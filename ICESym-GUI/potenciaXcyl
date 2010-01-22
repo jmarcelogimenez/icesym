@@ -1,0 +1,71 @@
+	#calculo de Potencia y Torque (efectivos e indicados)
+	Power_indicated = []
+	Torque_indicated = []
+	Power_effective = []
+	Torque_effective = []
+	mechanical_performance = []
+
+	for j in range(len(cyls)):
+		Power_indicated.append([])
+		Torque_indicated.append([])
+		Power_effective.append([])
+		Torque_effective.append([])
+		mechanical_performance.append([])
+
+		for icycle in range(len(ncycles)):
+			Power_indicated[-1].append([])
+			Torque_indicated[-1].append([])
+			Power_effective[-1].append([])
+			Torque_effective[-1].append([])
+			mechanical_performance[-1].append([])
+
+		for irpm in range(len(rpms)):
+			N = rpms[irpm]/60
+			for icycle in range(len(ncycles)):
+				Vd = volDesp[j][irpm][icycle]
+				aux1 = IMEP[j][icycle][irpm]*Vd*N/nr
+				aux2 = aux1/(2*pi*N)
+				aux3 = BMEP[j][icycle][irpm]*Vd*N/nr
+				aux4 = aux3/(2*pi*N)
+				Power_indicated[-1][icycle].append((rpms[irpm],aux1))
+				Torque_indicated[-1][icycle].append((rpms[irpm],aux2))
+				Power_effective[-1][icycle].append((rpms[irpm],aux3))
+				Torque_effective[-1][icycle].append((rpms[irpm],aux4))
+				mechanical_performance[-1][icycle].append((rpms[irpm],aux3/aux1))
+
+
+	#calculo de consumo especifico y rendimientos mecanicos, volumetricos y de conversion de combustible
+	(mfc,mair)  = getMasses()
+		
+	SFC_indicated = []
+	SFC_effective = []
+	volumetric_performance = []
+	fuel_conversion_performance_indicated = []
+	fuel_conversion_performance_effective = []
+	for j in range(len(cyls)):
+		SFC_indicated.append([])
+		SFC_effective.append([])
+		volumetric_performance.append([])
+		fuel_conversion_performance_indicated.append([])
+		fuel_conversion_performance_effective.append([])
+		for icycle in range(len(ncycles)):
+			SFC_indicated[-1].append([])
+			SFC_effective[-1].append([])
+			volumetric_performance[-1].append([])
+			fuel_conversion_performance_indicated[-1].append([])
+			fuel_conversion_performance_effective[-1].append([])
+		for irpm in range(len(rpms)):
+			for icycle in range(len(ncycles)):
+				Vd = volDesp[j][irpm][icycle]
+				aux1 = mfc[j][irpm][icycle]*N/(nr*Power_indicated[j][icycle][irpm])
+				aux2 = mfc[j][irpm][icycle]*N/(nr*Power_effective[j][icycle][irpm])
+				aux3 = mair[j][irpm][icycle]/(rho*Vd)
+				aux4 = 1/(aux1*cyls[j]['Q_fuel'])
+				aux5 = 1/(aux2*cyls[j]['Q_fuel'])
+				SFC_indicated[-1][icycle].append((rpms[irpm],aux1))
+				SFC_effective[-1][icycle].append((rpms[irpm],aux2))
+				volumetric_performance[-1][icycle].append((rpms[irpm],aux3))
+				fuel_conversion_performance_indicated[-1][icycle].append((rpms[irpm],aux4))
+				fuel_conversion_performance_effective[-1][icycle].append((rpms[irpm],aux5))
+
+
