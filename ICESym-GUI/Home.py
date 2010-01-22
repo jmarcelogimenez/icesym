@@ -16,10 +16,6 @@ from extraFunctions import *
 import wx.lib.ogl as ogl
 from MyEvtHandler import MyEvtHandler,MyLineEvtHandler,keyMap
 from MyShapeCanvas import MyShapeCanvas
-<<<<<<< HEAD:GUI/Home.py
-=======
-# from simCythonCPP import Simulator
->>>>>>> 3e6ec9988564ebe37441268e1c213f324c2b4510:GUI/Home.py
 import time
 
 # begin wxGlade: dependencies
