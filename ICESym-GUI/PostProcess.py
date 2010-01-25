@@ -35,7 +35,7 @@ class PostProcess(wx.Frame):
     panel_buttons = []
     buttons_figure = []
     canvas_list = []
-    path = ""
+    path = "../ICESym/src/"
     files = ['cyl_','tube_','tank_','junc_']
     id_button = 0;
     nButtons = 6
@@ -340,14 +340,17 @@ class PostProcess(wx.Frame):
 						dataFig['data'] = variable[int(icycle)-1]
 						dataFig['y_axis'] = plot.parsedData['global_variable'] + " ["+str(plot.parsedData['units'])+"]"
 				
-				print "a graficar: ", dataFig['data']
 				dataFig['data'] = conversion(dataFig['data'],plot.parsedData['units'])
 				dataFig['label'] = plot.parsedData['label']+ "_cycle" + str(icycle)
 				dataFig['x_axis'] = 'RPM'
+				print "dataFig['data']: ", dataFig['data']
+				#sys.exit()
+				#print "a graficar: ", dataFig
 				if (plot.parsedData['figure'] == "new figure"):
 					l = len(self.dataFigures)					
 					self.dataFigures.append([]) 
 					self.dataFigures[l].append(dataFig)
+					print "self.dataFigures: ",self.dataFigures
 					self.addNewTab(l)
 					pc = self.plotData(l,self.dataFigures[l])
 					self.canvas_list.append(pc)
@@ -378,7 +381,7 @@ class PostProcess(wx.Frame):
 
 		sys.path.append(str(pathName))
 		self.configData = __import__(str(moduleName))
-		self.path = folder_name
+		self.path = folder_name + "/"
 
 		self.orderingData()
 		return True
@@ -399,7 +402,9 @@ class PostProcess(wx.Frame):
 		lines = []
 		title = ''
 		#title = " FIGURE 1"
+		#print "en plotdata, datafigure: ", dataFigure
 		for i in range(len(dataFigure)):
+			#print "dataFigure[i]['data']", dataFigure[i]['data']
 			lines.append(libPlot.PolyLine(dataFigure[i]['data'], colour=self.colours[i], width=1, legend=dataFigure[i]['label']))
 			#title = title + dataFigure[i]['label'] + " (" +  self.colours[i] + ") - "
 

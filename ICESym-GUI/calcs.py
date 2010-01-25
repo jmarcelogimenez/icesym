@@ -55,7 +55,7 @@ def getRPMfromCycle(cdata,rpms,icycle):
 		nCycle = 1
 		for v in cdata[i]: 
 			if int(nCycle) == int(icycle):
-				data.append((rpms[i],v[1]))
+				data.append((int(rpms[i]),v[1]))
 				break
 			nCycle = nCycle + 1
 	return data	

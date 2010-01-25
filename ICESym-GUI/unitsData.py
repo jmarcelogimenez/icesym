@@ -1,3 +1,5 @@
+import os, sys
+
 possibleUnits = dict()
 possibleUnits['density'] = ['kg/m^3']
 possibleUnits['pressure'] = ['Pa', 'kPa', 'MPa','Bar','Atm']
@@ -48,7 +50,7 @@ conversions['Atm'] = 9.87e-6
 #energia
 conversions['W'] = 1
 conversions['kW'] = 1e-3
-conversions['hp'] = 1,34e-3
+conversions['hp'] = 1.34e-3
 conversions['cv'] = 1.36e-3
 #eficiencia
 conversions['kg/(W.s)'] = 1
@@ -70,7 +72,7 @@ conversions['kgf'] = 0.1
 
 
 def conversion(data,units):
-	print data
+	print "llega aca: ", data, units
 	if not(units == ''):
 		dataRet = []
 		if units in ['C']:
@@ -82,5 +84,6 @@ def conversion(data,units):
 				aux = (data[i][0],data[i][1]*conversions[units])
 				dataRet.append(aux)
 		data = dataRet
+	print "sale aca: ", data
 	return data
 
