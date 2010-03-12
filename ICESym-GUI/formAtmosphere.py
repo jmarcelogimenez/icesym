@@ -3,6 +3,7 @@
 
 import wx
 from validations import numberValidator
+from help_texts import help_atmosphere
 # begin wxGlade: dependencies
 # end wxGlade
 
@@ -30,8 +31,10 @@ class formAtmosphere(wx.Dialog):
         self.data['p'] = wx.TextCtrl(self.panel, -1, "")
         self.accept = wx.Button(self.panel_buttons, wx.ID_OK, "")
         self.cancel = wx.Button(self.panel_buttons, wx.ID_CANCEL, "")
+        self.help = wx.ContextHelpButton(self.panel_buttons)
 
         self.__set_properties()
+        self.setContextualHelp()
         self.__do_layout()
 
         self.Bind(wx.EVT_BUTTON, self.ConfigureAccept, self.accept)
@@ -40,7 +43,7 @@ class formAtmosphere(wx.Dialog):
     def __set_properties(self):
         # begin wxGlade: formAtmosphere.__set_properties
         self.SetTitle("Configure Atmosphere")
-        self.SetSize(wx.DLG_SZE(self, (99, 70)))
+        self.SetSize(wx.DLG_SZE(self, (140, 70)))
         self.label_0.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         self.data['rho'].SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         self.data['rho'].SetValidator(numberValidator())
@@ -59,7 +62,7 @@ class formAtmosphere(wx.Dialog):
     def __do_layout(self):
         # begin wxGlade: formAtmosphere.__do_layout
         configure_background = wx.BoxSizer(wx.VERTICAL)
-        sizer_buttons = wx.GridSizer(1, 2, 0, 0)
+        sizer_buttons = wx.GridSizer(1, 3, 0, 0)
         configure_sizer = wx.BoxSizer(wx.HORIZONTAL)
         grid_sizer_6 = wx.FlexGridSizer(3, 2, 0, 0)
         grid_sizer_6.Add(self.label_0, 0, wx.ALIGN_CENTER_VERTICAL, 0)
@@ -72,13 +75,19 @@ class formAtmosphere(wx.Dialog):
         configure_sizer.Add(self.panel, 1, wx.ALL|wx.EXPAND, 8)
         self.panel_configure.SetSizer(configure_sizer)
         configure_background.Add(self.panel_configure, 1, wx.EXPAND|wx.ALIGN_CENTER_HORIZONTAL, 1)
-        sizer_buttons.Add(self.accept, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_CENTER_VERTICAL, 0)
-        sizer_buttons.Add(self.cancel, 0, wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_buttons.Add(self.accept, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_buttons.Add(self.help, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_CENTER_HORIZONTAL, 0)
+        sizer_buttons.Add(self.cancel, 0, wx.ALIGN_CENTER_VERTICAL| wx.ALIGN_LEFT, 0)
         self.panel_buttons.SetSizer(sizer_buttons)
         configure_background.Add(self.panel_buttons, 0, wx.EXPAND, 0)
         self.SetSizer(configure_background)
         self.Layout()
         # end wxGlade
+
+    def setContextualHelp(self):
+		for key in self.data:
+			self.data[key].SetHelpText(help_atmosphere[key])
+
 
     def ConfigureAccept(self, event): # wxGlade: formAtmosphere.<event_handler>
         can_out=1

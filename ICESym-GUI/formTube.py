@@ -4,6 +4,7 @@
 import wx
 from validations import numberValidator
 from extraFunctions import *
+from help_texts import help_tube
 # begin wxGlade: dependencies
 import wx.grid
 # end wxGlade
@@ -67,8 +68,10 @@ class formTube(wx.Dialog):
         
         self.accept = wx.Button(self.panel_buttons, wx.ID_OK, "")
         self.cancel = wx.Button(self.panel_buttons, wx.ID_CANCEL, "")
+        self.help = wx.ContextHelpButton(self.panel_buttons)
 
         self.__set_properties()
+        self.setContextualHelp()
         self.__do_layout()
 
         self.Bind(wx.EVT_TEXT, self.onChangeNodes, self.data['nnod'])
@@ -218,7 +221,7 @@ class formTube(wx.Dialog):
     def __do_layout(self):
         # begin wxGlade: formTube.__do_layout
         configure_background = wx.BoxSizer(wx.VERTICAL)
-        sizer_buttons = wx.GridSizer(1, 2, 0, 0)
+        sizer_buttons = wx.GridSizer(1, 3, 0, 0)
         configure_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         grid_sizer_back = wx.FlexGridSizer(3, 2, 5, 5)
@@ -299,8 +302,9 @@ class formTube(wx.Dialog):
         configure_sizer.Add(self.configure_notebook, 1, wx.EXPAND, 0)
         self.panel_configure.SetSizer(configure_sizer)
         configure_background.Add(self.panel_configure, 1, wx.EXPAND, 0)
-        sizer_buttons.Add(self.accept, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_CENTER_VERTICAL, 0)
-        sizer_buttons.Add(self.cancel, 0, wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_buttons.Add(self.accept, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_buttons.Add(self.help, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_CENTER_HORIZONTAL, 0)
+        sizer_buttons.Add(self.cancel, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_LEFT, 0)
         self.panel_buttons.SetSizer(sizer_buttons)
         configure_background.Add(self.panel_buttons, 0, wx.EXPAND, 0)
         self.SetSizer(configure_background)
@@ -316,7 +320,9 @@ class formTube(wx.Dialog):
 			value = i*float(length/(nodes-1))
 			self.data['xnod'].SetCellValue(i,0,str(value))
 
-	
+    def setContextualHelp(self):
+		for key in self.data:
+			self.data[key].SetHelpText(help_tube[key])
 
     def onEquispaced(self, event): # wxGlade: formTube.<event_handler>
         if(self.checkbox_1.GetValue()):

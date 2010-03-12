@@ -4,6 +4,8 @@
 import wx
 from validations import numberValidator
 from extraFunctions import *
+from help_texts import help_valve
+
 # begin wxGlade: dependencies
 import wx.grid
 from Plots import Plots
@@ -61,8 +63,10 @@ class formValve(wx.Dialog):
         #self.button_3 = wx.Button(self.notebook_state, -1, "...")
         self.accept = wx.Button(self.panel_buttons, wx.ID_OK, "")
         self.cancel = wx.Button(self.panel_buttons, wx.ID_CANCEL, "")
+        self.help = wx.ContextHelpButton(self.panel_buttons)
 
         self.__set_properties()
+        self.setContextualHelp()
         self.__do_layout()
 
         self.Bind(wx.EVT_RADIOBOX, self.onTypeDat, self.data['type_dat'])
@@ -165,7 +169,7 @@ class formValve(wx.Dialog):
     def __do_layout(self):
         # begin wxGlade: formValve.__do_layout
         configure_background = wx.BoxSizer(wx.VERTICAL)
-        sizer_buttons = wx.GridSizer(1, 2, 0, 0)
+        sizer_buttons = wx.GridSizer(1, 3, 0, 0)
         configure_sizer_copy = wx.BoxSizer(wx.HORIZONTAL)
         #grid_sizer_state = wx.FlexGridSizer(2, 2, 0, 0)
         grid_sizer_back = wx.FlexGridSizer(1, 2, 0, 8)
@@ -230,8 +234,9 @@ class formValve(wx.Dialog):
         configure_sizer_copy.Add(self.configure_notebook, 1, wx.EXPAND, 0)
         self.panel_configure.SetSizer(configure_sizer_copy)
         configure_background.Add(self.panel_configure, 1, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_CENTER_VERTICAL, 8)
-        sizer_buttons.Add(self.accept, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_CENTER_VERTICAL, 0)
-        sizer_buttons.Add(self.cancel, 0, wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_buttons.Add(self.accept, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_buttons.Add(self.help, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_CENTER_HORIZONTAL, 0)
+        sizer_buttons.Add(self.cancel, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_LEFT, 0)
         self.panel_buttons.SetSizer(sizer_buttons)
         configure_background.Add(self.panel_buttons, 0, wx.EXPAND, 0)
         self.SetSizer(configure_background)
@@ -353,6 +358,10 @@ class formValve(wx.Dialog):
 		self.data['Lv'].SetColLabelValue(1, "Value")
 		self.data['Cd'].SetColLabelValue(0, "Lv (mm)")
 		self.data['Cd'].SetColLabelValue(1, "Cd")
+
+    def setContextualHelp(self):
+		for key in self.data:
+			self.data[key].SetHelpText(help_valve[key])
 # end of class formValve
 
 

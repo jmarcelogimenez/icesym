@@ -1,0 +1,51 @@
+<h3> Simulation Configuration </h3>
+You can access to Simulation Configuration doing: 
+<br><br>
+ <code>Simulation->Configure</code> 
+<br><br>
+In this section you must select the global parameters to the Simulation, for example, you can choose
+the frequency to save data (and what data you needs) for Post Process -tab <i>I/O Process</i>-, or  
+essencial parameters for the simulation, how the list of rpms to simulate, or the number of strokes per cycle of the engine.
+<br>
+<h5>List of Attributes:</h5>
+
+<ul>
+	<li><b>List of RPMS:</b> List of rpms to simulate separated with ','. Example: 1000,2000</li>
+	<li><b>Number of cycles for rpm:</b> Number of cycles for each rpm simulated</li>
+	<li><b>dTheta Rpm: </b>Maximum allowable crank angle variation in each time step [deg]</li>
+	<li><b>Courant: </b>Courant Number</li>
+	<li><b>Ga: </b>Specific heat ratio</li>
+	<li><b>Viscous Flow: </b>Switches on/off (1/0) the friction computation with the pipe wall</li>
+	<li><b>Heat Flow: </b>Switches on/off (1/0) the heat transfer computation with the pipe wall</li>
+	<li><b>R Gas: </b>Gas constant</li>
+	<li><b>Number Stroke: </b>Number of strokes per cycle</li>
+	<li>
+		<b>Engine Type: </b>Engine type: 
+		<ul>
+			<li>0 -> Reciprocating </li>
+			<li>1 -> Opposed-piston</li>
+		</ul>
+	</li>
+	<li><b>Ignition Order: </b>Ignition order of cylinders. Example: 0,1,3,2,6</li>
+	<li><b>File Save State: </b>File name to save the state in each time step (specified for Iterations per Save)</li>
+	<li><b>File Save SPD: </b>File name to save the chemical species concentration in each time step (specified for Iterations per Append)</li>
+	<li>
+		<b>Get State From: </b>Select how you initialize the state: 
+		<ul>
+			<li>From Here-> You must indicates the State in each component</li>
+			<li>From File-> You must indicates the file to load the state for all components. (Used when you need to continue a simulation)</li>
+			<li>From Fortran-> ICESym-1D calculates the initial state numerically with a predictor."</li>
+		</ul>
+	</li>
+	<li><b>find: </b> If you select <i>From File</i> in the previous parameter, you must specified the file that contents the initial state</li>
+	<li><b>Iterations per Save: </b>Step of iterations for save Simulation State. 0=never. It calculates how <code>number_iteration%ips == 0</code></li>
+	<li><b>Iterations per Append: </b>Step of iterations for save the component data. In order to see correctly the results in the post-process you should decrease this value. For higher speed, you should increase this value. 0=never.  It calculates how <code>number_iteration%ipa == 0</code></li>
+	<li><b>Folder Name: </b>Folder name to save the simulation. In the post-process you must search it. This name is an identifier for this simulation</li>
+	<li><b>Calculate Engine ... : </b>Calculate engine's data to post-process, such as Power, Torque etc</li>
+</ul>
+<!--
+<a href="html/cylinder.html"> Aca a cilindro </a>
+<img src="images/tree.png" title="imagen" alt="aca va la imagen"/>
+<a href="images/tree.png" target="_self"> Descargar cilindro </a>
+-->
+

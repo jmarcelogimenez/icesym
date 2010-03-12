@@ -1,0 +1,37 @@
+<h3> Tube </h3>
+<img src="images/TubesSmall.bmp"/><br><br>
+This object model a tube in the simulation. 
+<br>
+To access at this form, you can do:
+<br>
+<ul>
+	<li>Create a new tube with: <code>Components->New->tube</code></li>
+	<li>Create a new tube choosing in ToolBar the tube's icone</li>
+	<li>Edit an existing tube doing double click over its image object in the simulation diagram</li> 
+	<li>Edit an existing tube doing double click over its label in the tree of objects at left of the screen</li>
+</ul>
+
+
+<h5> List of Attributes</h5>
+
+<ul>
+	<li><b>Label: </b>Choose a label for this object to identifies it in object-tree and in Post Process</li>
+	<li><b>Number of Nodes: </b> Number of nodes</li>	
+	<li><b>Deggress of Freedom: </b> Number of degrees of freedom</li>
+	<li><b>Length: </b>Pipe length [m]</li>
+	<li><b>Equispaced: </b>Switch (0/1) if you want to make automatically the array xnod, dividing the length of the pipe in nnod nodes equispaced </li>
+	<li><b>Has Curvature: </b>Switch (0/1) if you want that the pipe has curvature (0=NO curvature)</li>
+	<li><b>Xnod: </b>Coordinates in x for each node [m]<a href="html/import_values.html"> -can be imported-</a></li>
+	<li><b>Diameter: </b>Pipe diameter [m]<a href="html/import_values.html"> -can be imported-</a></li> 
+	<li><b>Twall: </b>Wall pipe temperature [K]<a href="html/import_values.html"> -can be imported-</a></li>
+	<li><b>Curvature: </b>Curvature in each node along the pipe<a href="html/import_values.html"> -can be imported-</a></li>
+	<li>
+		<b>State: </b> Initial State. You need to complete it only if <code>Simulation->get_state</code> is set <i>from Here</i>. 
+		<a href="html/import_values.html"> -can be imported-</a>
+	</li>
+	<li><b>Type Save: </b>you can choose the way to save data (which nodes)</li>
+	<li><b>Normalized Points: </b> You can choose how many points you want to save. After, you must specify in what normalized positions are that points.<br>
+Example: If the pipe length is 0.2 mts, and you needs save the data in the nodes at 0.0 mts, 0.1 mts and 0.2 mts, you must choose <i>Normalized points = 3</i> and in the box below, you must input 0 - 0.5 - 1.
+	</li>
+</ul>
+

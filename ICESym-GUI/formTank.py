@@ -4,6 +4,7 @@
 import wx
 from validations import numberValidator
 from extraFunctions import *
+from help_texts import help_tank
 # begin wxGlade: dependencies
 import wx.grid
 # end wxGlade
@@ -52,7 +53,9 @@ class formTank(wx.Dialog):
         self.button_2 = wx.Button(self.notebook_state, -1, "...")
         self.accept = wx.Button(self.panel_buttons, wx.ID_OK, "")
         self.cancel = wx.Button(self.panel_buttons, wx.ID_CANCEL, "")
+        self.help = wx.ContextHelpButton(self.panel_buttons)
         self.__set_properties()
+        self.setContextualHelp()
         self.__do_layout()
 
         self.Bind(wx.EVT_TEXT, self.onChangeNnod, self.data['nnod'])
@@ -137,7 +140,7 @@ class formTank(wx.Dialog):
     def __do_layout(self):
         # begin wxGlade: formTank.__do_layout
         configure_background = wx.BoxSizer(wx.VERTICAL)
-        sizer_buttons = wx.GridSizer(1, 2, 0, 0)
+        sizer_buttons = wx.GridSizer(1, 3, 0, 0)
         configure_sizer = wx.BoxSizer(wx.HORIZONTAL)
         grid_sizer_5 = wx.FlexGridSizer(1, 2, 0, 0)
         grid_sizer_2 = wx.FlexGridSizer(1, 2, 0, 6)
@@ -181,8 +184,9 @@ class formTank(wx.Dialog):
         configure_sizer.Add(self.configure_notebook, 1, wx.EXPAND, 0)
         self.panel_configure.SetSizer(configure_sizer)
         configure_background.Add(self.panel_configure, 1, wx.EXPAND, 0)
-        sizer_buttons.Add(self.accept, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_CENTER_VERTICAL, 0)
-        sizer_buttons.Add(self.cancel, 0, wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_buttons.Add(self.accept, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_buttons.Add(self.help, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_CENTER_HORIZONTAL, 0)
+        sizer_buttons.Add(self.cancel, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_LEFT, 0)
         self.panel_buttons.SetSizer(sizer_buttons)
         configure_background.Add(self.panel_buttons, 0, wx.EXPAND, 0)
         self.SetSizer(configure_background)
@@ -282,6 +286,10 @@ class formTank(wx.Dialog):
 		self.data['state_ini'].SetColLabelValue(1, "Pressure")
 		self.data['state_ini'].SetColLabelValue(2, "Temperature")
 		self.data['Cd_ports'].SetColLabelValue(0, "Cd")
+
+    def setContextualHelp(self):
+		for key in self.data:
+			self.data[key].SetHelpText(help_tank[key])
 
 # end of class formTank
 

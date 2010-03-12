@@ -10,6 +10,7 @@ from formAtmosphere import formAtmosphere
 from formSimulation import formSimulation
 from formTube import formTube
 from formValve import formValve
+from Help import Help
 from PostProcess import PostProcess
 import default_values
 from extraFunctions import *
@@ -106,7 +107,9 @@ class Home(wx.Frame):
         self.Components.AppendMenu(wx.NewId(), "New", New, "")
         self.home_menubar.Append(self.Components, "Components")
         self.Help = wx.Menu()
-        self.About = wx.MenuItem(self.Help, 30, "About", "About Simulator", wx.ITEM_NORMAL)
+        self.About = wx.MenuItem(self.Help, 30, "About", "About ICESym-GUI", wx.ITEM_NORMAL)
+        self.UserHelp = wx.MenuItem(self.Help, 31, "User Help [F1]", "Help ICESym-GUI", wx.ITEM_NORMAL)
+        self.Help.AppendItem(self.UserHelp)
         self.Help.AppendItem(self.About)
         self.home_menubar.Append(self.Help, "Help")
         self.SetMenuBar(self.home_menubar)
@@ -122,6 +125,7 @@ class Home(wx.Frame):
         self.home_toolbar.AddLabelTool(4, "Tank", wx.Bitmap("images/TanksIconeSmall.bmp", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "New Tank", "Add new Tank to simulation")
         self.home_toolbar.AddLabelTool(5, "Atmosphere", wx.Bitmap("images/AtmospheresIconeSmall.bmp", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "New Atmosphere", "Add new Atmosphere to simulation")
         self.home_toolbar.AddLabelTool(6, "Valve", wx.Bitmap("images/ValvesIntakeIconeSmall.bmp", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "New Valve", "")
+
         # Tool Bar end
         #self.canvas = ogl.ShapeCanvas(self.window_1_pane_2, -1)
         self.canvas = MyShapeCanvas(self,self.window_1_pane_2, -1)
@@ -172,6 +176,7 @@ class Home(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnStatusBarTube, self.Tube)
         self.Bind(wx.EVT_MENU, self.OnStatusBarAtmosphere, self.Atmosphere)
         self.Bind(wx.EVT_MENU, self.OnStatusBarValve, self.Valve)
+        self.Bind(wx.EVT_MENU, self.OnMenuUserHelp, self.UserHelp)
         self.Bind(wx.EVT_MENU, self.OnMenuHelpAbout, self.About)
         self.Bind(wx.EVT_TOOL, self.OnStatusBarTube, id=1)
         self.Bind(wx.EVT_TOOL, self.OnStatusBarCylinder, id=2)
@@ -193,11 +198,14 @@ class Home(wx.Frame):
         self.tree.Bind(wx.EVT_LEFT_DCLICK, self.OnLeftDClick)
         self.tree.Bind(wx.EVT_RIGHT_DOWN, self.OnRightDown)
         self.tree.Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
-        # end wxGlade
+
+        x = [(wx.ACCEL_NORMAL, wx.WXK_F1, self.UserHelp.GetId())]
+        atable = wx.AcceleratorTable(x)
+        self.SetAcceleratorTable(atable)
 
     def __set_properties(self):
         # begin wxGlade: Home.__set_properties
-        self.SetTitle("ICES GUI")
+        self.SetTitle("ICESym-GUI")
         self.SetSize(wx.DLG_SZE(self, (314, 314)))
         self.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         self.home_statusbar.SetStatusWidths([-1])
@@ -457,6 +465,11 @@ class Home(wx.Frame):
         print "Event handler `OnMenuHelpAbout' not implemented!"
         event.Skip()
 
+    def OnMenuUserHelp(self, event): # wxGlade: Home.<event_handler>
+		help = Help(None, -1, "")
+		help.Show()
+
+
     def OnStatusBarValve(self, event, edit=-1): # wxGlade: Home.<event_handler>
         valve = formValve(None, -1, "")
         if edit==-1:
@@ -690,7 +703,7 @@ class Home(wx.Frame):
                  Generic = self.Cylinders[edit]['fuel']
         if(edit=='default'):
             for key in dict_generic:
-                print "key: ", key 
+                #print "key: ", key 
                 if isinstance(generic[key],wx.grid.Grid):
                     setGrid(dict_generic[key],generic[key])	
                 else:

@@ -4,6 +4,7 @@
 import wx
 from validations import numberValidator
 from extraFunctions import *
+from help_texts import help_junction
 # begin wxGlade: dependencies
 import wx.grid
 # end wxGlade
@@ -38,8 +39,10 @@ class formJunction(wx.Dialog):
         self.data['label'] = wx.TextCtrl(self.notebook_general, -1, "")
         self.accept = wx.Button(self.panel_buttons, wx.ID_OK, "")
         self.cancel = wx.Button(self.panel_buttons, wx.ID_CANCEL, "")
+        self.help = wx.ContextHelpButton(self.panel_buttons)
 
         self.__set_properties()
+        self.setContextualHelp()
         self.__do_layout()
 
         #self.Bind(wx.EVT_TEXT, self.onChangeNdof, self.data['ndof'])
@@ -88,7 +91,7 @@ class formJunction(wx.Dialog):
     def __do_layout(self):
         # begin wxGlade: formJunction.__do_layout
         configure_background = wx.BoxSizer(wx.VERTICAL)
-        sizer_buttons = wx.GridSizer(1, 2, 0, 0)
+        sizer_buttons = wx.GridSizer(1, 3, 0, 0)
         configure_sizer = wx.BoxSizer(wx.HORIZONTAL)
         #grid_sizer_23 = wx.FlexGridSizer(1, 1, 0, 10)
         #grid_sizer_25 = wx.FlexGridSizer(2, 2, 0, 0)
@@ -130,8 +133,9 @@ class formJunction(wx.Dialog):
         configure_sizer.Add(self.configure_notebook, 1, wx.EXPAND, 0)
         self.panel_configure.SetSizer(configure_sizer)
         configure_background.Add(self.panel_configure, 1, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_CENTER_VERTICAL, 8)
-        sizer_buttons.Add(self.accept, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_CENTER_VERTICAL, 0)
-        sizer_buttons.Add(self.cancel, 0, wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_buttons.Add(self.accept, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_buttons.Add(self.help, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_CENTER_HORIZONTAL, 0)
+        sizer_buttons.Add(self.cancel, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_LEFT, 0)
         self.panel_buttons.SetSizer(sizer_buttons)
         configure_background.Add(self.panel_buttons, 0, wx.EXPAND, 0)
         self.SetSizer(configure_background)
@@ -207,6 +211,9 @@ class formJunction(wx.Dialog):
 		for i in range(nodes):
 			self.data['histo'].Append("Connection with " + labels[i])
 
+    def setContextualHelp(self):
+		for key in self.data:
+			self.data[key].SetHelpText(help_junction[key])
 
 # end of class formJunction
 

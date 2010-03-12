@@ -5,6 +5,13 @@
 import wx
 from Home import Home
 
+#----------------------------------------------------------------------
+# We first have to set an application-wide help provider.  Normally you
+# would do this in your app's OnInit or in other startup code...
+
+provider = wx.SimpleHelpProvider()
+wx.HelpProvider_Set(provider)
+
 class SimulatorGUI(wx.App):
     def OnInit(self):
         wx.InitAllImageHandlers()

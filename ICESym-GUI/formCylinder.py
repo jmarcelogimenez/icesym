@@ -8,6 +8,10 @@ from extraFunctions import *
 import wx.grid
 # end wxGlade
 from validations import numberValidator
+from help_texts import help_cylinder
+from help_texts import help_fuel
+from help_texts import help_combustion
+from help_texts import help_injection
 from Plots import Plots
 # begin wxGlade: extracode
 
@@ -140,9 +144,12 @@ class formCylinder(wx.Dialog):
         self.panel_27 = wx.Panel(self.notebook_state, -1)
         self.accept = wx.Button(self.panel_buttons, wx.ID_OK, "")
         self.cancel = wx.Button(self.panel_buttons, wx.ID_CANCEL, "")
+        self.help = wx.ContextHelpButton(self.panel_buttons)
 
         self.__set_properties()
+        self.setContextualHelp()
         self.__do_layout()
+        self.onTypeIg("")
 
         self.Bind(wx.EVT_TEXT, self.onChangeNodes, self.data['nnod'])
         self.Bind(wx.EVT_TEXT, self.onChangeNdof, self.data['ndof'])
@@ -393,7 +400,7 @@ class formCylinder(wx.Dialog):
     def __do_layout(self):
         # begin wxGlade: formCylinder.__do_layout
         configure_background = wx.BoxSizer(wx.VERTICAL)
-        sizer_buttons = wx.GridSizer(1, 2, 0, 0)
+        sizer_buttons = wx.GridSizer(1, 3, 0, 0)
         configure_sizer = wx.BoxSizer(wx.HORIZONTAL)
         grid_sizer_22 = wx.FlexGridSizer(2, 1, 0, 0)
         grid_sizer_38 = wx.FlexGridSizer(1, 2, 0, 0)
@@ -549,8 +556,9 @@ class formCylinder(wx.Dialog):
         configure_sizer.Add(self.configure_notebook, 1, wx.EXPAND, 0)
         self.panel_configure.SetSizer(configure_sizer)
         configure_background.Add(self.panel_configure, 1, wx.EXPAND, 0)
-        sizer_buttons.Add(self.accept, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_CENTER_VERTICAL, 0)
-        sizer_buttons.Add(self.cancel, 0, wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_buttons.Add(self.accept, 0, wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_buttons.Add(self.help, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_CENTER_HORIZONTAL, 0)
+        sizer_buttons.Add(self.cancel, 0, wx.ALIGN_CENTER_VERTICAL| wx.ALIGN_LEFT, 0)
         self.panel_buttons.SetSizer(sizer_buttons)
         configure_background.Add(self.panel_buttons, 0, wx.EXPAND, 0)
         self.SetSizer(configure_background)
@@ -638,13 +646,13 @@ class formCylinder(wx.Dialog):
     def onTypeIg(self, event): # wxGlade: formCylinder.<event_handler>
         type_ig = self.data['type_ig'].GetSelection()
         if type_ig == 0:
-            for i in range(len(self.injection)):
-                self.injection[i].Enable(0)
+            for key in self.injection:
+                self.injection[key].Enable(0)
             self.combustion['phi'].Enable(1)
         else:
             self.combustion['phi'].Enable(0)
-            for i in range(len(self.injection)):
-                self.injection[i].Enable(1)
+            for key in self.injection:
+                self.injection[key].Enable(1)
 
 
     def onHasScavenge(self, event): # wxGlade: formCylinder.<event_handler>
@@ -795,6 +803,16 @@ class formCylinder(wx.Dialog):
 			self.data['twall'].SetRowLabelValue(2, "Exhaust: ")
 			self.data['twall'].SetRowLabelValue(3, "Liners: ")
 
+
+    def setContextualHelp(self):
+		for key in self.data:
+			self.data[key].SetHelpText(help_cylinder[key])
+		for key in self.fuel:
+			self.fuel[key].SetHelpText(help_fuel[key])
+		for key in self.injection:
+			self.injection[key].SetHelpText(help_injection[key])
+		for key in self.combustion:
+			self.combustion[key].SetHelpText(help_combustion[key])
 
 
 

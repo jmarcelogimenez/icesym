@@ -1,0 +1,31 @@
+<h3> Tank </h3><img src="images/TanksIcone.bmp"/><br><br>
+This object model a tank in the simulation. 
+<br>
+To access at this form, you can do:
+<br>
+<ul>
+	<li>Create a new tank with: <code>Components->New->tank</code></li>
+	<li>Create a new tank choosing in ToolBar the tank's icone</li>
+	<li>Edit an existing tank doing double click over its image object in the simulation diagram</li> 
+	<li>Edit an existing tank doing double click over its label in the tree of objects at left of the screen</li>
+</ul>
+
+<h5> List of Attributes</h5>
+
+<ul>
+	<li><b>Label: </b>Choose a label for this object to identifies it in object-tree and in Post Process</li>
+	<li><b>Number of Nodes: </b> Number of nodes (un-editable, because is equal at the number of tubes connected + the internal node)</li>
+	<li><b>Deggress of Freedom: </b> Number of degrees of freedom</li>
+	<li><b>Volume: </b>Volume of tank [m^3]</li>
+	<li><b>Mass: </b>Mass of gas contained into the tank [kg]</li>
+	<li><b>H film: </b>Heat-transfer coefficient [W/m^2 K]</li>
+	<li><b>Area Wall: </b>Tank wall area [m^2]</li>
+	<li><b>Temperature Wall: </b>Tank wall temperature [K]</li>
+	<li><b>Cd Ports: </b>Discharge coefficients of the ports<a href="html/import_values.html"> -can be imported-</a></li>
+	<li><b>State: </b> Initial State. You need to complete it only if <code>Simulation->get_state</code> is set <i>from Here</i>. 
+		<a href="html/import_values.html"> -can be imported-</a>
+	</li>
+	<li><b>Connections and own State Box:</b> Switch (0/1) if you want to save the data in each connection for Post Process </li>
+	<li><b>Save Extras:</b>Switch (0/1) if you want to save extra data for the tank </li>
+</ul>
+
