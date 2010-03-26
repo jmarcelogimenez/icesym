@@ -77,7 +77,7 @@ def getWriteList(objectName, objectData, dict_generic, numCyl = -1):
 		line = objectName + " = []\n\n"
 		lines.append(line)
 	#if objectName in ['combustion','injection','fuel']:
-	print objectData
+	#print objectData
 	for i in range(len(objectData)):
 		line = objectName + str(i) + " = dict()\n"
 		lines.append(line)
@@ -164,7 +164,7 @@ def getWriteList(objectName, objectData, dict_generic, numCyl = -1):
 				line = objectName + str(i) + "['state_ini'] = " + explodeAtribute(objectData[i]['state_ini'])
 				lines.append(line)
 
-		print "object name: ", objectName
+		#print "object name: ", objectName
 		if objectName in ['Cylinders','Junctions','Tubes','Tanks', 'Atmospheres']:
 			line = "\n" + objectName + ".append(" + objectName +  str(i) + ")\n\n"
 			lines.append(line)
@@ -172,7 +172,6 @@ def getWriteList(objectName, objectData, dict_generic, numCyl = -1):
 				line = "\nCylinders" + str(numCyl) + "['" + objectName + "'] = " + objectName +  str(i) + "\n\n"
 				lines.append(line)
 		elif objectName in ['Simulator']:
-				print "adentro!!"
 				line = "\nSimulator = "	 + objectName +  str(i) + "\n\n"
 				lines.append(line)
 
@@ -259,7 +258,6 @@ def data2tuple(grid):
 def String2List(string):
 	data = []
 	aux = ""
-	print "Llega: ",string
 	if not(string=="0") and not(string==""):
 		for i in range(len(string)):
 			if string[i] == ",":
@@ -305,9 +303,8 @@ def couplingCode(home):
 				#	home.Cylinders[i]['state_ini'][j] = home.Cylinders[i]['state_ini'][j] + v['state_ini'][j]
 				home.Cylinders[i]['state_ini'] = home.Cylinders[i]['state_ini'] + v['state_ini']
 				home.Cylinders[i]['nvi'] = home.Cylinders[i]['nvi'] + 1
-				print "para: ",n," valor: ",bool(v['histo']==1)
+				#print "para: ",n," valor: ",bool(v['histo']==1)
 				if bool(v['histo']==1) == True:
-					print "appendiza"
 					histo.append(n)
 		for v in home.Valves:
 			if v['ncyl'] == i and v['typeVal']=='exh':
@@ -821,7 +818,7 @@ def genStates(home):
 
 def getWriteListPost(objectName, objectData):
 	lines = []
-	print objectData
+	#print objectData
 	line = objectName + " = []\n"
 	lines.append(line)
 	for i in range(len(objectData)):

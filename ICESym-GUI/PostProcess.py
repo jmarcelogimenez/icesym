@@ -10,6 +10,8 @@ from formCyclePlots import cyclePlots
 from formRPMPlots import RPMPlots
 from extraFunctions import *
 from unitsData import *
+from Help import Help
+from About import About
 import  wx.lib.plot as libPlot
 import sys
 
@@ -72,6 +74,12 @@ class PostProcess(wx.Frame):
 		self.rpmPlots = wx.MenuItem(wxglade_tmp_menu, wx.NewId(), "RPM Plots", "RPM Plots", wx.ITEM_NORMAL)
 		wxglade_tmp_menu.AppendItem(self.rpmPlots)
 		self.PostProcess_menubar.Append(wxglade_tmp_menu, "Graphics")
+		self.Help = wx.Menu()
+		self.About = wx.MenuItem(self.Help, 30, "About", "About ICESym-GUI", wx.ITEM_NORMAL)
+		self.UserHelp = wx.MenuItem(self.Help, 31, "User Help [F1]", "Help ICESym-GUI", wx.ITEM_NORMAL)
+		self.Help.AppendItem(self.UserHelp)
+		self.Help.AppendItem(self.About)
+		self.PostProcess_menubar.Append(self.Help, "Help")
 		self.SetMenuBar(self.PostProcess_menubar)
 		self.notebook = wx.Notebook(self, -1, style=0)
 		# Menu Bar end
@@ -88,8 +96,14 @@ class PostProcess(wx.Frame):
 		self.Bind(wx.EVT_MENU, self.onSpacePlots, self.spacePlots)
 		self.Bind(wx.EVT_MENU, self.onCyclePlots, self.cyclePlots)
 		self.Bind(wx.EVT_MENU, self.onRPMPlots, self.rpmPlots)
+		self.Bind(wx.EVT_MENU, self.OnMenuUserHelp, self.UserHelp)
+		self.Bind(wx.EVT_MENU, self.OnMenuHelpAbout, self.About)
 		#self.Bind(wx.EVT_SIZE, self, self.onResize)
 		wx.EVT_SIZE(self, self.onResize)
+
+		x = [(wx.ACCEL_NORMAL, wx.WXK_F1, self.UserHelp.GetId())]
+		atable = wx.AcceleratorTable(x)
+		self.SetAcceleratorTable(atable)
 		# end wxGlade
 
     def __set_properties(self):
@@ -361,6 +375,15 @@ class PostProcess(wx.Frame):
 					self.dataFigures[l].append(dataFig)	
 					pc = self.plotData(l,self.dataFigures[l])
 					self.canvas_list[l] = pc
+
+    def OnMenuHelpAbout(self, event): # wxGlade: Home.<event_handler>
+		dlg = About(self)
+		dlg.ShowModal()
+		dlg.Destroy()
+
+    def OnMenuUserHelp(self, event): # wxGlade: Home.<event_handler>
+		help = Help(None, -1, "")
+		help.Show()
 
     def loadResults(self,folder_name):
 		

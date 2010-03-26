@@ -236,7 +236,6 @@ class cyclePlots(wx.Dialog):
 		if elem == 1:
 			self.data['element_ndof'].Clear()
 			if not(str(nnod) in self.infoData['Cylinders']['histos'][number]):
-				print "eligio valvula"
 				self.data['element_ndof'].AppendItems(self.listNdofA)
 			else:
 				choices = []			

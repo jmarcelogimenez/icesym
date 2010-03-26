@@ -197,7 +197,6 @@ class formTank(wx.Dialog):
 		try:
 			ownNodes = 1 #solo el propio
 			extNodes = int(self.data['nnod'].GetValue()) - ownNodes
-			print "ext nodes = ", extNodes
 			
 			nstate = self.data['state_ini'].GetNumberRows()
 			ncd = self.data['Cd_ports'].GetNumberRows()

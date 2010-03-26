@@ -11,6 +11,7 @@ from formSimulation import formSimulation
 from formTube import formTube
 from formValve import formValve
 from Help import Help
+from About import About
 from PostProcess import PostProcess
 import default_values
 from extraFunctions import *
@@ -278,7 +279,6 @@ class Home(wx.Frame):
         else:
             md = wx.MessageDialog(None, 'Save changes in ' + self.thisFile + ' ?','Confirm', wx.YES_NO| wx.CANCEL | wx.ICON_QUESTION)
             res = md.ShowModal()
-            print res
             if res == 5104: #NO
                 self.Close()
             if res == 5103: #YES
@@ -290,7 +290,6 @@ class Home(wx.Frame):
 		if not(self.saved == 1):
 			md = wx.MessageDialog(None, 'Save changes in ' + self.thisFile + ' ?','Confirm', wx.YES_NO| wx.CANCEL | wx.ICON_QUESTION)
 			res = md.ShowModal()
-			print res
 			if res == 5103: #YES
 				self.OnMenuFileSave("")
 			if res == 5101: 
@@ -320,7 +319,7 @@ class Home(wx.Frame):
 			return  
 		if isinstance(shapeObject,ogl.BitmapShape):
 			(element,indexElem) = self.shapes[index]
-			print element,indexElem
+			#print element,indexElem
 			if element == "Cylinders":
 				self.copyboard = ("Cylinders", self.Cylinders[indexElem].copy())
 			if element == "Valves":
@@ -336,7 +335,6 @@ class Home(wx.Frame):
 			self.copynumber = 0
 
     def OnMenuEditPaste(self, event): # wxGlade: Home.<event_handler>
-        print "pegar la copia"
         if not(self.copyboard == ''):
             element = self.copyboard[0]
             if element == "Cylinders":
@@ -462,8 +460,10 @@ class Home(wx.Frame):
 				wx.MessageBox("This Simulation Haven't Results yet", "Error")
 
     def OnMenuHelpAbout(self, event): # wxGlade: Home.<event_handler>
-        print "Event handler `OnMenuHelpAbout' not implemented!"
-        event.Skip()
+		dlg = About(self)
+		dlg.ShowModal()
+		dlg.Destroy()
+
 
     def OnMenuUserHelp(self, event): # wxGlade: Home.<event_handler>
 		help = Help(None, -1, "")
@@ -906,7 +906,7 @@ class Home(wx.Frame):
         for key in dict_generic:
              if not(key in objectData.keys()):
                  objectData[key] = '<none>'
-        print objectData		
+        #print objectData		
 
 # modifica algunos valores paa que sean compatibles con el simulador en c++
     def parseData(self):
@@ -958,7 +958,7 @@ class Home(wx.Frame):
         self.updatePosition(len(self.shapes)-1,x,y)
         if load==-1: #cuando cargamos de un archivo no se inician las conexiones
             self.initConnections(element,index)
-        print (element,index)
+        #print (element,index)
         label = self.getLabel(element,index)
         self.canvas.AddShape(shape)
         self.canvas.Refresh()
@@ -967,7 +967,6 @@ class Home(wx.Frame):
 
 
     def editGeneric(self, shapesIndex):
-        print "en edit ", shapesIndex 
         element = self.shapes[shapesIndex][0]
         index = self.shapes[shapesIndex][1]
         if element == "Cylinders":
@@ -1004,11 +1003,11 @@ class Home(wx.Frame):
     def makeConection(self, shapeObjectFrom, shapeIndexFrom, shapeObjectTo, shapeIndexTo, test=-1):
         shapeFrom = self.shapes[shapeIndexFrom]
         shapeTo = self.shapes[shapeIndexTo]
-        print self.shapes
-        print shapeObjectFrom
-        print shapeObjectTo
-        print "ShapeFrom: ",shapeFrom[0]
-        print "ShapeTo: ",shapeTo[0]
+        #print self.shapes
+        #print shapeObjectFrom
+        #print shapeObjectTo
+        #print "ShapeFrom: ",shapeFrom[0]
+        #print "ShapeTo: ",shapeTo[0]
         if(test==-1):                                 
             test = self.possibleConnection(shapeFrom, shapeTo)
         
@@ -1038,7 +1037,7 @@ class Home(wx.Frame):
          for s in self.shapes:
              element = s[0]
              index   = s[1]
-             print "a conectar: ",element,index
+             #print "a conectar: ",element,index
              if element == "Tubes":
                  if not(self.Tubes[index]['nright'])==-1:
                      shapeObjectFrom = shapeList[i]
@@ -1057,9 +1056,8 @@ class Home(wx.Frame):
 
                      self.makeConection(shapeObjectFrom, shapeIndexFrom, shapeObjectTo, shapeIndexTo, test=1)
                    
-                 print self.Tubes[index]['nleft'], " - " , self.Tubes[index]['tleft']
+                 #print self.Tubes[index]['nleft'], " - " , self.Tubes[index]['tleft']
                  if not(self.Tubes[index]['nleft']==-1) and (self.Tubes[index]['tleft']=="atmosphere"): # a la derecha una atmosphere
-                     print "aca entra"
                      shapeObjectTo = shapeList[i]
                      shapeIndexTo = i
                      (shapeObjectFrom,shapeIndexFrom) = self.findShape("Atmospheres",self.Tubes[index]['nleft'])              
@@ -1112,10 +1110,10 @@ class Home(wx.Frame):
     def findShape(self,nameElement, index):
         shapeList = self.canvas.GetDiagram().GetShapeList()
         i = 0
-        print "Buscando"
+        #print "Buscando"
         for s in self.shapes:
-            print s[0]," - ",nameElement
-            print s[1]," - ",index
+            #print s[0]," - ",nameElement
+            #print s[1]," - ",index
             if nameElement in ["Tanks","Tubes","Junctions","Atmospheres","Cylinders"]:
                 if s[0] == nameElement and s[1] == index:
                    return (shapeList[i],i)
@@ -1199,7 +1197,7 @@ class Home(wx.Frame):
                 else:
                     return "The valve already is connected with another cylinder" 
             if elementTo == "Tubes":
-                print len(self.Valves)," - ",indexFrom
+                #print len(self.Valves)," - ",indexFrom
                 if not(self.Valves[indexFrom]['type']==1):
                     return "The valve must be for Exhaust"
                 if self.Valves[indexFrom]['ncyl'] == -1 or not(self.Valves[indexFrom]['typeVal']=='exh'):
@@ -1317,7 +1315,7 @@ class Home(wx.Frame):
             else:
                 keyname = "(%s)" % keycode
         
-        print evt.ControlDown(), keyname
+        #print evt.ControlDown(), keyname
 
         #evento de copia (solo para componentes)
         if(evt.ControlDown() and keyname=='"C"'):
@@ -1325,7 +1323,7 @@ class Home(wx.Frame):
 
 
         if(keyname == "WXK_DELETE"):
-            print "eliminar seleccionado"
+            #print "eliminar seleccionado"
             (shapeObject,index) = self.findSelected()
             if shapeObject==-1 and index == -1:
                 return
@@ -1489,14 +1487,12 @@ class Home(wx.Frame):
         #actualizo indices de conexion y las referencias de shapes
         del self.shapes[index]
         for s in range(len(self.shapes)):
-            print "En shapes: ", self.shapes[s]
+            #print "En shapes: ", self.shapes[s]
             (nameElement, indexElement) = self.shapes[s]
             if nameElement == element and indexElement >= indexElem:
                 indexElement = indexElement - 1
             self.shapes[s] = (nameElement, indexElement)
-            print "Sale: ",self.shapes[s]
-        print "final: ",self.shapes
-
+       
         for cl in range(len(self.connectionLines)):
             (cl0,cl1) = self.connectionLines[cl]
             if cl0 > index:
@@ -1510,7 +1506,7 @@ class Home(wx.Frame):
         shapeList = self.diagram.GetShapeList()
         toDelete = [shapeObject]
         for s in shapeList:
-           print type(s)
+           #print type(s)
            if isinstance(s,ogl.ControlPoint):
                toDelete.append(s)
 
@@ -1518,9 +1514,9 @@ class Home(wx.Frame):
            self.diagram.RemoveShape(s)
 
         self.canvas.Refresh(True)
-        print "tamanio shapes: ",len(self.shapes)
-        print "tamanio lineas: ",len(self.connectionLines)
-        print "tamanio diagram: ",self.diagram.GetCount()
+        #print "tamanio shapes: ",len(self.shapes)
+        #print "tamanio lineas: ",len(self.connectionLines)
+        #print "tamanio diagram: ",self.diagram.GetCount()
         self.saved = 0
 
         #elimino el objeto del arbol, y actualizo las referencias
@@ -1539,7 +1535,7 @@ class Home(wx.Frame):
 
     #elimino las conexiones, atencion en la actualizacion de nnod 
     def deleteLine(self,index, shapeObject):
-        print "eliminando lines: ",self.connectionLines[index]
+        #print "eliminando lines: ",self.connectionLines[index]
         (indexShapeFrom, indexShapeTo) = self.connectionLines[index]
         (elementFrom, indexFrom) = self.shapes[indexShapeFrom]
         (elementTo, indexTo) = self.shapes[indexShapeTo]
@@ -1596,7 +1592,7 @@ class Home(wx.Frame):
         shapeList = self.diagram.GetShapeList()
         toDelete = [shapeObject]
         for s in shapeList:
-           print type(s)
+           #print type(s)
            if isinstance(s,ogl.ControlPoint):
                toDelete.append(s)
 
@@ -1604,9 +1600,9 @@ class Home(wx.Frame):
            self.diagram.RemoveShape(s)
 
         self.canvas.Refresh(True)
-        print "tamanio shapes: ",len(self.shapes)
-        print "tamanio lineas: ",len(self.connectionLines)
-        print "tamanio diagram: ",self.diagram.GetCount()
+        #print "tamanio shapes: ",len(self.shapes)
+        #print "tamanio lineas: ",len(self.connectionLines)
+        #print "tamanio diagram: ",self.diagram.GetCount()
         self.saved = 0
 
     def findTubesNames(self,indexs):

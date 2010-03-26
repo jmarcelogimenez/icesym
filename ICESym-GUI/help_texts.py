@@ -136,8 +136,10 @@ help_valve['Cd']          = "Discharge coefficient data"
 help_valve['histo']        = ""
 help_valve['label']       = "Choose a label for this object"
 
-ordered_pages = ["Fast Start","Add, Edit, Delete Objects", "Connections between Objects", "Simulation Configuration","Object Cylinder",
-"Object Tube","Object Junction","Object Valve","Object Atmosphere","Object Tank", "Import Data"]
+ordered_pages_pre = ["Fast Start","Add, Edit, Delete Objects", "Connections between Objects", "Simulation Configuration","Object Cylinder",
+"Object Tube","Object Junction","Object Valve","Object Atmosphere","Object Tank", "Import Data", "Plot Laws in Pre-Process"]
+
+ordered_pages_post = []
 
 html_pages = dict()
 html_pages["Fast Start"] = "html/fast_start.html"
@@ -145,6 +147,7 @@ html_pages["Simulation Configuration"] = "html/simulation_configuration.html"
 html_pages["Add, Edit, Delete Objects"] = "html/aed_objects.html"
 html_pages["Connections between Objects"] = "html/connections.html"
 html_pages["Import Data"] = "html/import_values.html"
+html_pages["Plot Laws in Pre-Process"] = "html/plot_pre.html"
 html_pages["Object Cylinder"] = "html/cylinder.html"
 html_pages["Object Tube"] = "html/tube.html"
 html_pages["Object Junction"] = "html/junction.html"

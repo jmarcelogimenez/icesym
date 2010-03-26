@@ -3,7 +3,7 @@
 
 import wx
 import wx.html
-from help_texts import html_pages, ordered_pages
+from help_texts import html_pages, ordered_pages_pre, ordered_pages_post
 # begin wxGlade: dependencies
 # end wxGlade
 
@@ -145,9 +145,24 @@ class Help(wx.Frame):
 
     def initTree(self):
 		self.childs = dict()
-		for name in ordered_pages:
+		self.pre = self.tree.AppendItem(self.root, "Pre-Process")
+		self.tree.SetPyData(self.pre, "html/indexPre.html")
+		self.post = self.tree.AppendItem(self.root, "PostProcess")
+		self.tree.SetPyData(self.post, "html/indexPost.html")
+		self.tree.SetItemImage(self.pre, self.fldridx, wx.TreeItemIcon_Normal)
+		self.tree.SetItemImage(self.pre, self.fldropenidx, wx.TreeItemIcon_Expanded)
+		self.tree.SetItemImage(self.post, self.fldridx, wx.TreeItemIcon_Normal)
+		self.tree.SetItemImage(self.post, self.fldropenidx, wx.TreeItemIcon_Expanded)
+		for name in ordered_pages_pre:
 			self.itemsTree[name] = dict()
-			self.childs[name] = self.tree.AppendItem(self.root, name)
+			self.childs[name] = self.tree.AppendItem(self.pre, name)
+			self.tree.SetPyData(self.childs[name], html_pages[name]) 
+			self.tree.SetItemImage(self.childs[name], self.fldridx, wx.TreeItemIcon_Normal)
+			self.tree.SetItemImage(self.childs[name], self.fldropenidx, wx.TreeItemIcon_Expanded)
+
+		for name in ordered_pages_post:
+			self.itemsTree[name] = dict()
+			self.childs[name] = self.tree.AppendItem(self.post, name)
 			self.tree.SetPyData(self.childs[name], html_pages[name]) 
 			self.tree.SetItemImage(self.childs[name], self.fldridx, wx.TreeItemIcon_Normal)
 			self.tree.SetItemImage(self.childs[name], self.fldropenidx, wx.TreeItemIcon_Expanded)

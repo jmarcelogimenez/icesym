@@ -318,8 +318,8 @@ class RPMPlots(wx.Dialog):
 		self.data['units'].Clear()
 		self.data['units'].AppendItems(possibleUnits[ndof])
 		self.data['units'].Enable(True)
-		print possibleUnits[ndof]
-		print len(possibleUnits[ndof])
+		#print possibleUnits[ndof]
+		#print len(possibleUnits[ndof])
 		if len(possibleUnits[ndof]) > 0:
 			self.data['units'].SetStringSelection(str(possibleUnits[ndof][0]))
 		else:
