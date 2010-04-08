@@ -40,12 +40,19 @@ public:
 	Simulator(){};
 	void printData();
 
+	void actualizeState();
 	void actualizeDt();
 	double GetTimeStep();
+	void SetTimeStep(double);
+	void SetTime(double, int);
 	vector<double> GetOldState();
     vector<double> GetNewState();
 	int GetNewStateSize();
 	int GetOldStateSize();
+	void SetStateValue(int, double);
+
+	vector<double> getCylinderMass(int);
+	void setCylinderMass(int, int, double);
 protected:
 
 private:

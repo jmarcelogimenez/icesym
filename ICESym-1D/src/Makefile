@@ -13,6 +13,9 @@ build: src
 install: build
 	python setup.py install
 
+install_gdb: build
+	python setup_gdb.py install
+
 install_home: build
 	python setup.py install --home=${HOME}
 

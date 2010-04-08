@@ -364,7 +364,7 @@ void Simulator::solverEngine(){
 			time += dt;
 			theta = fmod(omega*time, pi*nstroke);
 			solveStep();
-			Xn = Xn1; //actualizo al nuevo estado global
+			actualizeState(); //actualizo al nuevo estado global
 			if(nappend>0){
 				if(iteration%nappend==0){ // aca usar nappend
 					saveHisto(iteration<=nappend);
@@ -424,6 +424,13 @@ void Simulator::solveStep(){
 }
 
 /**
+    \brief Actualizes the new global state vector
+*/
+void Simulator::actualizeState(){
+	Xn = Xn1;
+}
+
+/**
 	\brief Calculates the new time step
 */
 void Simulator::actualizeDt(){
@@ -443,6 +450,22 @@ double Simulator::GetTimeStep(){
 }
 
 /**
+    \brief Sets a value for the time step
+*/
+void Simulator::SetTimeStep(double dT){
+	dt = dT;
+}
+
+/**
+    \brief Sets a value for time and crank angle
+*/
+void Simulator::SetTime(double t, int irpm){
+	time  = t;
+	omega = 2.*pi*rpms[irpm]/60.;
+	theta = fmod(omega*time, pi*nstroke);
+}
+
+/**
     \brief Returns the old state vector
 */
 vector<double> Simulator::GetOldState(){
@@ -455,6 +478,7 @@ vector<double> Simulator::GetOldState(){
 vector<double> Simulator::GetNewState(){
     return Xn1;
 }
+
 /**
     \brief Returns the length of old state vector
 */
@@ -467,6 +491,29 @@ int Simulator::GetOldStateSize(){
 */
 int Simulator::GetNewStateSize(){
     return Xn1.size();
+}
+
+/**
+    \brief Sets values in the state vector
+	\param i: position index in the array state
+	\param val: value to be set in the array state
+*/
+void Simulator::SetStateValue(int i, double val){
+    Xn[i] = val;
+}
+
+/**
+    \brief Returns the vector of masses into the cylinder
+*/
+vector<double> Simulator::getCylinderMass(int icyl){
+    return cylinders[icyl].getMass();
+}
+
+/**
+    \brief Sets values in the cylinder mass vector
+*/
+void Simulator::setCylinderMass(int icyl, int i, double mass){
+    cylinders[icyl].setMass(i, mass);
 }
 
 /**
@@ -702,15 +749,15 @@ void Simulator::saveState(){
 */
 void Simulator::createDir(bool newRPM){
 	if(!newRPM){
-		char mk[7] = "mkdir ";
-		char testsChar[7] = "tests/";
+		char mk[] = "mkdir -p ";
+		char testsChar[] = "tests/";
 		char* folder = strconcat(testsChar,folder_name);
 		char* makeFolder = strconcat(mk,folder);	
 		system(makeFolder);
 		strcopy(this->folderGral,folder);
 	}
 	else{
-		char mk[7] = "mkdir ";
+		char mk[] = "mkdir -p ";
 		char* folder = strconcat(this->folderGral,(char*)"/RPM_");
 		char* out = int2char(rpms[irpm]);
 		folder = strconcat(folder,out);

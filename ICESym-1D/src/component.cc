@@ -17,8 +17,9 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "component.h"
 #include <sstream>
+#include "component.h"
+
 /**
  	\brief Generic Constructor for all Elements
  */
@@ -37,6 +38,19 @@ Component::Component(unsigned int nnod, unsigned int ndof, unsigned int nnod_inp
 /**
 	\brief Copy Constructor
 */
+// Component::Component(const Component& other)
+// {
+// 	    const Component* c  = &other;
+// 		this->nnod			= c->nnod;
+// 		this->ndof			= c->ndof;
+// 		this->nnod_input	= c->nnod_input;
+// 		this->implicit		= c->implicit;
+// 		this->state_ini		= c->state_ini;
+// 		this->state.resize((nnod+nnod_input)*ndof);
+// 		this->new_state.resize(nnod*ndof);
+// 		this->histo			= histo;
+// }
+
 Component::Component(Component* c){
 		this->nnod			= c->nnod;
 		this->ndof			= c->ndof;

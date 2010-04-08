@@ -630,8 +630,8 @@ contains
     vref(2,:) = P1(2,:)*Uref(1,:)+P1(5,:)*Uref(2,:)+P1(8,:)*Uref(3,:)
     vref(3,:) = P1(3,:)*Uref(1,:)+P1(6,:)*Uref(2,:)+P1(9,:)*Uref(3,:)
 
-    where(D.le.0.0) v = vref
-    where(D.gt.0.0) v = vin
+    where(D.lt.0.0) v = vref
+    where(D.ge.0.0) v = vin
 
     U_bc(1,:) = P(1,:)*v(1,:)+P(4,:)*v(2,:)+P(7,:)*v(3,:)
     U_bc(2,:) = P(2,:)*v(1,:)+P(5,:)*v(2,:)+P(8,:)*v(3,:)

@@ -251,3 +251,17 @@ void Cylinder::openFortranUnit(char* file){
 void Cylinder::closeFortranUnit(){
 	close_unit(&(this->nunit));
 }
+
+/**
+   \brief Returns the mass vector
+*/
+vector<double> Cylinder::getMass(){
+	return mass_C;
+}
+
+/**
+   \brief Sets values in the mass vector
+*/
+void Cylinder::setMass(int i, double mass){
+	mass_C[i] = mass;
+}

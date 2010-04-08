@@ -1303,7 +1303,6 @@ contains
     nunit =  myData%nunit
     type_ig = myData%type_ig
 
-
     theta = modulo(theta_g+myData%theta_0, &
          nstroke*pi)
 

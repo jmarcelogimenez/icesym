@@ -49,6 +49,7 @@ public:
 	Component(unsigned int nnod, unsigned int ndof, unsigned int nnod_input, int type, vector<double> state_ini, vector<int> histo, char* label);
 	void solver(dataSim &globalData, vector<double>&Xn, vector<double>&Xn1, bool is_tube);
 	Component(){};
+	// Component(const Component&);
 	Component(Component* c);
 	void Make(vector<double> &Xn, unsigned int &iXn, int get_state);
 	virtual void calculate_state(double* atm){}; 

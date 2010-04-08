@@ -123,6 +123,10 @@ class Cylinder: public Component
 	int nunit;							/**< Number of fortran unit file */
 	fuel fuel_data; 	
 	double crank_radius;      /**< Crank's diameter */
+
+	vector<double> getMass();
+	void setMass(int, double);
+
  protected:
 	
  private:

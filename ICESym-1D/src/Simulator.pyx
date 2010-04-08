@@ -97,12 +97,19 @@ cdef extern from "simulator.h":
 		void solver()
 		void solveStep()
 		void printData()
+		void actualizeState()
 		void actualizeDt()
 		double GetTimeStep()
+		void SetTimeStep(double dT)
+		void SetTime(double t, int irpm)
 		doublevec GetNewState()
 		doublevec GetOldState()
 		int GetNewStateSize()
 		int GetOldStateSize()
+		void SetStateValue(int i, double val)
+
+		doublevec getCylinderMass(int icyl)
+		void setCylinderMass(int icyl, int i, double mass)
        	
 	c_Simulator *new_Simulator "new Simulator" (double dt, double tf, int nrpms, doublevec rpms, doublevec Xn, doublevec Xn1,
 						    int ntubes, int ncyl, int ntank, int njunc, int iter_sim1d, int nsave, int nappend,
@@ -248,13 +255,22 @@ cdef class Simulator:
 	
 	def printData(self):
 		self.thisptr.printData()
+
+	def ActualizeGlobalState(self):
+		self.thisptr.actualizeState()
         
 	def actualizeDt(self):
 		self.thisptr.actualizeDt()
-	
+		
 	def GetTimeStep(self):
 		return float(self.thisptr.GetTimeStep())
-
+	
+	def SetTimeStep(self, dT):
+		self.thisptr.SetTimeStep(dT)
+		
+	def SetTime(self, t, irpm=0):
+		self.thisptr.SetTime(t, irpm)
+		
 	def GetNewState(self):
 		cdef doublevec a = self.thisptr.GetNewState()
 		cdef int l = self.thisptr.GetNewStateSize()
@@ -270,6 +286,21 @@ cdef class Simulator:
 		for i in range(int(l)):
 			aPython.append(a.at(i))
 		return aPython
+
+	def SetState(self, indx, values):
+		for i in range(len(indx)):
+			self.thisptr.SetStateValue(indx[i],values[i])
+
+	def GetCylinderMass(self, icyl):
+		cdef doublevec mass = self.thisptr.getCylinderMass(icyl)
+		lmass = []	
+		for i in range(6):
+			lmass.append(mass.at(i))
+		return lmass
+
+	def SetCylinderMass(self, icyl, mass_vec):
+		for i in range(len(mass_vec)):
+			self.thisptr.setCylinderMass(icyl, i, mass_vec[i])
 
 	def __dealloc__(self):
 		del_Simulator(self.thisptr)
