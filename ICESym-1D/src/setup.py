@@ -34,7 +34,7 @@ setup(
               "tube.cc", "junction.cc", "tank.cc", "cylinder.cc", "atmosphere.cc","simulator.cc", "component.cc"
               ,"def_general.f90", "utilities.f90", "gasdyn_utils.f90", "def_simulator.f90", "def_valve.f90", "def_tank.f90",
               "def_junction.f90", "def_cylinder.f90", "def_tube.f90" 
-              ], include_dirs = [numpy.get_include()], libraries=['gfortranbegin', 'gfortran']
+              ], include_dirs = [numpy.get_include()], libraries=['gfortranbegin', 'gfortran'], extra_compile_args=["-g","-v"],extra_link_args=["-g"]
               ),
               
     ],
