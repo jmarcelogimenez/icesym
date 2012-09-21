@@ -139,7 +139,7 @@ cdef class Cylinder:
 		
 		onlyAssert(kargs,'histo','Cylinder')
 		cdef intvec histo = intvec_factory(0)
-		print kargs['histo'], range(nnod)
+		#print kargs['histo'], range(nnod)
 		for i in range(len(kargs['histo'])):
 			if(kargs['histo'][i] in range(nnod)):
 				histo.push_back(kargs['histo'][i])
@@ -206,7 +206,7 @@ cdef class Cylinder:
     	#condiciones para scavenge
 		cdef Scavenge scavenge_data
 		if(not(kargs['scavenge']==0)):
-			print "tengo scavenge"
+			#print "tengo scavenge"
 			if(kargs['scavenge_type']=='scre'):
 				scavenge_data.val_1 = -1.6709
 				scavenge_data.val_2 = 0.1899

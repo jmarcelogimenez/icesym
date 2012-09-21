@@ -84,21 +84,21 @@ void Simulator::makeSimulation(){
 	char str_tank[5]		= "tank";
 	char str_junction[9]	= "junction"; 
 	
-	//cout<<"en make simulation"<<endl;
+	cout<<"Making the simulation ..."<<endl;
 	if(get_state==1)
 		readState();
-	cout<<"apasa read state"<<endl;
+	//cout<<"apasa read state"<<endl;
 	for(int k=0;k<natm;k++){
 		atmospheres[k].Make(Xn,iXn,get_state);
 	}
-	cout<<"hizo atm"<<endl;
+	//cout<<"hizo atm"<<endl;
 	dataSim globalData;
 	if(get_state==2)
 		makeStruct(globalData);		
 	
 	double atm[3] = {Xn[0],Xn[1],Xn[2]};
 	initialize_cylinders(&(this->ncyl));
-	cout<<"pasa init cyluinders"<<endl;
+	//cout<<"pasa init cylinders"<<endl;
 	for(int k=0;k<ntubes;k++){
 		if(get_state==2)
 			tubes[k].calculate_state(atm,globalData);
@@ -106,7 +106,7 @@ void Simulator::makeSimulation(){
 		tubes[k].dt_max = this->dt;
 		tubes[k].itube = k;
 	}
-	cout<<"hizo tubes"<<endl;
+	//cout<<"hizo tubes"<<endl;
 	
 	for(int k=0;k<ncyl;k++){
 		for(unsigned int i=0;i<cylinders[k].nvi;i++){
@@ -130,25 +130,25 @@ void Simulator::makeSimulation(){
 		cylinders[k].initFortran(icyl);
 		if(get_state==2)
 			cylinders[k].calculate_state(atm,globalData);
-		cout<<"pasa el get state"<<endl;
+		//cout<<"pasa el get state"<<endl;
 		cylinders[k].Make(Xn,iXn,get_state);
 	}
 
-	cout<<"hizo cyl"<<endl;
+	//cout<<"hizo cyl"<<endl;
 	for(int k=0;k<njunc;k++){
 		if(get_state==2)
 			junctions[k].calculate_state(atm,globalData);
 		junctions[k].Make(Xn,iXn,get_state);
 	}
 
-	cout<<"hizo junc"<<endl;
+	//cout<<"hizo junc"<<endl;
 	for(int k=0;k<ntank;k++){
 		if(get_state==2)
 			tanks[k].calculate_state(atm,globalData);
 		tanks[k].Make(Xn,iXn,get_state);
 	}
 
-	cout<<"hizo tank"<<endl;
+	//cout<<"hizo tank"<<endl;
 	Xn1.resize(Xn.size());
 	/*
 	  Por cada tube, solo tengo 2 estados de referencia (left y right), tomo el correspondiente dependiendo de que objeto tenga a los lados
@@ -586,13 +586,14 @@ void Simulator::printData(){
 			}
 		}
 	archim.close();
-	cout<<"Archivo printData.txt generado"<<endl;
+	cout<<"File printData.txt generated"<<endl;
 }
 
 /**
 	\brief Makes the struct for send data to Fortran
 */
 void Simulator::makeStruct(dataSim &data){
+	if(irpm>=rpms.size() || irpm<0) irpm=0;
 	data.time			= this->time;
 	data.dt				= this->dt;
 	data.dtheta_rpm		= this->dtheta_rpm;
@@ -721,7 +722,7 @@ void Simulator::readState(){
 			fread(&Xn[0],sizeof(double),l,archim);
 			fclose(archim);	
 		}else{
-		cout<<"No se pudo abrir el archivo para guardar"<<endl;
+		cout<<"Could not be opened the file: "<<filein_state<<endl;
 	}
 }
 
@@ -740,8 +741,9 @@ void Simulator::saveState(){
 			fwrite(value,sizeof(double),l,archim);
 			fclose(archim);	
 		}else{
-		cout<<"No se pudo abrir el archivo para guardar"<<endl;
+		cout<<"Could not be opened the file: "<<file<<endl;
 	}
+	free(file);
 }
 
 /**
@@ -749,22 +751,39 @@ void Simulator::saveState(){
 */
 void Simulator::createDir(bool newRPM){
 	if(!newRPM){
-		char mk[] = "mkdir -p ";
-		char testsChar[] = "tests/";
-		char* folder = strconcat(testsChar,folder_name);
-		char* makeFolder = strconcat(mk,folder);	
-		system(makeFolder);
-		strcopy(this->folderGral,folder);
+		char mk[40]; 
+		strcpy(mk,(char*)"mkdir -p ");
+		char testsChar[40]; 
+		strcpy(testsChar,(char*)"tests/");
+		char folder[40]; 
+		strcat(strcpy(folder,testsChar),folder_name);
+		char makeFolder[100]; strcat(strcpy(makeFolder,mk),folder);
+		if(system(makeFolder)){
+			cout<<"Folder NOT created: "<<folder<<endl;
+			exit(1);
+		}
+		//strcopy(this->folderGral,folder);
+		this->folderGral = new char[strlen(folder)];
+		strcpy(this->folderGral,folder);
+		//free(folder); free(mk); free(testsChar); free(makeFolder);
 	}
 	else{
-		char mk[] = "mkdir -p ";
-		char* folder = strconcat(this->folderGral,(char*)"/RPM_");
+		char mk[40]; strcpy(mk,(char*)"mkdir -p ");
 		char* out = int2char(rpms[irpm]);
-		folder = strconcat(folder,out);
-		char* makeFolderRPM = strconcat(mk,folder);		
-		system(makeFolderRPM);
-		strcopy(this->folderRPM,folder);
-		cout<<"crea carpeta "<<this->folderRPM<<endl;
+		//char out[10]; sprintf(out, "%i",rpms[irpm]);
+		char folder[40]; strcat(strcat(strcpy(folder,this->folderGral),(char*)"/RPM_"),out);
+		char makeFolderRPM[100]; strcat(strcpy(makeFolderRPM,mk),folder);
+		if(system(makeFolderRPM)){
+			cout<<"Folder NOT created: "<<folder<<endl;
+			exit(1);
+		}
+		//strcopy(this->folderRPM,folder);
+		this->folderRPM = new char[strlen(folder)];
+		strcpy(this->folderRPM,folder);		
+		cout<<"Folder created: "<<this->folderRPM<<endl;
+		//free(folder); free(out); free(mk);free(makeFolderRPM);
+		free(out);
+
 	}
 }
 
@@ -776,10 +795,10 @@ void Simulator::openFortranUnits(){
 	for(int i=0;i<ncyl;i++){
 		if(this->cylinders[i].extras){
 			this->cylinders[i].nunit = nu;
-			char* indx = int2char(i);
-			char* file = strconcat(this->folderRPM,(char*)"/cyl_extras_");
-			file = strconcat(file,indx);
-			file = strconcat(file,(char*)".txt");
+			char indx[3];  
+			sprintf(indx, "%i", i);
+			char file[100];
+			strcat(strcat(strcat(strcpy(file,folderRPM),(char*)"/cyl_extras_"),indx),(char*)".txt");
 			this->cylinders[i].openFortranUnit(file);
 			nu++;
 		}
@@ -787,10 +806,10 @@ void Simulator::openFortranUnits(){
 	for(int i=0;i<ntank;i++){
 		if(this->tanks[i].extras){
 			this->tanks[i].nunit = nu;
-			char* indx = int2char(i);
-			char* file = strconcat(this->folderRPM,(char*)"/tank_extras_");
-			file = strconcat(file,indx);
-			file = strconcat(file,(char*)".txt");
+			char indx[3];  
+			sprintf(indx, "%i", i);
+			char file[100];
+			strcat(strcat(strcat(strcpy(file,folderRPM),(char*)"/tank_extras_"),indx),(char*)".txt");
 			this->tanks[i].openFortranUnit(file);
 			nu++;
 		}
@@ -820,31 +839,31 @@ void Simulator::closeFortranUnits(){
 void Simulator::saveHisto(bool first){
 	vector<double>aux;
 	for(int k=0;k<ntubes;k++){
-		char* indx = int2char(k);
-		char* file = strconcat(folderRPM,(char*)"/tube_");
-		file = strconcat(file,indx);
-		file = strconcat(file,(char*)".txt");
+		char indx[3];  
+		sprintf(indx, "%i", k);
+		char file[100];
+		strcat(strcat(strcat(strcpy(file,folderRPM),(char*)"/tube_"),indx),(char*)".txt");
 		tubes[k].saveHisto(first,file,icycle,crank_angle,time,tubes[k].xnod);
 	}
 	for(int k=0;k<ncyl;k++){
-		char* indx = int2char(k);
-		char* file = strconcat(folderRPM,(char*)"/cyl_");
-		file = strconcat(file,indx);
-		file = strconcat(file,(char*)".txt");
+		char indx[3];  
+		sprintf(indx, "%i", k);
+		char file[100];
+		strcat(strcat(strcat(strcpy(file,folderRPM),(char*)"/cyl_"),indx),(char*)".txt");
 		cylinders[k].saveHisto(first,file,icycle,crank_angle,time,aux);
 	}
 	for(int k=0;k<ntank;k++){
-		char* indx = int2char(k);
-		char* file = strconcat(folderRPM,(char*)"/tank_");
-		file = strconcat(file,indx);
-		file = strconcat(file,(char*)".txt");
+		char indx[3];  
+		sprintf(indx, "%i", k);
+		char file[100];
+		strcat(strcat(strcat(strcpy(file,folderRPM),(char*)"/tank_"),indx),(char*)".txt");
 		tanks[k].saveHisto(first,file,icycle,crank_angle,time,aux);
 	}
 	for(int k=0;k<njunc;k++){
-		char* indx = int2char(k);
-		char* file = strconcat(folderRPM,(char*)"/junc_");
-		file = strconcat(file,indx);
-		file = strconcat(file,(char*)".txt");
+		char indx[3];  
+		sprintf(indx, "%i", k);
+		char file[100];
+		strcat(strcat(strcat(strcpy(file,folderRPM),(char*)"/junc_"),indx),(char*)".txt");
 		junctions[k].saveHisto(first,file,icycle,crank_angle,time,aux);
 	}
 }
@@ -854,73 +873,65 @@ void Simulator::saveHisto(bool first){
 */
 void Simulator::compressFiles(){
 	for(int k=0;k<ntubes;k++){
-		char* indx = int2char(k);
-		char* file = strconcat(folderRPM,(char*)"/tube_");
-		file = strconcat(file,indx);
-		file = strconcat(file,(char*)".txt");
-		char* sys = strconcat((char*) "tar -jcvf ",file);
-		sys = strconcat(sys,(char*)".tar.bz2 ");
-		sys = strconcat(sys,file);
+		char indx[3];  
+		sprintf(indx, "%i", k);
+		char file[100];
+		strcat(strcat(strcat(strcpy(file,folderRPM),(char*)"/tube_"),indx),(char*)".txt");
+		char sys[200];
+		strcat(strcat(strcat(strcpy(sys,(char*) "tar -jcvf "),file),(char*)".tar.bz2 "),file);
 		system(sys);
-		char* rm =  strconcat((char*) "rm ",file);
+		char rm[100]; strcat(strcpy(rm,(char*) "rm "),file);
 		system(rm);
 	}
 	for(int k=0;k<ncyl;k++){
-		char* indx = int2char(k);
-		char* file = strconcat(folderRPM,(char*)"/cyl_");
-		file = strconcat(file,indx);
-		file = strconcat(file,(char*)".txt");
-		char* sys = strconcat((char*) "tar -jcvf ",file);
-		sys = strconcat(sys,(char*)".tar.bz2 ");
-		sys = strconcat(sys,file);
+		char indx[3];  
+		sprintf(indx, "%i", k);
+		char file[100];
+		strcat(strcat(strcat(strcpy(file,folderRPM),(char*)"/cyl_"),indx),(char*)".txt");
+		char sys[200];
+		strcat(strcat(strcat(strcpy(sys,(char*) "tar -jcvf "),file),(char*)".tar.bz2 "),file);
 		system(sys);
-		char* rm =  strconcat((char*) "rm ",file);
+		char rm[100]; strcat(strcpy(rm,(char*) "rm "),file);
 		system(rm);
 		if(this->cylinders[k].extras){
-			char* file2 = strconcat(folderRPM,(char*)"/cyl_extras_");
-			file2 = strconcat(file2,indx);
-			file2 = strconcat(file2,(char*)".txt");
-			char* sys2 = strconcat((char*) "tar -jcvf ",file2);
-			sys2 = strconcat(sys2,(char*)".tar.bz2 ");
-			sys2 = strconcat(sys2,file2);
+			char file2[100];
+			strcat(strcat(strcat(strcpy(file2,folderRPM),(char*)"/cyl_extras_"),indx),(char*)".txt");
+			char sys2[200];
+			strcat(strcat(strcat(strcpy(sys2,(char*) "tar -jcvf "),file2),(char*)".tar.bz2 "),file2);
 			system(sys2);
-			char* rm2 =  strconcat((char*) "rm ",file2);
+			char rm2[100]; strcat(strcpy(rm2,(char*) "rm "),file2);
 			system(rm2);
 		}
 	}
 	for(int k=0;k<ntank;k++){
-		char* indx = int2char(k);
-		char* file = strconcat(folderRPM,(char*)"/tank_");
-		file = strconcat(file,indx);
-		file = strconcat(file,(char*)".txt");
-		char* sys = strconcat((char*) "tar -jcvf ",file);
-		sys = strconcat(sys,(char*)".tar.bz2 ");
-		sys = strconcat(sys,file);
+		char indx[3];  
+		sprintf(indx, "%i", k);
+		char file[100];
+		strcat(strcat(strcat(strcpy(file,folderRPM),(char*)"/tank_"),indx),(char*)".txt");
+		char sys[200];
+		strcat(strcat(strcat(strcpy(sys,(char*) "tar -jcvf "),file),(char*)".tar.bz2 "),file);
 		system(sys);
-		char* rm =  strconcat((char*) "rm ",file);
+		char rm[100]; strcat(strcpy(rm,(char*) "rm "),file);
 		system(rm);
 		if(this->tanks[k].extras){
-			char* file2 = strconcat(folderRPM,(char*)"/tank_extras_");
-			file2 = strconcat(file2,indx);
-			file2 = strconcat(file2,(char*)".txt");
-			char* sys2 = strconcat((char*) "tar -jcvf ",file2);
-			sys2 = strconcat(sys2,(char*)".tar.bz2 ");
-			sys2 = strconcat(sys2,file2);
+			char file2[100];
+			strcat(strcat(strcat(strcpy(file2,folderRPM),(char*)"/tank_extras_"),indx),(char*)".txt");
+			char sys2[200];
+			strcat(strcat(strcat(strcpy(sys2,(char*) "tar -jcvf "),file2),(char*)".tar.bz2 "),file2);
 			system(sys2);
-			char* rm2 =  strconcat((char*) "rm ",file);
-			system(rm2);		
+			char rm2[100]; strcat(strcpy(rm2,(char*) "rm "),file2);
+			system(rm2);	
 		}
 	}
 	for(int k=0;k<njunc;k++){
-		char* indx = int2char(k);
-		char* file = strconcat(folderRPM,(char*)"/junc_");
-		file = strconcat(file,indx);
-		file = strconcat(file,(char*)".txt");
-		char* sys = strconcat((char*) "tar -jcvf ",file);
-		sys = strconcat(sys,(char*)".tar.bz2 ");
-		sys = strconcat(sys,file);
+		char indx[3];  
+		sprintf(indx, "%i", k);
+		char file[100];
+		strcat(strcat(strcat(strcpy(file,folderRPM),(char*)"/junc_"),indx),(char*)".txt");
+		char sys[200];
+		strcat(strcat(strcat(strcpy(sys,(char*) "tar -jcvf "),file),(char*)".tar.bz2 "),file);
 		system(sys);
-		char* rm =  strconcat((char*) "rm ",file);
+		char rm[100]; strcat(strcpy(rm,(char*) "rm "),file);
 		system(rm);
 	}
 }
@@ -929,7 +940,9 @@ void Simulator::compressFiles(){
 	\brief Generate one header file for rpm (replace the lastest). Support a stop in run.
 */
 void Simulator::createHeaderFile(){
-	char* file = strconcat(this->folderGral,(char *)"/header.py");
+	//char* file = strconcat(this->folderGral,(char *)"/header.py");
+	char file[100]; 
+	strcat(strcpy(file,this->folderGral),(char *)"/header.py");
 	ofstream archim;
 	archim.open(file,ios::trunc);
 	
@@ -994,7 +1007,7 @@ void Simulator::createHeaderFile(){
 		}
 
 		archim<<"Junctions = []"<<endl;
-		for(int i=0;i<ntank;i++){
+		for(int i=0;i<njunc;i++){
 			archim<<"Junction"<<i<<" = dict()"<<endl;
 			archim<<"Junction"<<i<<"['label'] = '"<<junctions[i].label<<"'"<<endl;
 			archim<<"Junction"<<i<<"['nnod'] = "<<junctions[i].nnod<<endl;
@@ -1048,4 +1061,5 @@ void Simulator::createHeaderFile(){
 		}
 		archim.close();
 	}
+	//free(file);
 }

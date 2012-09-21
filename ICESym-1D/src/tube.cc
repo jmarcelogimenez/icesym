@@ -33,8 +33,12 @@ Component(nnod,ndof,nnod_input,implicit,state_ini,histo,label){
 	this->Area		= Area;
 	this->twall		= twall;
 	this->curvature = curvature;
-	strcopy(this->tleft,tleft);
-	strcopy(this->tright,tright);
+	//strcopy(this->tleft,tleft);
+	//strcopy(this->tright,tright);
+	this->tleft = new char[strlen(tleft)];
+	strcpy(this->tleft,tleft);
+	this->tright = new char[strlen(tright)];
+	strcpy(this->tright,tright);
 	this->nleft		= nleft;
 	this->nright	= nright;
 	this->dt_max	= 1000;
@@ -64,9 +68,13 @@ Tube::Tube(Tube* t):Component(t->nnod,t->ndof,t->nnod_input,t->implicit,t->state
 	this->twall		= t->twall;
 	this->dAreax	= t->dAreax;
 	this->curvature = t->curvature;
-	strcopy(this->tleft,t->tleft);
+	this->tleft = new char[strlen(t->tleft)];
+	strcpy(this->tleft,t->tleft);
+	this->tright = new char[strlen(t->tright)];
+	strcpy(this->tright,t->tright);
+	//strcopy(this->tleft,t->tleft);
 	this->nleft		= t->nleft;
-	strcopy(this->tright,t->tright);
+	//strcopy(this->tright,t->tright);
 	this->nright	= t->nright;
 	this->dt_max	= t->dt_max; 
 }

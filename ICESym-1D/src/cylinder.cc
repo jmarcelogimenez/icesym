@@ -50,7 +50,8 @@ Component(nnod,ndof,nnod_input,implicit,state_ini,histo,label){
 	this->model_ht				= model_ht;
 	this->factor_ht				= factor_ht;
 	this->scavenge				= scavenge;
-	strcopy(this->scavenge_type,scavenge_type);
+	this->scavenge_type = new char[strlen(scavenge_type)];
+	strcpy(this->scavenge_type,scavenge_type);	
 	this->scavenge_data			= scavenge_data;
 	this->type_ig				= type_ig;
 	this->full_implicit			= full_implicit;
@@ -154,7 +155,7 @@ void Cylinder::initFortran(int icyl){
 	l2 = this->U_crevice.size();
 	int l3 = this->data_crevice.size();
 	initialize_arrays(&icyl, &(this->prop[0]),&(this->U_crevice[0]), &(this->data_crevice[0]),&l1,&l2,&l3);
-	cout<<"ya inicializo arrays fortran"<<endl;
+	//cout<<"ya inicializo arrays fortran"<<endl;
 }
 
 /**
@@ -230,11 +231,11 @@ void Cylinder::calculate(dataSim &globalData){
 void Cylinder::calculate_state(double* atm, dataSim &globalData){
 	dataCylinder myData;
 	makeStruct(myData);
-	cout<<"crea struct"<<endl;
+	//cout<<"crea struct"<<endl;
 	state_initial_cylinder(&(this->icyl), &myData, &atm[0], &globalData, &(this->state_ini[0]), &(this->mass_C[0]), &(this->Twall[0]));
-	cout<<"state initital pasa"<<endl;
+	//cout<<"state initital pasa"<<endl;
 	undoStruct(myData);
-	cout<<"pasa undo"<<endl;
+	//cout<<"pasa undo"<<endl;
 }
 
 /**

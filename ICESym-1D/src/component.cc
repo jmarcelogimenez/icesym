@@ -23,14 +23,15 @@
 /**
  	\brief Generic Constructor for all Elements
  */
-Component::Component(unsigned int nnod, unsigned int ndof, unsigned int nnod_input, int implicit, vector<double> state_ini, vector<int> histo, char* label) {
+Component::Component(unsigned int nnod, unsigned int ndof, unsigned int nnod_input, int implicit, vector<double>& state_ini, vector<int>& histo, char* label) {
 	this->nnod			= nnod;
 	this->ndof			= ndof;
 	this->nnod_input	= nnod_input;
 	this->implicit		= implicit;
 	this->state_ini		= state_ini;
 	this->histo			= histo;
-	strcopy(this->label,label);
+	this->label = new char[strlen(label)];
+	strcpy(this->label,label);
 	state.resize((nnod+nnod_input)*ndof);
 	new_state.resize(nnod*ndof);
 }

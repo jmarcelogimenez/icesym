@@ -11,7 +11,8 @@ contains
     integer :: io
     !character,dimension(:),pointer :: nfAux
     character(LEN=nfsize) :: nf
-    do i=1,(nfsize+1)
+    !do i=1,(nfsize+1)
+    do i=1,nfsize
        nf(i:i) = namefile(i)
     enddo
     write(*,*) namefile

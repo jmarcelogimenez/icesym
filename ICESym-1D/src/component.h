@@ -46,7 +46,7 @@ public:
 	vector<double> new_state;	   	/**< Next component state (nnod*ndof) */
 	vector<int> histo;				/**< Node's indexs to save state*/
 	char* label;					/**< Identificator for this element */
-	Component(unsigned int nnod, unsigned int ndof, unsigned int nnod_input, int type, vector<double> state_ini, vector<int> histo, char* label);
+	Component(unsigned int nnod, unsigned int ndof, unsigned int nnod_input, int type, vector<double>& state_ini, vector<int>& histo, char* label);
 	void solver(dataSim &globalData, vector<double>&Xn, vector<double>&Xn1, bool is_tube);
 	Component(){};
 	// Component(const Component&);

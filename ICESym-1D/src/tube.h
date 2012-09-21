@@ -34,6 +34,10 @@ class Tube: public Component
 		 vector<double>, char*, unsigned int, char*, unsigned int);
 	Tube(Tube* t);
 	Tube(){};
+	~Tube(){
+		//delete [] this->tleft;
+		//delete [] this->tright;		
+	};
 	void makeStruct(dataTube &data);
 	void undoStruct(dataTube &data);
 	void calculate_state(double* atm, dataSim &globalData);
