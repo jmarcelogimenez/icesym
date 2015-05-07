@@ -30,8 +30,9 @@ using namespace std;
 class Tank: public Component 
 {
 public:
-	Tank(unsigned int, unsigned int, unsigned int, int, vector<double>, vector<int>, char*, double, double, double, double, double, vector<int>, 
-	     vector<double>, vector<int>, vector<int>,int);
+	Tank(unsigned int, unsigned int, unsigned int, int, vector<double>, 
+		 vector<int>, char*, double, double, double, double, double, 
+		 vector<int>, vector<double>, vector<int>, vector<int>, int, int);
 	Tank(Tank* t);
 	Tank(){};
 	void makeStruct(dataTank &data);
@@ -57,6 +58,9 @@ private:
 	double T_wall;				/**< Temperature of Wall */
 	vector<int> type_end;		/**< External normal to tank (+1,-1) */
 	vector<double> Cd_ports;	/**< Discharge coefficients */
+	int type;                   /**< Indicates wether the tank belongs to 
+								   intake or exhaust systems 
+								   (1: intake, -1: exhaust)*/
 	void calculate(dataSim &globalData);
 };
 

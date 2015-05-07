@@ -70,12 +70,14 @@ cdef extern from "simulator.h":
 		int inicia
 		double Courant
 		double ga
+		double ga_intake
+		double ga_exhaust
 		int viscous_flow
 		int heat_flow
 		double R_gas
 		double theta
 		double omega 
-		int nstroke
+		double theta_cycle
 		int ncycles
 		int icycle
 		int engine_type
@@ -93,6 +95,7 @@ cdef extern from "simulator.h":
 		atmvec atmospheres
        	
 		int calc_engine_data
+		int use_global_gas_prop
 	
 		void solver()
 		void solveStep()
@@ -114,10 +117,11 @@ cdef extern from "simulator.h":
 	c_Simulator *new_Simulator "new Simulator" (double dt, double tf, int nrpms, doublevec rpms, doublevec Xn, doublevec Xn1,
 						    int ntubes, int ncyl, int ntank, int njunc, int iter_sim1d, int nsave, int nappend,
 						    double dtheta_rpm, int inicia, double Courant, double ga, int viscous_flow, 
-						    int heat_flow, double R_gas, int nstroke, int ncycles, int engine_type, 
-						    char* filein_state, char* filesave_state, char* filein_spd, char* filesave_spd,char* folder_name,
-						    intvec ig_order, cylindervec cylinders, tubevec tubes, junctionvec junctions,
-						    tankvec tanks, int natm, atmvec atmospheres, int get_state,int calc_engine_data)
+						    int heat_flow, double R_gas, double theta_cycle, int ncycles, int engine_type, 
+						    char* filein_state, char* filesave_state, char* filein_spd, 
+						    char* filesave_spd,char* folder_name, intvec ig_order, cylindervec cylinders, 
+						    tubevec tubes, junctionvec junctions, tankvec tanks, int natm, atmvec atmospheres, 
+						    int get_state,int calc_engine_data,int use_global_gas_prop, double ga_intake, double ga_exhaust)
 	void del_Simulator "delete" (c_Simulator *sim)
 
 #defino la clase
@@ -178,7 +182,7 @@ cdef class Simulator:
 		for i in range(ncyl):
 			ig_order.push_back(sargs['ig_order'][i])
 			
-		cdef int engine_type	= validateInList(sargs,'engine_type','Simulator',[0,1],0)
+		cdef int engine_type = validateInList(sargs,'engine_type','Simulator',[0,1,2],0)
 		
 		s = assignOptional(sargs, 'filein_state', '')
 		cdef char* filein_state = s
@@ -191,7 +195,19 @@ cdef class Simulator:
 		s = assignOptional(sargs, 'folder_name', 'testDefault')
 		cdef char* folder_name  = s
 
-		cdef int calc_engine_data	= boolean(sargs,'calc_engine_data','Simulator',1)
+		cdef int calc_engine_data = boolean(sargs,'calc_engine_data','Simulator',1)
+		cdef int use_global_gas_prop = boolean(sargs,'use_global_gas_properties','Simulator',1)
+
+		cdef double ga_intake
+		cdef double ga_exhaust
+		if(use_global_gas_prop):
+			ga_intake  = ga
+			ga_exhaust = ga
+		else:
+			# initializes the gas properties at intake and exhaust
+			# systems
+			ga_intake  = assignOptional(sargs,'ga_intake', 1.36)
+			ga_exhaust = assignOptional(sargs,'ga_exhaust', 1.36)
     	
 		#creo los tubos
 		cdef tubevec tubes = tubevec_factory(0)
@@ -199,13 +215,29 @@ cdef class Simulator:
 		for k in range(ntubes):
 			auxTube = Tube(**dataTubes[k])
 			tubes.push_back(copyTube(auxTube.thisptr))
+
+		cdef double theta_cycle = nstroke*pi
 		
+		if(engine_type==2):   # MRCVC
+			# Defining the cycle duration
+			theta_cycle = 2.*pi*(dataCylinders[0]['nvanes']+2.)/dataCylinders[0]['nvanes']
+			# Checking the number of chambers
+			if(ncyl!=dataCylinders[0]['nvanes']+2):
+				print 'Incorrect number of chambers for the MRCVC engine'
+				print 'Entered %d - Must be %d' %(ncyl, dataCylinders[0]['nvanes']+2)
+				raise ValueError
+			# Checking the ignition order
+			for k in range(ncyl):
+				if(not(sargs['ig_order'][k]==k)):
+					print 'Chamber numbering must be consecutive for the MRCVC engine'
+					raise ValueError
+
 		#creo los cilindros
 		cdef double delta_encendido
 		if(ncyl == 0):
 			delta_encendido = 0.0
 		else:
-			delta_encendido = nstroke*pi/ncyl
+			delta_encendido = theta_cycle/ncyl
 			
 		cdef double theta_start    = 0.0
 		cdef cylindervec cylinders = cylindervec_factory(0)
@@ -215,8 +247,11 @@ cdef class Simulator:
 				icyl = sargs['ig_order'][l]
 				if(icyl==k): break
 			theta_0			    = theta_start-l*delta_encendido
-			theta_0             = mod(theta_0,nstroke*pi)
+			theta_0                     = mod(theta_0,theta_cycle)
 			dataCylinders[k]['theta_0'] = theta_0
+			# I inform to the cylinders the engine type, in order to
+			# redefine some internal variables for the MRCVC engine
+			dataCylinders[k]['engine_type'] = engine_type
 			auxCyl			    = Cylinder(**dataCylinders[k])
 			cylinders.push_back(copyCylinder(auxCyl.thisptr))
 		    	
@@ -232,7 +267,7 @@ cdef class Simulator:
 		cdef Junction auxJunc
 		for k in range(njunc):
 			auxJunc = Junction(**dataJunctions[k])
-			junctions.push_back(copyJunction(auxJunc.thisptr))	
+			junctions.push_back(copyJunction(auxJunc.thisptr))
 			
 		#creo las atmospheras
 		cdef atmvec atmospheres = atmvec_factory(0)
@@ -241,11 +276,19 @@ cdef class Simulator:
 			auxAtm = Atmosphere(**dataAtmospheres[k])
 			atmospheres.push_back(copyAtmosphere(auxAtm.thisptr))
 			
-		self.thisptr = new_Simulator(dt,tf,nrpms,rpms,Xn,Xn1,ntubes,ncyl,ntank,njunc,iter_sim1d,nsave,nappend,
-					     dtheta_rpm,inicia,Courant,ga,viscous_flow,heat_flow,R_gas,nstroke,ncycles,
-					     engine_type,filein_state,filesave_state,filein_spd,filesave_spd,folder_name,
-					     ig_order,cylinders,tubes,junctions,tanks,natm,atmospheres, get_state, 
-					     calc_engine_data)
+		self.thisptr = new_Simulator(dt,tf,nrpms,rpms,Xn,Xn1,ntubes,
+					     ncyl,ntank,njunc,iter_sim1d,nsave,
+					     nappend,dtheta_rpm,inicia,Courant,
+					     ga,viscous_flow,heat_flow,R_gas,
+					     theta_cycle,ncycles,engine_type,
+					     filein_state,filesave_state,
+					     filein_spd,filesave_spd,
+					     folder_name,ig_order,cylinders,
+					     tubes,junctions,tanks,natm,
+					     atmospheres, get_state,
+					     calc_engine_data,
+					     use_global_gas_prop,
+					     ga_intake, ga_exhaust)
 		
 	def solver(self):
 		self.thisptr.solver()

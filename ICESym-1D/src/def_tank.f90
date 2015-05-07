@@ -6,9 +6,10 @@ module def_tank
   use, intrinsic :: ISO_C_BINDING
   
   type, BIND(C) :: this
-    integer(C_INT) :: nnod, ndof,nnod_input,nunit
-    real(C_DOUBLE) :: Volume, mass, h_film, Area_wall, T_wall
- end type this
+     integer(C_INT) :: nnod, ndof, nnod_input, nunit
+     real(C_DOUBLE) :: Volume, mass, h_film, Area_wall, T_wall
+     integer(C_INT) :: type
+  end type this
 
 contains
   
@@ -52,10 +53,10 @@ contains
     real(C_DOUBLE), dimension(0:myData%nnod_input-1) :: Area_tube, twall_tube, &
          dAreax_tube, Cd_ports
     
-    integer :: ntubes,i,j,itube
-    real*8 :: Area_P,Area_T,alpha,dAreax_P,Twall_P
-    real*8, dimension(myData%ndof) :: Utank,Utube,Uthroat,RHS
-    real*8, dimension(myData%ndof,myData%nnod-1) :: Upipe,Uref,Utpipe
+    integer :: ntubes, i, j, itube, solved_case
+    real*8 :: Area_P, Area_T, alpha, dAreax_P, Twall_P, ga, R_gas
+    real*8, dimension(myData%ndof) :: Utank, Utube, Uthroat, RHS
+    real*8, dimension(myData%ndof,myData%nnod-1) :: Upipe, Uref, Utpipe
     
     ntubes = myData%nnod-1
 
@@ -75,7 +76,16 @@ contains
           Uref(j+1,i-myData%nnod+1) = state(i*myData%ndof+j)
        enddo
     enddo
-    
+
+    R_gas = globalData%R_gas
+    if(myData%type.eq.1) then
+       ! at intake system
+       ga = globalData%ga_intake
+    else
+       ! at exhaust system
+       ga = globalData%ga_exhaust
+    end if
+
     do itube=1,ntubes
        Area_P   = Area_tube(itube-1)
        Area_T   = Cd_ports(itube-1)*Area_P
@@ -83,16 +93,16 @@ contains
        Twall_P  = twall_tube(itube-1)
        alpha = 1.
        if(.true.) then
-          call solve_valve(globalData, Utank, Uref(:,itube), &
-               type_end(itube-1), Area_T, Area_P, Utube, Uthroat)
+          call solve_valve(Utank, Uref(:,itube), type_end(itube-1), Area_T, &
+               Area_P, ga, R_gas, Utube, Uthroat)
           alpha = 0.15
        else
-          call rhschar(Uref(:,itube), Area_P, dAreax_P, Twall_P, globalData%ga, &
-               globalData%R_gas, globalData%dt, globalData%viscous_flow, &
+          call rhschar(Uref(:,itube), Area_P, dAreax_P, Twall_P, ga, &
+               R_gas, globalData%dt, globalData%viscous_flow, &
                globalData%heat_flow, RHS)
           Utube = Upipe(:,itube)
           call solve_valve_implicit(Utank, Uref(:,itube), type_end(itube-1), &
-               Area_T, Area_P, RHS, globalData%ga, Utube, Uthroat)
+               Area_T, Area_P, RHS, ga, Utube, Uthroat, solved_case)
        end if
        Upipe(:,itube)  = alpha*Utube + &
             (1.-alpha)*Upipe(:,itube)
@@ -133,7 +143,7 @@ contains
     real*8, dimension(3), intent(inout) :: Utank
 
     integer :: ispecie,ntubes
-    real*8 :: dt,cp,cv,rho_tank,p_tank,T_tank
+    real*8 :: dt,cp,cv,rho_tank,p_tank,T_tank,ga
     real*8 :: mass_old,mass_new,tol
     real*8 :: dQ_ht,edot,ene_old,ene_new
     real*8, dimension(myData%nnod-1) :: mdots,hdots
@@ -144,6 +154,14 @@ contains
 
     ntubes = myData%nnod-1
 
+    if(myData%type.eq.1) then
+       ! at intake system
+       ga = globalData%ga_intake
+    else
+       ! at exhaust system
+       ga = globalData%ga_exhaust
+    end if
+
     rho_tank = Utank(1)
     p_tank   = Utank(2)
     T_tank   = Utank(3)
@@ -152,7 +170,7 @@ contains
     cp = compute_cp(T_tank, ispecie, globalData%R_gas)
     cv = cp - globalData%R_gas
     
-    call flow_rates(ntubes, type_end, globalData%ga, Area_P, Cd_ports, &
+    call flow_rates(ntubes, type_end, ga, Area_P, Cd_ports, &
          Upipes, Utpipes, Utank, mdots, hdots)
     
     mass_old = myData%mass

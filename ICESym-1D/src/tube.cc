@@ -23,26 +23,25 @@
    	\brief Tube's Constructor
    	\param all: each Tube attribute 
 */
-Tube::Tube(unsigned int nnod, unsigned int ndof, unsigned int nnod_input, int implicit, 
-		   vector<double> state_ini, vector<int> histo, char* label, double longitud, vector<double> xnod, 
+Tube::Tube(unsigned int nnod, unsigned int ndof, unsigned int nnod_input, 
+		   int implicit, vector<double> state_ini, vector<int> histo, 
+		   char* label, double longitud, vector<double> xnod, 
 		   vector<double> Area, vector<double> twall, vector<double> curvature, 
-		   vector<double> dAreax, char* tleft, unsigned int nleft, char* tright, unsigned int nright):
+		   vector<double> dAreax, char* tleft, unsigned int nleft, 
+		   char* tright, unsigned int nright, int type):
 Component(nnod,ndof,nnod_input,implicit,state_ini,histo,label){
 	this->longitud  = longitud;
 	this->xnod		= xnod;
 	this->Area		= Area;
 	this->twall		= twall;
 	this->curvature = curvature;
-	//strcopy(this->tleft,tleft);
-	//strcopy(this->tright,tright);
-	this->tleft = new char[strlen(tleft)];
-	strcpy(this->tleft,tleft);
-	this->tright = new char[strlen(tright)];
-	strcpy(this->tright,tright);
+	strcopy(this->tleft,tleft);
+	strcopy(this->tright,tright);
 	this->nleft		= nleft;
 	this->nright	= nright;
 	this->dt_max	= 1000;
 	this->hele.resize(this->nnod-1);
+	this->type  	= type;
 	for(unsigned int i=0;i<(nnod-1);i++){
 		this->hele[i] = xnod[i+1]-xnod[i];
 	}
@@ -68,15 +67,12 @@ Tube::Tube(Tube* t):Component(t->nnod,t->ndof,t->nnod_input,t->implicit,t->state
 	this->twall		= t->twall;
 	this->dAreax	= t->dAreax;
 	this->curvature = t->curvature;
-	this->tleft = new char[strlen(t->tleft)];
-	strcpy(this->tleft,t->tleft);
-	this->tright = new char[strlen(t->tright)];
-	strcpy(this->tright,t->tright);
-	//strcopy(this->tleft,t->tleft);
+	strcopy(this->tleft,t->tleft);
 	this->nleft		= t->nleft;
-	//strcopy(this->tright,t->tright);
+	strcopy(this->tright,t->tright);
 	this->nright	= t->nright;
-	this->dt_max	= t->dt_max; 
+	this->dt_max	= t->dt_max;
+	this->type  	= t->type;
 }
 
 
@@ -89,6 +85,9 @@ void Tube::makeStruct(dataTube &data){
 	data.nnod_input	= this->nnod_input;
 	data.longitud   = this->longitud;
 	data.dt_max	    = this->dt_max;
+	data.t_left     = strcmp(this->tleft,"atmosphere");
+	data.t_right    = strcmp(this->tright,"atmosphere");
+	data.type       = this->type;
 }
 
 /**

@@ -26,8 +26,17 @@ cdef extern from "junction.h":
 		unsigned int nnod_input
 		intvec histo
 		char* label
+		int type
 	
-	c_Junction *new_Junction "new Junction" (unsigned int nnod, unsigned int ndof, unsigned int nnod_input, int implicit, doublevec state_ini,intvec histo, char* label, intvec type_end,int modelo_junc, intvec node2tube)
+	c_Junction *new_Junction "new Junction" (unsigned int nnod, 
+						 unsigned int ndof, 
+						 unsigned int nnod_input, 
+						 int implicit, 
+						 doublevec state_ini,
+						 intvec histo, char* label, 
+						 intvec type_end,
+						 int modelo_junc, 
+						 intvec node2tube, int type)
 	c_Junction copyJunction "new Junction" (c_Junction* c)
 	void del_Junction "delete" (c_Junction *junc)
 
@@ -37,13 +46,12 @@ cdef class Junction:
     
 	def __cinit__(self, **kargs):
     	
-		cdef unsigned int nnod 			= validatePositive(kargs,'nnod','Junction')
-		cdef unsigned int ndof 			= validatePositive(kargs,'ndof','Junction')
-		cdef unsigned int nnod_input 	= validatePositive(kargs,'nnod_input','Junction', nnod)
-		kargs['implicit']				= assignOptional(kargs,'implicit',1)
-		cdef int implicit 				= boolean(kargs,'implicit','Junction')
-
-    	
+		cdef unsigned int nnod 	     = validatePositive(kargs,'nnod','Junction')
+		cdef unsigned int ndof 	     = validatePositive(kargs,'ndof','Junction')
+		cdef unsigned int nnod_input = validatePositive(kargs,'nnod_input','Junction', nnod)
+		kargs['implicit']	     = assignOptional(kargs,'implicit',1)
+		cdef int implicit 	     = boolean(kargs,'implicit','Junction')
+		
 		onlyAssert(kargs,'state_ini','Junction')
 		cdef doublevec state_ini = doublevec_factory(0)
 		for i in range(nnod):
@@ -62,9 +70,8 @@ cdef class Junction:
 		s =  assignOptional(kargs,'label','junc_default')
 		cdef char* label =  s
 				
-		cdef int modelo_junc 			= assignOptional(kargs,'modelo_jun',1)
-    	
-    	
+		cdef int modelo_junc = assignOptional(kargs,'modelo_jun',1)
+    	    	
 		# asignacion que puede ser mejorada
     	    			
 		cdef intvec type_end = intvec_factory(0)
@@ -75,8 +82,22 @@ cdef class Junction:
 		cdef intvec node2tube = intvec_factory(0)
 		for i in range(nnod):
 			node2tube.push_back(kargs['node2tube'][i])
-			
-		self.thisptr = new_Junction(nnod, ndof, nnod_input, implicit,state_ini, histo, label, type_end, modelo_junc, node2tube)
+		
+		cdef int type
+		if('type' in kargs.keys()):
+			validateInList(kargs,'type','Junction', ['intake', 'exhaust'], 'none')
+			if(kargs['type']=='intake'):
+				type = 1
+			elif(kargs['type']=='exhaust'):
+				type = -1
+		else:
+			print 'It is not indicated the type of junction'
+			print 'Options are: intake or exhaust'
+			raise ValueError
+
+		self.thisptr = new_Junction(nnod, ndof, nnod_input, implicit,
+					    state_ini, histo, label, type_end, 
+					    modelo_junc, node2tube, type)
         
         
 	def __dealloc__(self):

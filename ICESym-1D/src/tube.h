@@ -29,15 +29,12 @@ using namespace std;
 class Tube: public Component 
 {
  public:
-	Tube(unsigned int, unsigned int, unsigned int, int, vector<double>, vector<int>, char*,
-	     double, vector<double>, vector<double>, vector<double>, vector<double>, 
-		 vector<double>, char*, unsigned int, char*, unsigned int);
+	Tube(unsigned int, unsigned int, unsigned int, int, vector<double>, 
+		 vector<int>, char*, double, vector<double>, vector<double>, 
+		 vector<double>, vector<double>, vector<double>, char*, unsigned int, 
+		 char*, unsigned int, int);
 	Tube(Tube* t);
 	Tube(){};
-	~Tube(){
-		//delete [] this->tleft;
-		//delete [] this->tright;		
-	};
 	void makeStruct(dataTube &data);
 	void undoStruct(dataTube &data);
 	void calculate_state(double* atm, dataSim &globalData);
@@ -53,6 +50,9 @@ class Tube: public Component
 	vector<double> dAreax;			/**< Differential area in each node */
 	int itube;						/**< index in global array */
 	vector<double> xnod;			/**< Coordinates for each node */
+	int type;                       /**< Indicates wether the tube belongs 
+									   to  intake or exhaust systems 
+									   (1: intake, -1: exhaust)*/
  protected:
 
  private:

@@ -20,14 +20,21 @@
 #include "cylinder.h"
 
 /**
-   	\brief Cylinder's Constructor
-   	\param all each Cylinder attribute 
+   \brief Cylinder's Constructor
+   \param all each Cylinder attribute 
 */
-Cylinder::Cylinder(unsigned int nnod, unsigned int ndof, unsigned int nnod_input, int implicit, vector<double> state_ini, vector<int> histo, char* label, double Bore, 
-				   double crank_radius, double Vol_clearance, double rod_length, double head_chamber_area, double piston_area,
-				   double theta_0, double delta_ca, vector<double> Twall, vector<double> prop, vector<double> U_crevice, vector<double> data_crevice, 
-				   vector<double> mass_C, int model_ht, double factor_ht, int scavenge,char* scavenge_type, int type_ig, int full_implicit, fuel fuel_data, 
-				   combustion combustion_data, injection injection_data,vector<valve> intake_valves, vector<valve> exhaust_valves, Scavenge scavenge_data, int extras,int species_model):
+Cylinder::Cylinder(unsigned int nnod, unsigned int ndof, unsigned int nnod_input, int implicit, 
+				   vector<double> state_ini, vector<int> histo, char* label, double Bore, 
+				   double crank_radius, double Vol_clearance, double rod_length, 
+				   double head_chamber_area, double piston_area, double theta_0, double delta_ca, 
+				   vector<double> Twall, vector<double> prop, vector<double> U_crevice, 
+				   vector<double> data_crevice, vector<double> mass_C, int model_ht, 
+				   double factor_ht, int scavenge,char* scavenge_type, int type_ig, 
+				   int full_implicit, fuel fuel_data, combustion combustion_data, 
+				   injection injection_data,vector<valve> intake_valves, 
+				   vector<valve> exhaust_valves, Scavenge scavenge_data, int extras,
+				   int species_model, int nvanes, double major_radius, double minor_radius,
+				   double chamber_heigh):
 Component(nnod,ndof,nnod_input,implicit,state_ini,histo,label){
 	this->fuel_data				= fuel_data;
 	this->combustion_data		= combustion_data;
@@ -50,8 +57,7 @@ Component(nnod,ndof,nnod_input,implicit,state_ini,histo,label){
 	this->model_ht				= model_ht;
 	this->factor_ht				= factor_ht;
 	this->scavenge				= scavenge;
-	this->scavenge_type = new char[strlen(scavenge_type)];
-	strcpy(this->scavenge_type,scavenge_type);	
+	strcopy(this->scavenge_type,scavenge_type);
 	this->scavenge_data			= scavenge_data;
 	this->type_ig				= type_ig;
 	this->full_implicit			= full_implicit;
@@ -59,6 +65,12 @@ Component(nnod,ndof,nnod_input,implicit,state_ini,histo,label){
 	this->species_model			= species_model;
 	this->nvi					= this->intake_valves.size();
 	this->nve					= this->exhaust_valves.size();
+
+	// MRCVC
+	this->nvanes        = nvanes;
+	this->major_radius  = major_radius;
+	this->minor_radius  = minor_radius;
+	this->chamber_heigh = chamber_heigh;
 }
 
 /**
@@ -94,13 +106,19 @@ Cylinder::Cylinder(Cylinder* c):Component(c->nnod,c->ndof,c->nnod_input,c->impli
 	this->species_model		= c->species_model;
 	this->nvi			    = c->nvi;
 	this->nve				= c->nve;
+
+	// MRCVC
+	this->nvanes        = c->nvanes;
+	this->major_radius  = c->major_radius;
+	this->minor_radius  = c->minor_radius;
+	this->chamber_heigh = c->chamber_heigh;
 }
 
 /**
-	\brief Initialize Fortran's types for def_cylinder.f90 module
-	\param icycle: actual cycle
+   \brief Initialize Fortran's types for def_cylinder.f90 module
+   \param icycle: actual cycle
 */
-void Cylinder::initFortran(int icyl){
+void Cylinder::initFortran(int icyl,dataSim &globalData){
 	this->icyl = icyl;
 	int nvi = this->nvi;
 	int nve = this->nve;
@@ -133,7 +151,8 @@ void Cylinder::initFortran(int icyl){
 								 &(this->intake_valves[ival].Cd[0]),&(this->intake_valves[ival].Lv[0]), 
 								 &(this->intake_valves[ival].valve_model), &l1, &l2, this->intake_valves[ival].dx_tube,
 								 this->intake_valves[ival].Area_tube, this->intake_valves[ival].twall_tube, 
-								 this->intake_valves[ival].dAreax_tube, &(this->intake_valves[ival].tube));
+								 this->intake_valves[ival].dAreax_tube, &(this->intake_valves[ival].tube),
+								 &this->theta_0, &globalData);
 	}
 	//cout<<"aca"<<endl;
 	for(unsigned int ival=0;ival<this->exhaust_valves.size();ival++){
@@ -148,24 +167,25 @@ void Cylinder::initFortran(int icyl){
 								  &(this->exhaust_valves[ival].Cd[0]), &(this->exhaust_valves[ival].Lv[0]), 
 								  &(this->exhaust_valves[ival].valve_model), &l1, &l2, this->exhaust_valves[ival].dx_tube,
 								  this->exhaust_valves[ival].Area_tube, this->exhaust_valves[ival].twall_tube, 
-								  this->exhaust_valves[ival].dAreax_tube, &(this->exhaust_valves[ival].tube));
+								  this->exhaust_valves[ival].dAreax_tube, &(this->exhaust_valves[ival].tube),
+								  &this->theta_0, &globalData);
 	}
 	//cout<<"por here"<<endl;
 	l1 = this->prop.size();
 	l2 = this->U_crevice.size();
 	int l3 = this->data_crevice.size();
 	initialize_arrays(&icyl, &(this->prop[0]),&(this->U_crevice[0]), &(this->data_crevice[0]),&l1,&l2,&l3);
-	//cout<<"ya inicializo arrays fortran"<<endl;
+	cout<<"ya inicializo arrays fortran"<<endl;
 }
 
 /**
-	   \brief Makes the struct for send data to Fortran
+   \brief Makes the struct for send data to Fortran
 */
 void Cylinder::makeStruct(dataCylinder &data){
 	data.nvi				= this->nvi;
 	data.nve				= this->nve;
-	data.nnod				= this->nnod;	
-	data.nnod_input			= this->nnod_input;	
+	data.nnod				= this->nnod;
+	data.nnod_input			= this->nnod_input;
 	data.ndof				= this->ndof;
 	data.Bore				= this->Bore;
 	data.crank_radius		= this->crank_radius;
@@ -189,16 +209,21 @@ void Cylinder::makeStruct(dataCylinder &data){
 	else
 		data.nh_temp =  true;
 
+	// MRCVC
+	data.nvanes        = this->nvanes;
+	data.major_radius  = this->major_radius;
+	data.minor_radius  = this->minor_radius;
+	data.chamber_heigh = this->chamber_heigh;
 }
 
 /**
-	\brief Actualizes the component data from the struct that received from Fortran
+   \brief Actualizes the component data from the struct that received from Fortran
 */
 void Cylinder::undoStruct(dataCylinder &data){
 	//this->nvi				= data.nvi;
 	//this->nve				= data.nve;
-	//this->nnod			= data.nnod;	
-	//this->nnod_input		= data.nnod_input;	
+	//this->nnod			= data.nnod;
+	//this->nnod_input		= data.nnod_input;
 	//this->ndof			= data.ndof;
 	this->Bore				= data.Bore;
 	this->crank_radius		= data.crank_radius;
@@ -213,10 +238,15 @@ void Cylinder::undoStruct(dataCylinder &data){
 	//this->model_ht		= data.model_ht;
 	//this->type_ig			= data.type_ig;
 	//this->scavenge		= data.scavenge;
+	// MRCVC
+	this->nvanes        = data.nvanes;
+	this->major_radius  = data.major_radius;
+	this->minor_radius  = data.minor_radius;
+	this->chamber_heigh = data.chamber_heigh;
 }
 
 /**
-	\brief Calcules the cylinder's new state calling Fortran
+   \brief Calcules the cylinder's new state calling Fortran
 */
 void Cylinder::calculate(dataSim &globalData){
 	dataCylinder myData;
@@ -231,11 +261,11 @@ void Cylinder::calculate(dataSim &globalData){
 void Cylinder::calculate_state(double* atm, dataSim &globalData){
 	dataCylinder myData;
 	makeStruct(myData);
-	//cout<<"crea struct"<<endl;
+	cout<<"crea struct"<<endl;
 	state_initial_cylinder(&(this->icyl), &myData, &atm[0], &globalData, &(this->state_ini[0]), &(this->mass_C[0]), &(this->Twall[0]));
-	//cout<<"state initital pasa"<<endl;
+	cout<<"state initital pasa"<<endl;
 	undoStruct(myData);
-	//cout<<"pasa undo"<<endl;
+	cout<<"pasa undo"<<endl;
 }
 
 /**

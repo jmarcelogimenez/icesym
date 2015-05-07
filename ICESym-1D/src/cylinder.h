@@ -28,9 +28,19 @@ using namespace std;
 */
 typedef struct
 {
-	double Q_fuel;    /**< Calorific Value of fuel (Poder calorífico del combustible) */
-	double y;         /**< Relationship between "H" and "C" atoms in fuel molecule (Relación entre el número de atomos de H y C en la molécula del combustible)  */
-	double hvap_fuel; /**< Heat Vaporization Fuel (Calor de vaporización del combustible)   */
+	double Q_fuel;    /**< Lower Heating Value of fuel (Poder calorífico 
+						 inferior del combustible) */
+	double y;         /**< H/C ratio of fuel (Relación entre el número de 
+						 atomos de H y C en la molécula del combustible)  */
+	double alpha;     /**< Number of C atoms in the fuel molecule */
+	double beta;      /**< Number of H atoms in the fuel molecule */
+	double gamma;     /**< Number of O atoms in the fuel molecule */
+	double delta;     /**< Number of N atoms in the fuel molecule */
+	double Mw;        /**< Molecular weight of fuel */
+	double hvap_fuel; /**< Vaporization Heat of fuel (Calor de vaporización 
+						 del combustible)   */
+	vector<double> coef_cp; /**< Coefficients for the computation of the 
+							   fuel's cp */
 }fuel;
 
 /**
@@ -103,14 +113,17 @@ typedef struct
 class Cylinder: public Component 
 {
  public:
-	Cylinder(unsigned int, unsigned int, unsigned int, int, vector<double>, vector<int>, char*, double, double, double, double, double, double,
-	         double, double, vector<double>, vector<double>, vector<double>, vector<double>,vector<double>, int, double, int, char*, int, int, fuel, 
-			 combustion, injection,vector<valve>, vector<valve>, Scavenge, int,int);
+	Cylinder(unsigned int, unsigned int, unsigned int, int, vector<double>, vector<int>, 
+			 char*, double, double, double, double, double, double,
+	         double, double, vector<double>, vector<double>, vector<double>, 
+			 vector<double>,vector<double>, int, double, int, char*, int, int, fuel, 
+			 combustion, injection,vector<valve>, vector<valve>, Scavenge, int,int,
+			 int, double, double, double);
 	Cylinder(Cylinder* c);
 	Cylinder(){};
 	void makeStruct(dataCylinder &data);
 	void undoStruct(dataCylinder &data);
-	void initFortran(int icyl);
+	void initFortran(int icyl,dataSim &globalData);
 	void calculate_state(double* atm,dataSim &globalData);
 	void openFortranUnit(char* file);
 	void closeFortranUnit();
@@ -127,6 +140,7 @@ class Cylinder: public Component
 	vector<double> getMass();
 	void setMass(int, double);
 
+	double theta_0;           /**< Piston's Initial position angle (Angulo correspondiente a la posicion inicial del piston) */
  protected:
 	
  private:
@@ -135,7 +149,6 @@ class Cylinder: public Component
 	double rod_length;		  /**< Rod's Length */
 	double head_chamber_area; /**< Combustion's chamber's Head Area (Area de la superficie de la camara) */
 	double piston_area;       /**< Piston's Head area (Area de la cabeza del piston) */
-	double theta_0;           /**< Piston's Initial position angle (Angulo correspondiente a la posicion inicial del piston) */
 	double delta_ca;          /**< Angle between crancks (only for opposed pistons) (Angulo entre cigüeñales (para motores de pistones opuestos)) */
 	vector<double> Twall;     /**< Cylinder's Wall Temperature (size=1: homogeneus, size=4: piston, intake, exhaust, liners) */
 	vector<double> prop; 
@@ -155,6 +168,14 @@ class Cylinder: public Component
 	int species_model;		  /**< Type of Species Model 0:none, 1:single-component */
 	
 	void calculate(dataSim &globalData);
+
+	/**
+	   Definitions of geometrical parameters for the MRCVC engine
+	 **/
+	int nvanes;           /**< Number of vanes (n) */
+	double major_radius;  /**< Radius of the vanes's center (R) */
+	double minor_radius;  /**< Radius of the vanes (r) */
+	double chamber_heigh; /**< Heigh of the chamber (h) */
 };
 
 extern "C"{
@@ -172,11 +193,13 @@ extern "C"{
 	void initialize_exhaust_valves(int* icyl, int* ival, int* Nval, int* type_dat, double* angle_V0,
 								   double* angle_VC, double* Dv, double* Lvmax, double* Cd, double* Lv,
 								   int* valve_model, int* l1, int* l2, double* dx_tube, double* Area_tube, 
-								   double* twall_tube, double* dAreax_tube, int* tube);
+								   double* twall_tube, double* dAreax_tube, int* tube, double* theta_0,
+								   dataSim* globalData);
 	void initialize_intake_valves(int* icyl, int* ival, int* Nval, int* type_dat, double* angle_V0,
 								  double* angle_VC, double* Dv, double* Lvmax, double* Cd, double* Lv,
 								  int* valve_model, int* l1, int* l2, double* dx_tube, double* Area_tube, 
-								  double* twall_tube, double* dAreax_tube, int* tube);
+								  double* twall_tube, double* dAreax_tube, int* tube, double* theta_0,
+								  dataSim* globalData);
 	void open_unit(int* nu, char* file, int* nfsize);
 	void close_unit(int* nu);
 }

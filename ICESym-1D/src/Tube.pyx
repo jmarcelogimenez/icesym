@@ -36,11 +36,17 @@ cdef extern from "tube.h":
 		unsigned int nleft
 		char* tright
 		unsigned int nright
+		int type
        	
-	c_Tube *new_Tube "new Tube" (unsigned int nnod, unsigned int ndof, unsigned int nnod_input, int implicit, doublevec state_ini, 
-				     intvec histo, char* label, double longitud, doublevec xnod, doublevec Area, doublevec twall, 
-				     doublevec curvature, doublevec dAreax, char* tleft, unsigned int nleft, char* tright, 
-				     unsigned int nright)
+	c_Tube *new_Tube "new Tube" (unsigned int nnod, unsigned int ndof, 
+				     unsigned int nnod_input, int implicit, 
+				     doublevec state_ini, intvec histo, 
+				     char* label, double longitud, 
+				     doublevec xnod, doublevec Area, 
+				     doublevec twall, doublevec curvature, 
+				     doublevec dAreax, char* tleft, 
+				     unsigned int nleft, char* tright, 
+				     unsigned int nright, int type)
 	void del_Tube "delete" (c_Tube *tube)
 	c_Tube copyTube "new Tube" (c_Tube* t)
 	
@@ -50,11 +56,11 @@ cdef class Tube:
     
 	def __cinit__(self, **kargs):
     	
-		cdef unsigned int nnod 			= validatePositive(kargs,'nnod','Tube')
-		cdef unsigned int ndof 			= validatePositive(kargs,'ndof','Tube')
-		cdef unsigned int nnod_input 	= validatePositive(kargs,'nnod_input','Tube',2)
-		kargs['implicit']				= assignOptional(kargs,'implicit',0)
-		cdef int implicit 			= boolean(kargs,'implicit','Tube')
+		cdef unsigned int nnod 	     = validatePositive(kargs,'nnod','Tube')
+		cdef unsigned int ndof 	     = validatePositive(kargs,'ndof','Tube')
+		cdef unsigned int nnod_input = validatePositive(kargs,'nnod_input','Tube',2)
+		kargs['implicit']	     = assignOptional(kargs,'implicit',0)
+		cdef int implicit 	     = boolean(kargs,'implicit','Tube')
 			
 		onlyAssert(kargs,'state_ini','Tube')
 		cdef doublevec state_ini = doublevec_factory(0)
@@ -91,7 +97,7 @@ cdef class Tube:
 				validateSize(kargs,'diameter','Tube',nnod)
 				kargs['Area'] = []
 				for d in kargs['diameter']:
-					kargs['Area'].append(3.14159*(d/2)**2)
+					kargs['Area'].append(3.14159*(d/2.0)**2)
 		validateSize(kargs,'Area','Tube',nnod)
 		cdef doublevec Area = doublevec_factory(0)
 		for i in range(nnod):
@@ -119,12 +125,25 @@ cdef class Tube:
 		cdef char* tleft = s
 		s = onlyAssert(kargs,'tright','Tubes')
 		cdef char* tright = s
-		cdef unsigned int nleft 	= onlyAssert(kargs,'nleft','Tube')
-		cdef unsigned int nright  	= onlyAssert(kargs,'nright','Tube')
+		cdef unsigned int nleft  = onlyAssert(kargs,'nleft','Tube')
+		cdef unsigned int nright = onlyAssert(kargs,'nright','Tube')
 		
-		self.thisptr = new_Tube(nnod, ndof, nnod_input, implicit, state_ini,histo, label, longitud, 
-					xnod, Area, twall, curvature, dAreax, tleft, nleft, 
-					tright, nright)
+		cdef int type
+		if('type' in kargs.keys()):
+			validateInList(kargs,'type','Tube', ['intake', 'exhaust'], 'none')
+			if(kargs['type']=='intake'):
+				type = 1
+			elif(kargs['type']=='exhaust'):
+				type = -1
+		else:
+			print 'It is not indicated the type of tube'
+			print 'Options are: intake or exhaust'
+			raise ValueError
+
+		self.thisptr = new_Tube(nnod, ndof, nnod_input, implicit, 
+					state_ini,histo, label, longitud, 
+					xnod, Area, twall, curvature, dAreax, 
+					tleft, nleft, tright, nright, type)
         
 	def __dealloc__(self):
 		del_Tube(self.thisptr)

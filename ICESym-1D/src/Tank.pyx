@@ -34,9 +34,16 @@ cdef extern from "tank.h":
 		intvec int2tube
 		intvec exh2tube
 		int extras
+		int type
 	
-	c_Tank *new_Tank "new Tank" (unsigned int nnod, unsigned int ndof, unsigned int nnod_input, int implicit, doublevec state_ini, intvec histo, char* label,
-		double Volume, double mass, double h_film, double Area_wall, double T_wall, intvec type_end, doublevec Cd_ports, intvec int2tube, intvec exh2tube, int extras)
+	c_Tank *new_Tank "new Tank" (unsigned int nnod, unsigned int ndof, 
+				     unsigned int nnod_input, int implicit, 
+				     doublevec state_ini, intvec histo, 
+				     char* label, double Volume, double mass, 
+				     double h_film, double Area_wall, 
+				     double T_wall, intvec type_end, 
+				     doublevec Cd_ports, intvec int2tube, 
+				     intvec exh2tube, int extras, int type)
 	c_Tank copyTank "new Tank" (c_Tank* t)
 	void del_Tank "delete" (c_Tank *tank)
 
@@ -49,8 +56,8 @@ cdef class Tank:
 		cdef unsigned int nnod 	     = validatePositive(kargs,'nnod','Tank')
 		cdef unsigned int ndof 	     = validatePositive(kargs,'ndof','Tank')
 		cdef unsigned int nnod_input = validatePositive(kargs,'nnod_input','Tank',nnod-1)
-		kargs['implicit']			= assignOptional(kargs,'implicit',1)
-		cdef int implicit 	     	= boolean(kargs,'implicit','Tank')
+		kargs['implicit']	     = assignOptional(kargs,'implicit',1)
+		cdef int implicit 	     = boolean(kargs,'implicit','Tank')
     	
 		onlyAssert(kargs,'state_ini','Tank')
 		cdef doublevec state_ini = doublevec_factory(0)
@@ -106,9 +113,25 @@ cdef class Tank:
 		for i in range(len(kargs['exh2tube'])):
 			exh2tube.push_back(kargs['exh2tube'][i])
 				
-		cdef int extras	=  boolean(kargs,'extras','Tank',0)
+		cdef int extras	= boolean(kargs,'extras','Tank',0)
 
-		self.thisptr = new_Tank(nnod, ndof, nnod_input, implicit, state_ini, histo, label, Volume, mass, h_film, Area_wall, T_wall, type_end, Cd_ports, int2tube, exh2tube, extras)
+		cdef int type
+		if('type' in kargs.keys()):
+			validateInList(kargs,'type','Tank', ['intake', 'exhaust'], 'none')
+			if(kargs['type']=='intake'):
+				type = 1
+			elif(kargs['type']=='exhaust'):
+				type = -1
+		else:
+			print 'It is not indicated the type of tank'
+			print 'Options are: intake or exhaust'
+			raise ValueError
+
+		self.thisptr = new_Tank(nnod, ndof, nnod_input, implicit, 
+					state_ini, histo, label, Volume, 
+					mass, h_film, Area_wall, T_wall, 
+					type_end, Cd_ports, int2tube, 
+					exh2tube, extras, type)
         
 	def __dealloc__(self):
 		del_Tank(self.thisptr)

@@ -24,8 +24,11 @@
    	\brief Junction's Constructor
    	\param all: each Junction attribute 
 */
-Junction::Junction(unsigned int nnod, unsigned int ndof, unsigned int nnod_input, int type, vector<double> state_ini, 
-				   vector<int> histo, char* label, vector<int> type_end,int modelo_junc,vector<int> node2tube):
+Junction::Junction(unsigned int nnod, unsigned int ndof, 
+				   unsigned int nnod_input, int implicit, 
+				   vector<double> state_ini, vector<int> histo, 
+				   char* label, vector<int> type_end, int modelo_junc,
+				   vector<int> node2tube, int type):
 Component(nnod,ndof,nnod_input,implicit,state_ini,histo,label){
 	
 	this->type_end	  = type_end;
@@ -35,6 +38,7 @@ Component(nnod,ndof,nnod_input,implicit,state_ini,histo,label){
 	this->twall_tube.resize(nnod);
 	this->dAreax_tube.resize(nnod);
 	this->node2tube	  = node2tube;
+	this->type  	  = type;
 }
 
 
@@ -49,16 +53,18 @@ Junction::Junction(Junction* j):Component(j->nnod,j->ndof,j->nnod_input,j->impli
 	this->twall_tube  = j->twall_tube;
 	this->dAreax_tube = j->dAreax_tube;
 	this->node2tube	  = j->node2tube;
+	this->type   	  = j->type;
 }
 
 /**
 	   \brief Makes the struct for send data to Fortran
 */
 void Junction::makeStruct(dataJunction &data){
-	data.nnod			= this->nnod;
-	data.nnod_input		= this->nnod_input;
-	data.ndof			= this->ndof;
-	data.modelo_junc    = this->modelo_junc;
+	data.nnod		 = this->nnod;
+	data.nnod_input	 = this->nnod_input;
+	data.ndof		 = this->ndof;
+	data.modelo_junc = this->modelo_junc;
+	data.type        = this->type;
 }
 
 /**

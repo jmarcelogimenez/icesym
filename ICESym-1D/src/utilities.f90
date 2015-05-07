@@ -3,6 +3,10 @@ module utilities
   real*8 :: pi
   parameter (pi = 4.0d0*datan(1.0d0))
 
+  ! real*8 ::  PInf, MInf
+  ! data PInf /B'01111111100000000000000000000000'/    ! +Infinity
+  ! data MInf /B'11111111100000000000000000000000'/    ! -Infinity
+  
 contains
 
   subroutine linear_solver(B, A, X, n)
@@ -94,6 +98,7 @@ contains
     !
     do j=1,n-1
        pi1 = 0.0
+       k   = 0
        do i=j,n
           pi0 = abs(A(indx(i),j))/C(indx(i))
           if(pi0.gt.pi1) then

@@ -27,7 +27,8 @@
 class Junction: public Component 
 {
 public:
-	Junction(unsigned int, unsigned int, unsigned int, int, vector<double>, vector<int> , char*, vector<int>, int, vector<int>);
+	Junction(unsigned int, unsigned int, unsigned int, int, vector<double>, 
+			 vector<int> , char*, vector<int>, int, vector<int>, int);
 	Junction(Junction* j);
 	Junction(){};
 	void makeStruct(dataJunction &data);
@@ -38,6 +39,9 @@ public:
 	vector<double*> Area_tube;		/**< Array of areas of tube's element connected */
 	vector<double*> twall_tube;		/**< Array of temperatures of tube's element connected */
 	vector<double*> dAreax_tube;	/**< Array of area's differential of tube's element connected */
+	int type;                       /**< Indicates wether the junction belongs 
+									   to  intake or exhaust systems 
+									   (1: intake, -1: exhaust)*/
 protected:
 
 private:

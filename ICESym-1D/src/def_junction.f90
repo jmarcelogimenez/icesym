@@ -6,7 +6,8 @@ module def_junction
   use, intrinsic :: ISO_C_BINDING
   
   type, BIND(C) :: this
-    integer(C_INT) :: nnod, ndof, nnod_input, modelo_junc
+     integer(C_INT) :: nnod, ndof, nnod_input, modelo_junc
+     integer(C_INT) :: type
   end type this
 
 contains
@@ -43,9 +44,15 @@ contains
     real*8, dimension(myData%ndof) :: RHS
     real*8, dimension(myData%ndof,myData%nnod) :: RHSv,U,Uref
     
-    ga    = globalData%ga
     R_gas = globalData%R_gas
-    dt    = globalData%dt
+    if(myData%type.eq.1) then
+       ! at intake system
+       ga = globalData%ga_intake
+    else
+       ! at exhaust system
+       ga = globalData%ga_exhaust
+    end if
+    dt = globalData%dt
 
     viscous_flow = globalData%viscous_flow
     heat_flow    = globalData%heat_flow
@@ -115,15 +122,16 @@ contains
        J  = 0.0d0
        call junction_residue(nnod, U, Uref, Area_tube, type_end, RHS, &
             ga, R)
+       if(any(isnan(R))) then
+          write(*,*) R
+          stop ' NANs in JUNCTION SOLVER - Residue'
+       end if
        call junction_jaco(nnod, U, Uref, Area_tube, type_end, RHS, &
             ga, J)
        call linear_solver(R, J, dU, nnod*ndof)
-       
-       if(any(isnan(dU))) then
-          write(*,*) 'NANs in JUNCTION SOLVER'
-          stop
-       end if
-       relax = tanh(0.05*(niter+1))
+
+       if(any(isnan(dU))) stop ' NANs in JUNCTION SOLVER - Solution '
+       relax = tanh(0.025*(niter+1))
        do i=1,nnod
           U(:,i) = U(:,i)-relax*dU(ndof*(i-1)+1:ndof*i)
        end do
@@ -132,7 +140,7 @@ contains
        niter   = niter+1
        if((normres.lt.tol).or.(niter.gt.niter_max)) continue_flag = .false.
     end do
-    
+
   end subroutine solve_equation_system
 
   subroutine junction_residue(ntubes, U, Uref, Areas, type_end, RHS, ga, res)
@@ -202,7 +210,7 @@ contains
        else
           res(j+2) = (p_P-p_S)/(rho_S*a_S)+v_S+RHS(3,j)-v_P
        end if
-       
+
        ! Equalize all the pressures
        if(pipe_count.gt.0) then
           res(2+ntubes+pipe_count) = p_P - p_1
@@ -258,7 +266,7 @@ contains
     real*8 :: tol,pt_avg
     real*8, dimension(ntubes) :: pt,vn
 
-    tol = 1.0d-06
+    tol = 1.0d-07
     ! Normal velocity
     vn = U(2,:)*no
 

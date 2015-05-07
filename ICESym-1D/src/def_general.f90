@@ -11,15 +11,14 @@ contains
     integer :: io
     !character,dimension(:),pointer :: nfAux
     character(LEN=nfsize) :: nf
-    !do i=1,(nfsize+1)
-    do i=1,nfsize
+    do i=1,(nfsize+1)
        nf(i:i) = namefile(i)
     enddo
     write(*,*) namefile
     write(*,*) nf
     open(UNIT=nu,FILE=nf,ACTION='WRITE',STATUS='REPLACE',IOSTAT=io)
     if(io /= 0) then
-      write(*,*) "El archivo "//nf//" no pudo ser abierto"
+      write(*,*) "File "//nf//" cannot be open"
     endif
     return
   end subroutine open_unit
@@ -27,9 +26,9 @@ contains
   subroutine close_unit(nu) BIND(C)
     use, intrinsic :: ISO_C_BINDING
     integer(C_INT) :: nu
-    integer:: io
+    ! integer:: io
     close(nu)
-    write(*,*) "El archivo se cerró"
+    write(*,*) "File was closed"
     return
   end subroutine close_unit
 

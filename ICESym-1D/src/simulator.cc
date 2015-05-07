@@ -21,18 +21,30 @@
 #include <math.h>
 #include <limits.h>
 #include <sstream>
+#include <vector>
+
+double modulo(double x, double y){
+	return x-y*floor(x/y);
+}
 
 /**
-	   \brief Simulator's costructor
+   \brief Simulator's costructor
 */
-Simulator::Simulator(double dt, double tf, int nrpms, vector<double> rpms, vector<double> Xn, 
-					 vector<double> Xn1, int ntubes,int ncyl,int ntank,int njunc,int iter_sim1d,
-					 int nsave, int nappend,double dtheta_rpm, int inicia,double Courant,double ga,
-					 int viscous_flow,int heat_flow,double R_gas,int nstroke,int ncycles, 
-					 int engine_type, char* filein_state,char* filesave_state,char* filein_spd,
-					 char* filesave_spd,char* folder_name,vector<int> ig_order,vector<Cylinder> cylinders,
-					 vector<Tube> tubes,vector<Junction> junctions,vector<Tank> tanks, int natm, 
-					 vector<Atmosphere> atmospheres, int get_state, int calc_engine_data){
+Simulator::Simulator(double dt, double tf, int nrpms, vector<double> rpms, 
+					 vector<double> Xn, vector<double> Xn1, int ntubes,
+					 int ncyl, int ntank, int njunc, int iter_sim1d, int nsave,
+					 int nappend, double dtheta_rpm, int inicia, double Courant,
+					 double ga, int viscous_flow, int heat_flow, double R_gas,
+					 double theta_cycle, int ncycles, int engine_type, 
+					 char* filein_state,char* filesave_state,char* filein_spd,
+					 char* filesave_spd, char* folder_name,
+					 vector<int> ig_order, vector<Cylinder> cylinders,
+					 vector<Tube> tubes, vector<Junction> junctions,
+					 vector<Tank> tanks, int natm, 
+					 vector<Atmosphere> atmospheres, 
+					 int get_state, int calc_engine_data, 
+					 int use_global_gas_prop, double ga_intake, 
+					 double ga_exhaust){
 	this->dt = dt;
 	this->tf = tf;
 	this->nrpms = nrpms;
@@ -54,7 +66,7 @@ Simulator::Simulator(double dt, double tf, int nrpms, vector<double> rpms, vecto
 	this->viscous_flow = viscous_flow;
 	this->heat_flow = heat_flow;
 	this->R_gas = R_gas;
-	this->nstroke = nstroke;
+	this->theta_cycle = theta_cycle;
 	this->ncycles = ncycles;
 	this->engine_type = engine_type;
 	strcopy(this->filein_state,filein_state);
@@ -70,6 +82,11 @@ Simulator::Simulator(double dt, double tf, int nrpms, vector<double> rpms, vecto
 	this->atmospheres = atmospheres;
 	this->get_state = get_state;
 	this->calc_engine_data = calc_engine_data;
+	this->use_global_gas_prop = use_global_gas_prop;
+	this->ga_intake = ga_intake;
+	this->ga_exhaust = ga_exhaust;
+
+	this->irpm = 0;
 
 	makeSimulation();
 }
@@ -84,21 +101,23 @@ void Simulator::makeSimulation(){
 	char str_tank[5]		= "tank";
 	char str_junction[9]	= "junction"; 
 	
-	cout<<"Making the simulation ..."<<endl;
+	//cout<<"en make simulation"<<endl;
 	if(get_state==1)
 		readState();
-	//cout<<"apasa read state"<<endl;
+	// cout<<"apasa read state"<<endl;
 	for(int k=0;k<natm;k++){
 		atmospheres[k].Make(Xn,iXn,get_state);
 	}
-	//cout<<"hizo atm"<<endl;
+	// cout<<"hizo atm"<<endl;
+
 	dataSim globalData;
 	if(get_state==2)
-		makeStruct(globalData);		
+		makeStruct(globalData);
 	
+	// cout<<"init cylinders"<<endl;
 	double atm[3] = {Xn[0],Xn[1],Xn[2]};
 	initialize_cylinders(&(this->ncyl));
-	//cout<<"pasa init cylinders"<<endl;
+	// cout<<"pasa init cylinders"<<endl;
 	for(int k=0;k<ntubes;k++){
 		if(get_state==2)
 			tubes[k].calculate_state(atm,globalData);
@@ -106,7 +125,7 @@ void Simulator::makeSimulation(){
 		tubes[k].dt_max = this->dt;
 		tubes[k].itube = k;
 	}
-	//cout<<"hizo tubes"<<endl;
+	// cout<<"hizo tubes"<<endl;
 	
 	for(int k=0;k<ncyl;k++){
 		for(unsigned int i=0;i<cylinders[k].nvi;i++){
@@ -127,31 +146,32 @@ void Simulator::makeSimulation(){
 	}
 	for(int k=0;k<ncyl;k++){
 		int icyl = k+1;
-		cylinders[k].initFortran(icyl);
+		cylinders[k].initFortran(icyl,globalData);
 		if(get_state==2)
 			cylinders[k].calculate_state(atm,globalData);
-		//cout<<"pasa el get state"<<endl;
+		// cout<<"pasa el get state"<<endl;
 		cylinders[k].Make(Xn,iXn,get_state);
 	}
 
-	//cout<<"hizo cyl"<<endl;
+	// cout<<"hizo cyl"<<endl;
 	for(int k=0;k<njunc;k++){
 		if(get_state==2)
 			junctions[k].calculate_state(atm,globalData);
 		junctions[k].Make(Xn,iXn,get_state);
 	}
 
-	//cout<<"hizo junc"<<endl;
+	// cout<<"hizo junc"<<endl;
 	for(int k=0;k<ntank;k++){
 		if(get_state==2)
 			tanks[k].calculate_state(atm,globalData);
 		tanks[k].Make(Xn,iXn,get_state);
 	}
 
-	//cout<<"hizo tank"<<endl;
+	// cout<<"hizo tank"<<endl;
 	Xn1.resize(Xn.size());
 	/*
-	  Por cada tube, solo tengo 2 estados de referencia (left y right), tomo el correspondiente dependiendo de que objeto tenga a los lados
+	  Por cada tube, solo tengo 2 estados de referencia (left y right), tomo el 
+	  correspondiente dependiendo de que objeto tenga a los lados
 	  Si es junction, depende del orden de los nodos de la union
 	  Si es cylinder, depende si es de admision o escape, y su ubicacion alli
 	  Si es tube, tank y atmosphere es trivial
@@ -257,7 +277,7 @@ void Simulator::makeSimulation(){
 	  toma el primer nodo del tube si es "exhaust"
 	  toma el ultimo nodo del tube si es "intake"
 	*/
-	//cout<<"empieza make cylinder"<<endl;
+	// cout<<"empieza make cylinder"<<endl;
 	for(int k=0;k<ncyl;k++){
 		for(unsigned int i=0;i<cylinders[k].nvi;i++){
 			Tube* tubeRef = &(tubes[cylinders[k].intake_valves[i].tube]);
@@ -271,18 +291,31 @@ void Simulator::makeSimulation(){
 				cylinders[k].i_state.push_back(tubeRef->i_state[j]);
 			}
 		}
-		
+		if(this->engine_type==2){
+			/*
+			  For the MRCVC engine we add two reference nodes. The first node
+			  corresponds to the 'leading' chamber and the second node to
+			  the 'trailing' chamber
+			*/
+			unsigned int lcyl,tcyl;
+			lcyl = (((k-1)%ncyl)+ncyl)%ncyl;
+			tcyl = (((k+1)%ncyl)+ncyl)%ncyl;
+			for(unsigned int j=0;j<cylinders[k].ndof;j++)
+				cylinders[k].i_state.push_back(cylinders[lcyl].i_state[j]);
+			for(unsigned int j=0;j<cylinders[k].ndof;j++)
+				cylinders[k].i_state.push_back(cylinders[tcyl].i_state[j]);
+		}
 	}
 	/* 
 	   Junction solo se conecta a tubes. 
 	   Por cada nodo hay un estado de referencia, que es el ultimo o primero del pipe, dependiendo de donde esté el tube.
 	*/
 	//cout<<"empieza make junction"<<endl;
-	for(unsigned int k=0;k<njunc;k++){
+	for(int k=0;k<njunc;k++){
 		for(unsigned int i=0;i<junctions[k].nnod;i++){
 			unsigned int iTube = junctions[k].node2tube[i];
 			bool left = false; // tube a la izquierda o no
-			if(tubes[iTube].nleft == k && strcomp(tubes[iTube].tleft,str_junction)) //si esta junction esta a la izquierda del tube
+			if((int)tubes[iTube].nleft == k && strcomp(tubes[iTube].tleft,str_junction)) //si esta junction esta a la izquierda del tube
 				left = true;
 			for(unsigned int j=0;j<tubes[iTube].ndof;j++){
 				if(left)
@@ -331,9 +364,123 @@ void Simulator::makeSimulation(){
 	createDir(false);
 }
 
+/**
+   \brief Changes the reference state for tubes
+   Useful for the simulation of the MRCVC engine
+   and others rotary engines
+*/
+void Simulator::change_ref_state_tubes(double theta){
+
+	unsigned int nvi=0,nve=0;
+
+	for(int i=0;i<ncyl;i++){
+		double theta_cyl = modulo(theta+cylinders[i].theta_0,
+								  theta_cycle);
+		for(unsigned int j=0;j<cylinders[i].nvi;j++){
+			double IVO = cylinders[i].intake_valves[j].angle_V0;
+			double IVC = cylinders[i].intake_valves[j].angle_VC;
+			if(modulo(theta_cyl-IVO,theta_cycle) >= 0. &&
+			   modulo(theta_cyl-IVO,theta_cycle) <= modulo(IVC-IVO,theta_cycle)){
+				nvi++;
+				int itube =	cylinders[i].intake_valves[j].tube;
+				// We must to erase the last ndof elements of i_state...
+				for(unsigned int k=0;k<cylinders[i].ndof;k++)
+					tubes[itube].i_state.pop_back();
+				// ...and assign the new ones
+				for(unsigned int k=0;k<cylinders[i].ndof;k++){
+					int num = cylinders[i].i_state[(cylinders[i].nnod-cylinders[i].nvi-
+													cylinders[i].nve+j)*cylinders[i].ndof + k];
+					tubes[itube].i_state.push_back(num);
+				}
+				// cout<<"intake cylinder: "<<i<<endl;
+			}
+		}
+		if(nvi==cylinders[0].nvi) break;
+	}
+
+	for(int i=0;i<ncyl;i++){
+		double theta_cyl = modulo(theta+cylinders[i].theta_0,
+								  theta_cycle);
+		for(unsigned int j=0;j<cylinders[i].nve;j++){
+			double EVO = cylinders[i].exhaust_valves[j].angle_V0;
+			double EVC = cylinders[i].exhaust_valves[j].angle_VC;
+			if(modulo(theta_cyl-EVO,theta_cycle) >= 0. &&
+			   modulo(theta_cyl-EVO,theta_cycle) <= modulo(EVC-EVO,theta_cycle)){
+				nve++;
+				int itube =	cylinders[i].exhaust_valves[j].tube;
+				// We must to erase the elements of i_state corresponding 
+				// to the 'old' exhaust valve...
+				for(unsigned int k=0;k<cylinders[i].ndof;k++)
+					tubes[itube].i_state.erase(tubes[itube].i_state.end()-cylinders[i].ndof-1);
+				for(unsigned int k=0;k<cylinders[i].ndof;k++){
+					int num = cylinders[i].i_state[(cylinders[i].nnod-cylinders[i].nve+j)
+												   *cylinders[i].ndof + k];
+					// ...and assign the new ones
+					tubes[itube].i_state.insert(tubes[itube].i_state.end()-cylinders[i].ndof, num);
+				}
+				// cout<<"exhaust cylinder: "<<i<<endl;
+			}
+		}
+		if(nve==cylinders[0].nve) break;
+	}
+}
 
 /**
-	Wrapper function that detect if the simulation is a engine or not, and calls the corresponding function
+   \brief Overwrites the state at the end points of
+   a pipe connected with a valve.
+   By the time, is only used for the simulation of the MRCVC 
+   engine
+*/
+void Simulator::correct_state_tubes(double theta){
+
+	unsigned int nvi=0,nve=0;
+
+	for(int i=0;i<ncyl;i++){
+		double theta_cyl = modulo(theta+cylinders[i].theta_0,
+								  theta_cycle);
+		unsigned int ndof = cylinders[i].ndof;
+		for(unsigned int j=0;j<cylinders[i].nvi;j++){
+			double IVO = cylinders[i].intake_valves[j].angle_V0;
+			double IVC = cylinders[i].intake_valves[j].angle_VC;
+			if(modulo(theta_cyl-IVO,theta_cycle) >= 0. &&
+			   modulo(theta_cyl-IVO,theta_cycle) <= modulo(IVC-IVO,theta_cycle)){
+				nvi++;
+				int itube =	cylinders[i].intake_valves[j].tube;
+				unsigned int nnod_tube = tubes[itube].nnod;
+				int nod_ist = cylinders[i].nnod-cylinders[i].nvi-
+					cylinders[i].nve+j;
+				for(unsigned int k=0;k<ndof;k++)
+					Xn1[tubes[itube].i_new_state[(nnod_tube-1)*ndof+k]] = 
+						cylinders[i].new_state[nod_ist*ndof+k];
+			}
+		}
+		if(nvi==cylinders[0].nvi) break;
+	}
+
+	for(int i=0;i<ncyl;i++){
+		double theta_cyl = modulo(theta+cylinders[i].theta_0,
+								  theta_cycle);
+		unsigned int ndof = cylinders[i].ndof;
+		for(unsigned int j=0;j<cylinders[i].nve;j++){
+			double EVO = cylinders[i].exhaust_valves[j].angle_V0;
+			double EVC = cylinders[i].exhaust_valves[j].angle_VC;
+			if(modulo(theta_cyl-EVO,theta_cycle) >= 0. &&
+			   modulo(theta_cyl-EVO,theta_cycle) <= modulo(EVC-EVO,theta_cycle)){
+				nve++;
+				int itube =	cylinders[i].exhaust_valves[j].tube;
+				int nod_est = cylinders[i].nnod-cylinders[i].nve+j;
+				for(unsigned int k=0;k<ndof;k++)
+					Xn1[tubes[itube].i_new_state[k]] = 
+						cylinders[i].new_state[nod_est*ndof+k];
+			}
+		}
+		if(nve==cylinders[0].nve) break;
+	}
+}
+
+/**
+   Wrapper function that detect if the simulation is a engine or not, 
+   and calls the corresponding function
 */
 void Simulator::solver(){
 	if (this->ncyl==0)
@@ -343,13 +490,13 @@ void Simulator::solver(){
 }
 
 /**
-	Solves not engine simulation
+   Solves not engine simulation
 */
 void Simulator::solverNOEngine(){
 	cout<<"Not implemented yet"<<endl;
 }
 /**
-	   \brief Solves the engine Simulation
+   \brief Solves the engine Simulation
 */
 void Simulator::solverEngine(){
 	int show_info=100;
@@ -357,26 +504,38 @@ void Simulator::solverEngine(){
 		createDir(true);
 		openFortranUnits();
 		time   = 0.0;
+		lcycle = 1;
 		icycle = 1;
 		omega  = 2.*pi*rpms[irpm]/60.;
 		iteration = 1;
 		while(icycle<=ncycles){
 			time += dt;
-			theta = fmod(omega*time, pi*nstroke);
+			theta = fmod(omega*time, theta_cycle);
+			/** For the MRCVC engine, the chambers use the same
+				intake and exhaust pipe, so we must to change the
+				reference nodes for the corresponding pipes
+			 **/
+			if(engine_type==2) change_ref_state_tubes(theta);
 			solveStep();
+			// if(engine_type==2) correct_state_tubes(theta);
 			actualizeState(); //actualizo al nuevo estado global
+			actualizeDt();
+			// icycle = floor((theta/nstroke)*pi)+1;
+			icycle = floor(omega*time/theta_cycle)+1;
+			if(!this->use_global_gas_prop && icycle!=lcycle){
+				correct_gamma_exhaust(&(this->ga_exhaust));
+				lcycle = icycle;
+			}
+			this->crank_angle = theta*180./pi;
+			if(iteration%show_info==0)
+				cout<<"cycle: "<<icycle<<" - crank angle: "
+					<<crank_angle<<" deg"<<" - rpm: "<<rpms[irpm]<<endl;
+
 			if(nappend>0){
 				if(iteration%nappend==0){ // aca usar nappend
 					saveHisto(iteration<=nappend);
 				}
 			}
-			actualizeDt();
-			// icycle = floor((theta/nstroke)*pi)+1;
-			icycle = floor(omega*time/(nstroke*pi))+1;
-			this->crank_angle = theta*180./pi;
-			if(iteration%show_info==0)
-				cout<<"cycle: "<<icycle<<" - crank angle: "
-					<<crank_angle<<" deg"<<" - rpm: "<<rpms[irpm]<<endl;
 
 			if(nsave>0){
 				if(iteration%nsave==0){
@@ -388,29 +547,29 @@ void Simulator::solverEngine(){
 		this->final_times.push_back(time);
 		closeFortranUnits();
 		createHeaderFile();	// this rpm was calculated. Refresh header file
-		compressFiles(); //compress files and clean the .txt
+		// compressFiles(); //compress files and clean the .txt
 	}
 	if(this->nsave!=0)		
 		saveState();
 }
 
 /**
-	   \brief Solves one simulation step
+   \brief Solves one simulation step
 */
 void Simulator::solveStep(){
 	dataSim globalData;
 	makeStruct(globalData);
 	//cout<<"Pasa atmospheres"<<endl;
 	for(int i=0;i<ntubes;i++){
-		tubes[i].solver(globalData,Xn,Xn1,true);	
+		tubes[i].solver(globalData,Xn,Xn1,true);
 	}
 	//cout<<"Empieza solve step"<<endl;
 	for(int i=0;i<natm;i++){
-		atmospheres[i].solver(globalData,Xn,Xn1,false);	
+		atmospheres[i].solver(globalData,Xn,Xn1,false);
 	}
 	//cout<<"Pasa tubes"<<endl;
 	for(int i=0;i<ncyl;i++){
-		cylinders[i].solver(globalData,Xn,Xn1,false);	
+		cylinders[i].solver(globalData,Xn,Xn1,false);
 	}
 	//cout<<"Pasa Cylinders"<<endl;
 	for(int i=0;i<njunc;i++){
@@ -424,14 +583,14 @@ void Simulator::solveStep(){
 }
 
 /**
-    \brief Actualizes the new global state vector
+   \brief Actualizes the new global state vector
 */
 void Simulator::actualizeState(){
 	Xn = Xn1;
 }
 
 /**
-	\brief Calculates the new time step
+   \brief Calculates the new time step
 */
 void Simulator::actualizeDt(){
 	dt = INT_MAX;
@@ -443,81 +602,81 @@ void Simulator::actualizeDt(){
 }
 
 /**
-    \brief Returns the time step
+   \brief Returns the time step
 */
 double Simulator::GetTimeStep(){
 	return dt;
 }
 
 /**
-    \brief Sets a value for the time step
+   \brief Sets a value for the time step
 */
 void Simulator::SetTimeStep(double dT){
 	dt = dT;
 }
 
 /**
-    \brief Sets a value for time and crank angle
+   \brief Sets a value for time and crank angle
 */
 void Simulator::SetTime(double t, int irpm){
 	time  = t;
 	omega = 2.*pi*rpms[irpm]/60.;
-	theta = fmod(omega*time, pi*nstroke);
+	theta = fmod(omega*time, theta_cycle);
 }
 
 /**
-    \brief Returns the old state vector
+   \brief Returns the old state vector
 */
 vector<double> Simulator::GetOldState(){
     return Xn;
 }
 
 /**
-    \brief Returns the new state vector
+   \brief Returns the new state vector
 */
 vector<double> Simulator::GetNewState(){
     return Xn1;
 }
 
 /**
-    \brief Returns the length of old state vector
+   \brief Returns the length of old state vector
 */
 int Simulator::GetOldStateSize(){
     return Xn.size();
 }
 
 /**
-    \brief Returns the length of new state vector
+   \brief Returns the length of new state vector
 */
 int Simulator::GetNewStateSize(){
     return Xn1.size();
 }
 
 /**
-    \brief Sets values in the state vector
-	\param i: position index in the array state
-	\param val: value to be set in the array state
+   \brief Sets values in the state vector
+   \param i: position index in the array state
+   \param val: value to be set in the array state
 */
 void Simulator::SetStateValue(int i, double val){
     Xn[i] = val;
 }
 
 /**
-    \brief Returns the vector of masses into the cylinder
+   \brief Returns the vector of masses into the cylinder
 */
 vector<double> Simulator::getCylinderMass(int icyl){
     return cylinders[icyl].getMass();
 }
 
 /**
-    \brief Sets values in the cylinder mass vector
+   \brief Sets values in the cylinder mass vector
 */
 void Simulator::setCylinderMass(int icyl, int i, double mass){
     cylinders[icyl].setMass(i, mass);
 }
 
 /**
-	\brief Print the Global State in "printData.txt", is only for control
+   \brief Print the Global State in "printData.txt", is only for control
 */
 void Simulator::printData(){
 	ofstream archim;
@@ -590,10 +749,9 @@ void Simulator::printData(){
 }
 
 /**
-	\brief Makes the struct for send data to Fortran
+   \brief Makes the struct for send data to Fortran
 */
 void Simulator::makeStruct(dataSim &data){
-	if(irpm>=rpms.size() || irpm<0) irpm=0;
 	data.time			= this->time;
 	data.dt				= this->dt;
 	data.dtheta_rpm		= this->dtheta_rpm;
@@ -609,11 +767,15 @@ void Simulator::makeStruct(dataSim &data){
 	data.rpm			= this->rpms[irpm];
 	data.rpm_ini		= this->rpms[0];
 	data.engine_type	= this->engine_type;
-	data.nstroke        = this->nstroke;
+	data.theta_cycle    = this->theta_cycle;
 	if(iteration%nappend==0)
 		data.save_extras = true;
 	else
 		data.save_extras = false;
+	data.ncyl	        = this->ncyl;
+	data.use_global_gas_prop = (this->use_global_gas_prop ? true : false);
+	data.ga_intake  = this->ga_intake;
+	data.ga_exhaust = this->ga_exhaust;
 }
 
 /**
@@ -705,7 +867,7 @@ void Simulator::makeStruct(dataSim &data){
 */
 
 /**
-	\brief Read the state from binary file, and assign it to Global State
+   \brief Read the state from binary file, and assign it to Global State
 */
 void Simulator::readState(){
 	int l;
@@ -722,12 +884,12 @@ void Simulator::readState(){
 			fread(&Xn[0],sizeof(double),l,archim);
 			fclose(archim);	
 		}else{
-		cout<<"Could not be opened the file: "<<filein_state<<endl;
+		cout<<"File "<<filein_state<<" can't be opened"<<endl;
 	}
 }
 
 /**
-	\brief Save the state to binary file
+   \brief Save the state to binary file
 */
 void Simulator::saveState(){
 	char* file = strconcat(this->folderRPM,(char *)"/");
@@ -741,64 +903,48 @@ void Simulator::saveState(){
 			fwrite(value,sizeof(double),l,archim);
 			fclose(archim);	
 		}else{
-		cout<<"Could not be opened the file: "<<file<<endl;
+		cout<<"File "<<file<<" can't be opened"<<endl;
 	}
 	free(file);
 }
 
 /**
-	\brief Create folder for save the data for the actual RPM
+   \brief Create folder for save the data for the actual RPM
 */
 void Simulator::createDir(bool newRPM){
 	if(!newRPM){
-		char mk[40]; 
-		strcpy(mk,(char*)"mkdir -p ");
-		char testsChar[40]; 
-		strcpy(testsChar,(char*)"tests/");
-		char folder[40]; 
-		strcat(strcpy(folder,testsChar),folder_name);
-		char makeFolder[100]; strcat(strcpy(makeFolder,mk),folder);
-		if(system(makeFolder)){
-			cout<<"Folder NOT created: "<<folder<<endl;
-			exit(1);
-		}
-		//strcopy(this->folderGral,folder);
-		this->folderGral = new char[strlen(folder)];
-		strcpy(this->folderGral,folder);
-		//free(folder); free(mk); free(testsChar); free(makeFolder);
+		char mk[] = "mkdir -p ";
+		char testsChar[] = "tests/";
+		char* folder = strconcat(testsChar,folder_name);
+		char* makeFolder = strconcat(mk,folder);	
+		system(makeFolder);
+		strcopy(this->folderGral,folder);
 	}
 	else{
-		char mk[40]; strcpy(mk,(char*)"mkdir -p ");
+		char mk[] = "mkdir -p ";
+		char* folder = strconcat(this->folderGral,(char*)"/RPM_");
 		char* out = int2char(rpms[irpm]);
-		//char out[10]; sprintf(out, "%i",rpms[irpm]);
-		char folder[40]; strcat(strcat(strcpy(folder,this->folderGral),(char*)"/RPM_"),out);
-		char makeFolderRPM[100]; strcat(strcpy(makeFolderRPM,mk),folder);
-		if(system(makeFolderRPM)){
-			cout<<"Folder NOT created: "<<folder<<endl;
-			exit(1);
-		}
-		//strcopy(this->folderRPM,folder);
-		this->folderRPM = new char[strlen(folder)];
-		strcpy(this->folderRPM,folder);		
+		folder = strconcat(folder,out);
+		char* makeFolderRPM = strconcat(mk,folder);		
+		system(makeFolderRPM);
+		strcopy(this->folderRPM,folder);
 		cout<<"Folder created: "<<this->folderRPM<<endl;
-		//free(folder); free(out); free(mk);free(makeFolderRPM);
 		free(out);
-
 	}
 }
 
 /**
-	\brief Open Units files in Fortran for save extra's histo
+   \brief Open Units files in Fortran for save extra's histo
 */
 void Simulator::openFortranUnits(){
 	int nu = 8; //empiezo desde la unidad 8	
 	for(int i=0;i<ncyl;i++){
 		if(this->cylinders[i].extras){
 			this->cylinders[i].nunit = nu;
-			char indx[3];  
-			sprintf(indx, "%i", i);
-			char file[100];
-			strcat(strcat(strcat(strcpy(file,folderRPM),(char*)"/cyl_extras_"),indx),(char*)".txt");
+			char* indx = int2char(i);
+			char* file = strconcat(this->folderRPM,(char*)"/cyl_extras_");
+			file = strconcat(file,indx);
+			file = strconcat(file,(char*)".txt");
 			this->cylinders[i].openFortranUnit(file);
 			nu++;
 		}
@@ -806,10 +952,10 @@ void Simulator::openFortranUnits(){
 	for(int i=0;i<ntank;i++){
 		if(this->tanks[i].extras){
 			this->tanks[i].nunit = nu;
-			char indx[3];  
-			sprintf(indx, "%i", i);
-			char file[100];
-			strcat(strcat(strcat(strcpy(file,folderRPM),(char*)"/tank_extras_"),indx),(char*)".txt");
+			char* indx = int2char(i);
+			char* file = strconcat(this->folderRPM,(char*)"/tank_extras_");
+			file = strconcat(file,indx);
+			file = strconcat(file,(char*)".txt");
 			this->tanks[i].openFortranUnit(file);
 			nu++;
 		}
@@ -817,7 +963,7 @@ void Simulator::openFortranUnits(){
 }
 
 /**
-	\brief Close the File Units opened for save extra's histo
+   \brief Close the File Units opened for save extra's histo
 */
 void Simulator::closeFortranUnits(){
 	for(int i=0;i<ncyl;i++){
@@ -833,116 +979,122 @@ void Simulator::closeFortranUnits(){
 }
 
 /**
-	\brief Save the histo for all components
-	\param first: Indicates if open new (true) or append (false) a file
+   \brief Save the histo for all components
+   \param first: Indicates if open new (true) or append (false) a file
 */
 void Simulator::saveHisto(bool first){
 	vector<double>aux;
 	for(int k=0;k<ntubes;k++){
-		char indx[3];  
-		sprintf(indx, "%i", k);
-		char file[100];
-		strcat(strcat(strcat(strcpy(file,folderRPM),(char*)"/tube_"),indx),(char*)".txt");
+		char* indx = int2char(k);
+		char* file = strconcat(folderRPM,(char*)"/tube_");
+		file = strconcat(file,indx);
+		file = strconcat(file,(char*)".txt");
 		tubes[k].saveHisto(first,file,icycle,crank_angle,time,tubes[k].xnod);
 	}
 	for(int k=0;k<ncyl;k++){
-		char indx[3];  
-		sprintf(indx, "%i", k);
-		char file[100];
-		strcat(strcat(strcat(strcpy(file,folderRPM),(char*)"/cyl_"),indx),(char*)".txt");
+		char* indx = int2char(k);
+		char* file = strconcat(folderRPM,(char*)"/cyl_");
+		file = strconcat(file,indx);
+		file = strconcat(file,(char*)".txt");
 		cylinders[k].saveHisto(first,file,icycle,crank_angle,time,aux);
 	}
 	for(int k=0;k<ntank;k++){
-		char indx[3];  
-		sprintf(indx, "%i", k);
-		char file[100];
-		strcat(strcat(strcat(strcpy(file,folderRPM),(char*)"/tank_"),indx),(char*)".txt");
+		char* indx = int2char(k);
+		char* file = strconcat(folderRPM,(char*)"/tank_");
+		file = strconcat(file,indx);
+		file = strconcat(file,(char*)".txt");
 		tanks[k].saveHisto(first,file,icycle,crank_angle,time,aux);
 	}
 	for(int k=0;k<njunc;k++){
-		char indx[3];  
-		sprintf(indx, "%i", k);
-		char file[100];
-		strcat(strcat(strcat(strcpy(file,folderRPM),(char*)"/junc_"),indx),(char*)".txt");
+		char* indx = int2char(k);
+		char* file = strconcat(folderRPM,(char*)"/junc_");
+		file = strconcat(file,indx);
+		file = strconcat(file,(char*)".txt");
 		junctions[k].saveHisto(first,file,icycle,crank_angle,time,aux);
 	}
 }
 
 /**
-	\brief Compress files to .bz2 and remove *.txt
+   \brief Compress files to .bz2 and remove *.txt
 */
 void Simulator::compressFiles(){
 	for(int k=0;k<ntubes;k++){
-		char indx[3];  
-		sprintf(indx, "%i", k);
-		char file[100];
-		strcat(strcat(strcat(strcpy(file,folderRPM),(char*)"/tube_"),indx),(char*)".txt");
-		char sys[200];
-		strcat(strcat(strcat(strcpy(sys,(char*) "tar -jcvf "),file),(char*)".tar.bz2 "),file);
+		char* indx = int2char(k);
+		char* file = strconcat(folderRPM,(char*)"/tube_");
+		file = strconcat(file,indx);
+		file = strconcat(file,(char*)".txt");
+		char* sys = strconcat((char*) "tar -jcvf ",file);
+		sys = strconcat(sys,(char*)".tar.bz2 ");
+		sys = strconcat(sys,file);
 		system(sys);
-		char rm[100]; strcat(strcpy(rm,(char*) "rm "),file);
+		char* rm =  strconcat((char*) "rm ",file);
 		system(rm);
 	}
 	for(int k=0;k<ncyl;k++){
-		char indx[3];  
-		sprintf(indx, "%i", k);
-		char file[100];
-		strcat(strcat(strcat(strcpy(file,folderRPM),(char*)"/cyl_"),indx),(char*)".txt");
-		char sys[200];
-		strcat(strcat(strcat(strcpy(sys,(char*) "tar -jcvf "),file),(char*)".tar.bz2 "),file);
+		char* indx = int2char(k);
+		char* file = strconcat(folderRPM,(char*)"/cyl_");
+		file = strconcat(file,indx);
+		file = strconcat(file,(char*)".txt");
+		char* sys = strconcat((char*) "tar -jcvf ",file);
+		sys = strconcat(sys,(char*)".tar.bz2 ");
+		sys = strconcat(sys,file);
 		system(sys);
-		char rm[100]; strcat(strcpy(rm,(char*) "rm "),file);
+		char* rm =  strconcat((char*) "rm ",file);
 		system(rm);
 		if(this->cylinders[k].extras){
-			char file2[100];
-			strcat(strcat(strcat(strcpy(file2,folderRPM),(char*)"/cyl_extras_"),indx),(char*)".txt");
-			char sys2[200];
-			strcat(strcat(strcat(strcpy(sys2,(char*) "tar -jcvf "),file2),(char*)".tar.bz2 "),file2);
+			char* file2 = strconcat(folderRPM,(char*)"/cyl_extras_");
+			file2 = strconcat(file2,indx);
+			file2 = strconcat(file2,(char*)".txt");
+			char* sys2 = strconcat((char*) "tar -jcvf ",file2);
+			sys2 = strconcat(sys2,(char*)".tar.bz2 ");
+			sys2 = strconcat(sys2,file2);
 			system(sys2);
-			char rm2[100]; strcat(strcpy(rm2,(char*) "rm "),file2);
+			char* rm2 =  strconcat((char*) "rm ",file2);
 			system(rm2);
 		}
 	}
 	for(int k=0;k<ntank;k++){
-		char indx[3];  
-		sprintf(indx, "%i", k);
-		char file[100];
-		strcat(strcat(strcat(strcpy(file,folderRPM),(char*)"/tank_"),indx),(char*)".txt");
-		char sys[200];
-		strcat(strcat(strcat(strcpy(sys,(char*) "tar -jcvf "),file),(char*)".tar.bz2 "),file);
+		char* indx = int2char(k);
+		char* file = strconcat(folderRPM,(char*)"/tank_");
+		file = strconcat(file,indx);
+		file = strconcat(file,(char*)".txt");
+		char* sys = strconcat((char*) "tar -jcvf ",file);
+		sys = strconcat(sys,(char*)".tar.bz2 ");
+		sys = strconcat(sys,file);
 		system(sys);
-		char rm[100]; strcat(strcpy(rm,(char*) "rm "),file);
+		char* rm =  strconcat((char*) "rm ",file);
 		system(rm);
 		if(this->tanks[k].extras){
-			char file2[100];
-			strcat(strcat(strcat(strcpy(file2,folderRPM),(char*)"/tank_extras_"),indx),(char*)".txt");
-			char sys2[200];
-			strcat(strcat(strcat(strcpy(sys2,(char*) "tar -jcvf "),file2),(char*)".tar.bz2 "),file2);
+			char* file2 = strconcat(folderRPM,(char*)"/tank_extras_");
+			file2 = strconcat(file2,indx);
+			file2 = strconcat(file2,(char*)".txt");
+			char* sys2 = strconcat((char*) "tar -jcvf ",file2);
+			sys2 = strconcat(sys2,(char*)".tar.bz2 ");
+			sys2 = strconcat(sys2,file2);
 			system(sys2);
-			char rm2[100]; strcat(strcpy(rm2,(char*) "rm "),file2);
-			system(rm2);	
+			char* rm2 =  strconcat((char*) "rm ",file);
+			system(rm2);		
 		}
 	}
 	for(int k=0;k<njunc;k++){
-		char indx[3];  
-		sprintf(indx, "%i", k);
-		char file[100];
-		strcat(strcat(strcat(strcpy(file,folderRPM),(char*)"/junc_"),indx),(char*)".txt");
-		char sys[200];
-		strcat(strcat(strcat(strcpy(sys,(char*) "tar -jcvf "),file),(char*)".tar.bz2 "),file);
+		char* indx = int2char(k);
+		char* file = strconcat(folderRPM,(char*)"/junc_");
+		file = strconcat(file,indx);
+		file = strconcat(file,(char*)".txt");
+		char* sys = strconcat((char*) "tar -jcvf ",file);
+		sys = strconcat(sys,(char*)".tar.bz2 ");
+		sys = strconcat(sys,file);
 		system(sys);
-		char rm[100]; strcat(strcpy(rm,(char*) "rm "),file);
+		char* rm =  strconcat((char*) "rm ",file);
 		system(rm);
 	}
 }
 
 /**
-	\brief Generate one header file for rpm (replace the lastest). Support a stop in run.
+   \brief Generate one header file for rpm (replace the lastest). Support a stop in run.
 */
 void Simulator::createHeaderFile(){
-	//char* file = strconcat(this->folderGral,(char *)"/header.py");
-	char file[100]; 
-	strcat(strcpy(file,this->folderGral),(char *)"/header.py");
+	char* file = strconcat(this->folderGral,(char *)"/header.py");
 	ofstream archim;
 	archim.open(file,ios::trunc);
 	
@@ -963,7 +1115,7 @@ void Simulator::createHeaderFile(){
 			else
 				archim<<this->final_times[i]<<"]"<<endl<<endl;
 		}
-		archim<<"nstroke = "<<nstroke<<endl;
+		archim<<"nstroke = "<<theta_cycle/pi<<endl;
 		archim<<"ncycles = "<<ncycles<<endl;
 		archim<<"rho = "<<Xn[0]<<endl;
 		archim<<"Globals = dict()"<<endl;
@@ -1061,5 +1213,4 @@ void Simulator::createHeaderFile(){
 		}
 		archim.close();
 	}
-	//free(file);
 }

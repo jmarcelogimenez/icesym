@@ -7,11 +7,12 @@ module def_tube
   type, BIND(C) :: this
      integer(C_INT) :: nnod, ndof,nnod_input
      real(C_DOUBLE) :: longitud, dt_max
+     integer(C_INT) :: t_left,t_right, type
   end type this
 
 contains
-   subroutine state_initial_tube(myData, atm, globalData, state_ini, xnod, Area, Twall, curvature, dAreax) BIND(C)
-
+  subroutine state_initial_tube(myData, atm, globalData, state_ini, xnod, Area, Twall, curvature, dAreax) BIND(C)
+    
     use, intrinsic :: ISO_C_BINDING
     type(this)::myData
     type(dataSim)::globalData
@@ -30,6 +31,8 @@ contains
   subroutine solve_tube(myData, globalData, state, new_state, xnod, hnod, &
        Area, Twall, curvature, dAreax, itube) BIND(C)
 
+    use def_valve
+    use gasdyn_utils
     use, intrinsic :: ISO_C_BINDING
     type(this)::myData
     type(dataSim)::globalData
@@ -38,14 +41,26 @@ contains
     real(C_DOUBLE) :: new_state(0:(myData%nnod*myData%ndof)-1)
     real(C_DOUBLE), dimension(myData%nnod-1) :: hnod
     real(C_DOUBLE), dimension(myData%nnod) :: xnod, Area, Twall, curvature, dAreax
-    integer :: i,j
+    integer :: i,j,fixed
     real*8 :: ga,dt,dx
     real*8, dimension(5) :: prop_g
     real*8, dimension(myData%nnod-1) :: tau,tau1
     real*8, dimension(3,myData%nnod) :: U,Up,U_old,Fa,H,F_TVD
     real*8, dimension(3,myData%nnod_input) :: Uref
+    real*8, dimension(3) :: Upipe, Uthroat, Urv, Upv, RHS
+    real*8, dimension(3,2) :: Upv2
+
+    integer :: scheme, solved_case
     
-    ga = globalData%ga
+    scheme = 1
+
+    if(myData%type.eq.1) then
+       ! at intake system
+       ga = globalData%ga_intake
+    else
+       ! at exhaust system
+       ga = globalData%ga_exhaust
+    end if
     dt = globalData%dt
 
     prop_g(2) = ga
@@ -72,12 +87,14 @@ contains
     call pv2cv(Up, U, ga, myData%nnod)
     U_old = U
 
-    forall(i = 1:myData%nnod, j = 1:3)
-       U(j,i) = U(j,i)*Area(i)
-    end forall
+    if(scheme.eq.0) then
+       forall(i = 1:myData%nnod, j = 1:3)
+          U(j,i) = U(j,i)*Area(i)
+       end forall
+    end if
 
-    call fluxa(U, Area, ga, myData%nnod, 0, Fa)
-    call source(U, dAreax, Area, prop_g, Twall, myData%nnod, H, 0)
+    call fluxa(U, Area, ga, myData%nnod, scheme, Fa)
+    call source(U, dAreax, Area, prop_g, Twall, myData%nnod, H, scheme)
     call fluxTVD(U, Fa, H, dt, tau, ga, myData%nnod, F_TVD)
 
     forall(i = 2:myData%nnod-1, j = 1:3)
@@ -86,17 +103,53 @@ contains
 
     U(:,1)           = U(:,2)
     U(:,myData%nnod) = U(:,myData%nnod-1)
-
-    forall(i = 1:myData%nnod, j = 1:3)
-       U(j,i) = U(j,i)/Area(i)
-    end forall
+    
+    if(scheme.eq.0) then
+       forall(i = 1:myData%nnod, j = 1:3)
+          U(j,i) = U(j,i)/Area(i)
+       end forall
+    end if
 
     ! apply boundary conditions
+    fixed = 0
     dx = hnod(1)
-    call bc_tubes(U(:,1), Uref(:,1), U_old(:,2), ga, -1, dt, dx)
+    if(myData%t_left.eq.0) then
+       call cv2pv(U_old(:,1), Upv, ga, 1)
+       Upv2(:,1) = Upv
+       Upv2(:,2) = Upv
+       Urv(1) = Uref(1,1)
+       Urv(2) = Uref(3,1)+0.5*Uref(1,1)*Uref(2,1)**2.
+       Urv(3) = Uref(3,1)/Uref(1,1)/globalData%R_gas
+
+       call rhschar(Upv, Area(1), dAreax(1), Twall(1), ga, &
+            globalData%R_gas, globalData%dt, &
+            globalData%viscous_flow, globalData%heat_flow, RHS)
+
+       call solve_valve_implicit(Urv, Upv2, -1, 0.8*Area(1), &
+            Area(1), RHS, ga, Upipe, Uthroat, solved_case)
+       Uref(:,1) = Upipe
+    end if
+    call bc_tubes(U(:,1), Uref(:,1), U_old(:,2), ga, -1, dt, dx, fixed)
+    fixed = 0
     dx = hnod(myData%nnod-1)
+    if(myData%t_right.eq.0) then
+       call cv2pv(U_old(:,myData%nnod), Upv, ga, 1)
+       Upv2(:,1) = Upv
+       Upv2(:,2) = Upv
+       Urv(1) = Uref(1,2)
+       Urv(2) = Uref(3,2)+0.5*Uref(1,2)*Uref(2,2)**2.
+       Urv(3) = Uref(3,2)/Uref(1,2)/globalData%R_gas
+
+       call rhschar(Upv, Area(myData%nnod), dAreax(myData%nnod), &
+            Twall(myData%nnod), ga, globalData%R_gas, globalData%dt, &
+            globalData%viscous_flow, globalData%heat_flow, RHS)
+       
+       call solve_valve_implicit(Urv, Upv2, 1, 0.8*Area(myData%nnod), &
+            Area(myData%nnod), RHS, ga, Upipe, Uthroat, solved_case)
+       Uref(:,2) = Upipe
+    end if
     call bc_tubes(U(:,myData%nnod), Uref(:,2), &
-         U_old(:,myData%nnod-1), ga, 1, dt, dx)
+         U_old(:,myData%nnod-1), ga, 1, dt, dx, fixed)
     
     ! From conservative basis to primitive basis
     call cv2pv(U, Up, ga, myData%nnod)
@@ -107,10 +160,10 @@ contains
        enddo
     enddo
 
-    ! myData%dt_max = dt
-    call critical_dt(globalData, Up, hnod, myData%nnod, myData%dt_max)
+    call critical_dt(globalData, Up, hnod, myData%nnod, ga, myData%dt_max)
 
-    call actualize_valves(itube, Area, Twall, dAreax, myData%nnod)
+    call actualize_valves(itube, Area, Twall, dAreax, myData%nnod, &
+         U_old, hnod, ga, dt)
     
   end subroutine solve_tube
   
@@ -466,7 +519,6 @@ contains
     g1    =  ga-1.
 
     ucell =  U(2,:)/U(1,:)
-    ! pres  =  (U(3,:)-0.5*U(1,:)*U(2,:))*g1 ! CHEQUEAR
     pres  =  (U(3,:)-0.5*U(2,:)**2/U(1,:))*g1
     cc    =  dsqrt(ga*pres/U(1,:))
 
@@ -565,7 +617,7 @@ contains
 
   end subroutine ajac
 
-  subroutine bc_tubes(U, Uref, Uin, ga, normal, dt, dx)
+  subroutine bc_tubes(U, Uref, Uin, ga, normal, dt, dx, fixed)
     !
     !  WARNING! Saco las bc Dirichlet, todas son abso
     !
@@ -574,7 +626,7 @@ contains
     !
     implicit none
 
-    integer, intent(in) :: normal
+    integer, intent(in) :: normal,fixed
     real*8, intent(in) :: ga,dt,dx
     real*8, dimension(3,1), intent(in) :: Uref,Uin
     real*8, dimension(3,1), intent(inout) :: U
@@ -585,16 +637,30 @@ contains
 
     unsteady_absorbent = .false.
 
-    call pv2cv(Uref, Uref_C, ga, 1)
-    
-    if(unsteady_absorbent) then
-       call bc_abso_unsteady(U, normal, Uin, Uref_C, ga, Ubc, dt, dx)
-    else
-       call bc_abso(U, normal, Uin, Uref_C, ga, Ubc)
-    endif
+    if(fixed.ne.0) then
 
-    alfa = 0.
-    U = alfa*U+(1.-alfa)*Ubc
+       call cv2pv(U, Uref_C, ga, 1)
+       Uref_C(3,1) = Uref(3,1)
+       if(Uref_C(2,1)*normal.lt.0) then
+          Uref_C(1,1) = Uref(1,1)
+       end if
+       call pv2cv(Uref_C, Ubc, ga, 1)
+       U = Ubc
+
+    else
+
+       call pv2cv(Uref, Uref_C, ga, 1)
+    
+       if(unsteady_absorbent) then
+          call bc_abso_unsteady(U, normal, Uin, Uref_C, ga, Ubc, dt, dx)
+       else
+          call bc_abso(U, normal, Uin, Uref_C, ga, Ubc)
+       endif
+
+       alfa = 0.
+       U = alfa*U+(1.-alfa)*Ubc
+       
+    end if
 
   end subroutine bc_tubes
 
@@ -675,7 +741,6 @@ contains
     vref(2,:) = P1(2,:)*Uref(1,:)+P1(5,:)*Uref(2,:)+P1(8,:)*Uref(3,:)
     vref(3,:) = P1(3,:)*Uref(1,:)+P1(6,:)*Uref(2,:)+P1(9,:)*Uref(3,:)
 
-    !where(D.le.0.0) dvdx = (vref-vin)/dx
     where(D.le.0.0) dvdx = (vref-v)/dx
     where(D.gt.0.0) dvdx = (v-vin)/dx
 
@@ -687,17 +752,18 @@ contains
 
   end subroutine bc_abso_unsteady
 
-  subroutine critical_dt(globalData, Up, hnod, nnod, dt)
+  subroutine critical_dt(globalData, Up, hnod, nnod, ga, dt)
 
     implicit none
 
     integer, intent(in) :: nnod
+    real*8, intent(in) :: ga
     real*8, dimension(nnod-1), intent(in) :: hnod
     real*8, dimension(3,nnod), intent(in) :: Up
     type(dataSim), intent(in) :: globalData
     real*8, intent(out) :: dt
 
-    real*8 :: dtmin,dt_rpm,hmin,velmax,sonic_speed_min,ratio_rpm
+    real*8 :: dtmin, dt_rpm, hmin, velmax, sonic_speed_min, ratio_rpm
     real*8, dimension(nnod) :: sonic_speed,vel_star
 
     if(globalData%rpm.gt.0.0d0)then
@@ -708,13 +774,16 @@ contains
        ratio_rpm = 1.
     endif
 
-    sonic_speed = globalData%ga*Up(3,:)/Up(1,:)
+    sonic_speed = ga*Up(3,:)/Up(1,:)
 
     sonic_speed_min = minval(sonic_speed)
 
     if(sonic_speed_min.le.0.0d0) then
        write(6,*)' Negative sonic speed @ critical_dt , min(c)=', &
             sonic_speed_min
+       write(*,*) 'U - >'
+       write(*,*) Up
+       stop
     endif
 
     vel_star = dsqrt(abs(sonic_speed))+dabs(Up(2,:))
@@ -726,7 +795,8 @@ contains
 
  end subroutine critical_dt
 
- subroutine actualize_valves(itube, Area, Twall, dAreax, nnod)
+ subroutine actualize_valves(itube, Area, Twall, dAreax, nnod, &
+      Uc, hnod, ga, dt)
    !
    !
    !
@@ -735,9 +805,18 @@ contains
     implicit none
 
     integer, intent(in) :: itube, nnod
+    real*8, intent(in) :: ga,dt
     real*8, dimension(nnod), intent(in) :: dAreax,Area,Twall
+    real*8, dimension(nnod-1), intent(in) :: hnod
+    real*8, dimension(3,nnod), intent(in) :: Uc
 
-    integer :: i,k
+    integer :: i,j,k
+    real*8 :: dx_S,dx_R ! ,vchar_plus,vchar_minus,vchar_0
+    real*8, dimension(2) :: vchar_plus,vchar_minus,vchar_0
+    real*8, dimension(3,2) :: U
+
+    dx_S = 0.
+    dx_R = 0.
 
     if(size(cyl).gt.0) then
        do k=1,size(cyl),1
@@ -746,6 +825,28 @@ contains
                 cyl(k)%intake_valves(i)%Area_tube   = Area(nnod)
                 cyl(k)%intake_valves(i)%dAreax_tube = dAreax(nnod)
                 cyl(k)%intake_valves(i)%twall_tube  = Twall(nnod)
+
+                call cv2pv(Uc(:,nnod-1:nnod), U, ga, 2)
+
+                dx_S = 0.
+                dx_R = 0.
+
+                vchar_0 = U(2,:)
+                vchar_plus = U(2,:)+dsqrt(ga*U(3,:)/U(1,:))
+                dx_S = vchar_plus(2)*dt/ &
+                     (1.+dt/hnod(nnod-1)*(vchar_plus(2)-vchar_plus(1)))
+                if(vchar_0(2).gt.0.) then
+                   dx_R = vchar_0(2)*dt/ &
+                        (1.+dt/hnod(nnod-1)*(vchar_0(2)-vchar_0(1)))
+                else
+                   dx_R = -vchar_0(2)*dt
+                end if
+                do j=1,3
+                   cyl(k)%intake_valves(i)%state_ref(j,1) = &
+                        U(j,2)-dx_R/hnod(nnod-1)*(U(j,2)-U(j,1))
+                   cyl(k)%intake_valves(i)%state_ref(j,2) = &
+                        U(j,2)-dx_S/hnod(nnod-1)*(U(j,2)-U(j,1))
+                end do
              endif
           enddo
           do i=1,cyl(k)%nve,1
@@ -753,6 +854,33 @@ contains
                 cyl(k)%exhaust_valves(i)%Area_tube   = Area(1)
                 cyl(k)%exhaust_valves(i)%dAreax_tube = dAreax(1)
                 cyl(k)%exhaust_valves(i)%twall_tube  = Twall(1)
+
+                call cv2pv(Uc(:,1:2), U, ga, 2)
+
+                dx_S = 0.
+                dx_R = 0.
+
+                vchar_0 = U(2,:)
+                vchar_minus = U(2,:)-dsqrt(ga*U(3,:)/U(1,:))
+                dx_S = vchar_minus(1)*dt/ &
+                     (1.+dt/hnod(1)*(vchar_minus(2)-vchar_minus(1)))
+                if(vchar_0(1).lt.0.) then
+                   dx_R = vchar_0(1)*dt/ &
+                        (1.+dt/hnod(1)*(vchar_0(2)-vchar_0(1)))
+                else
+                   dx_R = -vchar_0(1)*dt
+                end if
+                do j=1,3
+                   cyl(k)%exhaust_valves(i)%state_ref(j,1) = &
+                        U(j,1)-dx_R/hnod(1)*(U(j,2)-U(j,1))
+                   cyl(k)%exhaust_valves(i)%state_ref(j,2) = &
+                        U(j,1)-dx_S/hnod(1)*(U(j,2)-U(j,1))
+                end do
+                if(any(isnan(cyl(k)%exhaust_valves(i)%state_ref(j,:)))) then
+                   write(*,*) 'CYL: ', k, ' - U: ', U, ' - dx: ', &
+                        dx_S/hnod(1), dx_R/hnod(1)
+                   write(*,*) Uc
+                end if
              endif
           enddo
        enddo

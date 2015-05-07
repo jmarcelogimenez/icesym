@@ -31,22 +31,24 @@
 using namespace std;
 
 /**
- Componente genérico
+   Generic component
  */
 class Component
 {
-public:
+ public:
 	bool implicit;					/**< Resolution Type: implicit = true, explicit = false */
 	unsigned int nnod;				/**< Number of own nodes */
-    unsigned int ndof;				/**< Number of degress of freedom */
-    unsigned int nnod_input;		/**< Number of Referency nodes */
+    unsigned int ndof;				/**< Number of deegres of freedom */
+    unsigned int nnod_input;		/**< Number of reference nodes */
 	vector<double> state_ini;		/**< Array with the initial state, only used if get_state = 0 */
-	vector<unsigned int> i_state;   /**< Indexs to global state in time "n"*/
+	vector<unsigned int> i_state;   /**< Indexes to global state at time "n"*/
+	vector<unsigned int> i_new_state; /**< Indexs to global state in time "n+1" */
 	vector<double> state;			/**< Actual component state ((nnod+nnod_input)*ndof) */
 	vector<double> new_state;	   	/**< Next component state (nnod*ndof) */
-	vector<int> histo;				/**< Node's indexs to save state*/
+	vector<int> histo;				/**< Node's indexes to save state*/
 	char* label;					/**< Identificator for this element */
-	Component(unsigned int nnod, unsigned int ndof, unsigned int nnod_input, int type, vector<double>& state_ini, vector<int>& histo, char* label);
+	Component(unsigned int nnod, unsigned int ndof, unsigned int nnod_input, int type, 
+			  vector<double> state_ini, vector<int> histo, char* label);
 	void solver(dataSim &globalData, vector<double>&Xn, vector<double>&Xn1, bool is_tube);
 	Component(){};
 	// Component(const Component&);
@@ -54,13 +56,13 @@ public:
 	void Make(vector<double> &Xn, unsigned int &iXn, int get_state);
 	virtual void calculate_state(double* atm){}; 
 	void saveHisto(bool first, char* file, int icycle, double crank_angle, double time,vector<double> &xnod);
-protected:
-
-private:
-	vector<unsigned int>  i_new_state; /**< Indexs to global state in time "n+1" */
-	void build(vector<double>&Xn); 
-	virtual void calculate(dataSim &globalData){}; 
-	void actualize(vector<double>&Xn1,vector<double>&Xn, bool is_tube); 
+ protected:
+	
+ private:
+	// vector<unsigned int>  i_new_state; /**< Indexs to global state in time "n+1" */
+	void build(vector<double>&Xn);
+	virtual void calculate(dataSim &globalData){};
+	void actualize(vector<double>&Xn1,vector<double>&Xn, bool is_tube);
 	vector<double> f(vector<double>&state, double t){vector<double> dx; return dx;};
 	void F(vector<double>& state, vector<double>& new_state,double t){};
 };

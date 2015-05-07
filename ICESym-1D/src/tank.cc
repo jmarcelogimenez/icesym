@@ -23,9 +23,12 @@
    	\brief Tank's Constructor
    	\param all each Tank attribute 
 */
-Tank::Tank(unsigned int nnod, unsigned int ndof, unsigned int nnod_input, int implicit, vector<double> state_ini, 
-	        vector<int> histo, char* label, double Volume, double mass, double h_film, double Area_wall, double T_wall,
-	 		vector<int> type_end,vector<double> Cd_ports, vector<int> int2tube, vector<int> exh2tube, int extras):
+Tank::Tank(unsigned int nnod, unsigned int ndof, unsigned int nnod_input, 
+		   int implicit, vector<double> state_ini, vector<int> histo, 
+		   char* label, double Volume, double mass, double h_film, 
+		   double Area_wall, double T_wall, vector<int> type_end,
+		   vector<double> Cd_ports, vector<int> int2tube, vector<int> exh2tube,
+		   int extras, int type):
 	Component(nnod,ndof,nnod_input,implicit,state_ini,histo,label){
 		this->Volume	= Volume;
 		this->mass		= mass;
@@ -40,7 +43,7 @@ Tank::Tank(unsigned int nnod, unsigned int ndof, unsigned int nnod_input, int im
 		this->int2tube  = int2tube;
 		this->exh2tube  = exh2tube;
 		this->extras	= extras;
-		
+		this->type      = type;
 }
 
 /**
@@ -48,20 +51,20 @@ Tank::Tank(unsigned int nnod, unsigned int ndof, unsigned int nnod_input, int im
 */
 Tank::Tank(Tank* t):Component(t->nnod,t->ndof,t->nnod_input,t->implicit,t->state_ini,t->histo, t->label){
 
-		this->Volume	= t->Volume;
-		this->mass		= t->mass;
-		this->h_film	= t->h_film;
-		this->Area_wall = t->Area_wall;
-		this->T_wall	= t->T_wall;
-		this->type_end  = t->type_end;
-		this->Area_tube = t->Area_tube;
-		this->twall_tube = t->twall_tube;
+		this->Volume	  = t->Volume;
+		this->mass		  = t->mass;
+		this->h_film	  = t->h_film;
+		this->Area_wall   = t->Area_wall;
+		this->T_wall	  = t->T_wall;
+		this->type_end    = t->type_end;
+		this->Area_tube   = t->Area_tube;
+		this->twall_tube  = t->twall_tube;
 		this->dAreax_tube = t->dAreax_tube;
-		this->Cd_ports  = t->Cd_ports;
-		this->int2tube  = t->int2tube;
-		this->exh2tube  = t->exh2tube;
-		this->extras	= t->extras;
-		
+		this->Cd_ports    = t->Cd_ports;
+		this->int2tube    = t->int2tube;
+		this->exh2tube    = t->exh2tube;
+		this->extras	  = t->extras;
+		this->type  	  = t->type;
 }
 
 
@@ -78,6 +81,7 @@ void Tank::makeStruct(dataTank &data){
 		data.Area_wall  = this->Area_wall;
 		data.T_wall		= this->T_wall;
 		data.nunit 		= this->nunit;
+		data.type 		= this->type;
 }
 
 /**
