@@ -1,0 +1,3 @@
+ICESym (Internal Combustion Engine Simulator) is a simulation software made of two independents components for engines and flux through tubes simulations.
+> The first component is the numerical solver called ICESym-1D, and is written in three languages (Cython, C++ and Fortran) that work together.
+> The second component is a Graphical User Interface called ICESym-GUI, and it allows at user to make simulations test easily and fast.
