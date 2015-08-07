@@ -43,7 +43,8 @@ class Home(wx.Frame):
     saved = 1
     calcEngine = 1
     pathCode = "../ICESym-1D/src/"
-    pathTests = "../ICESym-1D/src/"
+    # pathTests = "../ICESym-1D/src/"
+    pathTests = "./"
     names = ['Cylinders', 'Tubes', 'Tanks', 'Valves', 'Junctions', 'Atmospheres']
     itemsTree = dict()
     def __init__(self, *args, **kwds):
@@ -81,6 +82,8 @@ class Home(wx.Frame):
         self.Edit.AppendItem(self.EditCopy)
         self.EditPaste = wx.MenuItem(self.Edit, 61, "Paste", "Paste the object in clipboard", wx.ITEM_NORMAL)
         self.Edit.AppendItem(self.EditPaste)
+        self.EditDelete = wx.MenuItem(self.Edit, 61, "Delete", "Delete the object in clipboard", wx.ITEM_NORMAL)
+        self.Edit.AppendItem(self.EditDelete)
         self.home_menubar.Append(self.Edit, "Edit")
 
         self.Simulation = wx.Menu()
@@ -168,6 +171,7 @@ class Home(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnMenuFileExit, self.FileExit)
         self.Bind(wx.EVT_MENU, self.OnMenuEditCopy, self.EditCopy)
         self.Bind(wx.EVT_MENU, self.OnMenuEditPaste, self.EditPaste)
+        self.Bind(wx.EVT_MENU, self.OnMenuEditDelete, self.EditDelete)
         self.Bind(wx.EVT_MENU, self.OnMenuSimulationConfigure, self.SimulationConfigure)
         self.Bind(wx.EVT_MENU, self.OnMenuSimulationRun, self.SimulationRun)
         self.Bind(wx.EVT_MENU, self.OnMenuSimulationPost, self.SimulationPost)
@@ -247,6 +251,7 @@ class Home(wx.Frame):
         if dlg.ShowModal() == wx.ID_OK:
             namefile = dlg.GetPath()
             self.readFile(namefile)
+            self.SetTitle("ICESym-GUI: "+namefile)
         dlg.Destroy()
 
 
@@ -255,7 +260,7 @@ class Home(wx.Frame):
 			wx.MessageBox("You must Configure this Simulation Before", "Error")
 		else:
 			if self.thisFile == "untitled.py":
-				dlg = wx.FileDialog(self, message="Save File", defaultDir="./saves",defaultFile=self.thisFile, wildcard="*.py", style=wx.SAVE|wx.OVERWRITE_PROMPT)
+				dlg = wx.FileDialog(self, message="Save File", defaultDir="./saves",defaultFile=self.thisFile, wildcard="*.py", style=wx.SAVE)
 				if dlg.ShowModal() == wx.ID_OK:
 					namefile = dlg.GetPath()
 					self.saveFile(namefile)
@@ -267,7 +272,7 @@ class Home(wx.Frame):
 		if self.Simulator == []:
 			wx.MessageBox("You must Configure this Simulation Before", "Error")
 		else:
-			dlg = wx.FileDialog(self, message="Save File As", defaultDir="./saves",defaultFile=self.thisFile, wildcard="*.py", style=wx.SAVE)
+			dlg = wx.FileDialog(self, message="Save File As", defaultDir="./saves",defaultFile=self.thisFile, wildcard="*.py", style=wx.SAVE|wx.OVERWRITE_PROMPT)
 			if dlg.ShowModal() == wx.ID_OK:
 				namefile = dlg.GetPath()
 				self.saveFile(namefile)
@@ -374,6 +379,28 @@ class Home(wx.Frame):
                 self.addShape(element,index)
             self.copynumber = self.copynumber + 1
 
+    def OnMenuEditDelete(self, event):
+        (shapeObject,index) = self.findSelected()
+        if shapeObject==-1 and index == -1:
+            return
+            
+        if isinstance(shapeObject,ogl.BitmapShape):
+            if self.canDeleteShape(index)==1:
+                md = wx.MessageDialog(None, 'Are you Sure to delete this Element?','Confirm', wx.YES_NO | wx.ICON_QUESTION)
+                res = md.ShowModal()
+                if res == 5103:
+                    self.deleteShape(index, shapeObject)
+            else:
+                wx.MessageBox("You can't delete this element because it has Connections", "Error")
+        else:
+            if self.canDeleteLine(index)==1:
+                md = wx.MessageDialog(None, 'Are you Sure to delete this Connection?','Confirm', wx.YES_NO | wx.ICON_QUESTION)
+                res = md.ShowModal()
+                if res == 5103:
+                    self.deleteLine(index, shapeObject)
+            else:
+                wx.MessageBox("You can't delete this connection, first you must delete valve-tube connection", "Error")
+
     def OnMenuSimulationConfigure(self, event): # wxGlade: Home.<event_handler>
         simulation = formSimulation(None, -1, "")
         if(self.Simulator==[]):
@@ -383,7 +410,6 @@ class Home(wx.Frame):
         ret = simulation.ShowModal()
         if ret==5100:
             Sim = self.upGeneric(simulation.data,'simulation',['filesave_state','filesave_spd','filein_state','folder_name'],['ncycles','nsave','nstroke','calc_engine_data'],['rpms','ig_order'])
-
             if simulation.data['get_state'].GetSelection()==1 or simulation.data['get_state'].GetSelection()==2:
                 self.stateFromFile = 1
 
@@ -405,47 +431,48 @@ class Home(wx.Frame):
                 self.Simulator[0] = Sim
 
     def OnMenuSimulationRun(self, event): # wxGlade: Home.<event_handler>
-		d = self.hasDisconnections()
-		if len(d) > 0:
-			sd = List2String(d)
-			md = wx.MessageDialog(None, 'This Elements are disconnected: ' + sd,'WARNING!!', wx.ICON_EXCLAMATION)
-			md.ShowModal()
-		else:
-			self.OnMenuFileSave('')
-			filename = self.thisFile
-			
-			import sys
-			i1 = filename.rfind("/")
-			pathName = ''
-			for j in range(i1):
-				pathName = pathName + filename[j]
-			i2 = filename.rfind(".")
-			moduleName = ''
-			for j in range(i2-i1-1):
-				moduleName = moduleName + filename[j+i1+1]
+        d = self.hasDisconnections()
+        if len(d) > 0:
+            sd = List2String(d)
+            md = wx.MessageDialog(None, 'This Elements are disconnected: ' + sd,'WARNING!!', wx.ICON_EXCLAMATION)
+            md.ShowModal()
+        else:
+            if not(self.saved):
+                self.OnMenuFileSave('')
+            filename = self.thisFile
+            
+            import sys
+            i1 = filename.rfind("/")
+            pathName = ''
+            for j in range(i1):
+                pathName = pathName + filename[j]
+            i2 = filename.rfind(".")
+            moduleName = ''
+            for j in range(i2-i1-1):
+                moduleName = moduleName + filename[j+i1+1]
 
-			archi = open(self.pathCode + "exec.py", "w")
+            archi = open(self.pathCode + "exec.py", "w")
 
-			lines = [
-			'from numpy import array\n',
-			'import time\n',
-			'import sys\n',
-			'import os\n',
-			'from simCythonCPP import Simulator\n\n',
-			'sys.path.append("'+ pathName + '")\n',
-			'data = __import__("' + moduleName + '")\n',
-			'now = time.time()\n',
-			'Sim = Simulator(**data.kargs)\n',
-			'print "termina de inicializar"\n',
-			'Sim.printData()\n',
-			'Sim.solver()\n',
-			'now2 = time.time()\n',
-			'print now2-now\n']
-
-			archi.writelines(lines)
-			archi.close()
+            lines = [
+                'from numpy import array\n',
+                'import time\n',
+                'import sys\n',
+                'import os\n',
+                'from simCythonCPP import Simulator\n\n',
+                'sys.path.append("'+ pathName + '")\n',
+                'data = __import__("' + moduleName + '")\n',
+                'now = time.time()\n',
+                'Sim = Simulator(**data.kargs)\n',
+                'print "termina de inicializar"\n',
+                'Sim.printData()\n',
+                'Sim.solver()\n',
+                'now2 = time.time()\n',
+                'print now2-now\n']
+            
+            archi.writelines(lines)
+            archi.close()
 		
-			os.system("python "+self.pathCode+"exec.py &")
+            os.system("python "+self.pathCode+"exec.py &")
 		
 		
     def OnMenuSimulationPost(self, event): # wxGlade: Home.<event_handler>
@@ -477,6 +504,9 @@ class Home(wx.Frame):
         else:
             self.loadGeneric(valve.data,'valve',edit,['histo'])
             valve.edit = edit
+            if self.Valves[valve.edit]['type_dat']==2:
+                valve.data['Lvmax'].Enable(False)
+                valve.data['Lv'].Enable(True)
 
         valve.setLabels()
         ret = valve.ShowModal()
@@ -497,7 +527,7 @@ class Home(wx.Frame):
 
     def OnStatusBarCylinder(self, event, edit=-1): # wxGlade: Home.<event_handler>
         cylinder = formCylinder(None, -1, "")
-        
+
         if edit==-1:
             self.loadGeneric(cylinder.data,'cylinder','default',['scavenge','full_implicit','ownState','extras'],['histo'])
             self.loadGeneric(cylinder.combustion,'combustion','default',[])
@@ -505,10 +535,21 @@ class Home(wx.Frame):
             self.loadGeneric(cylinder.injection,'injection','default')
         else:
             self.loadGeneric(cylinder.data,'cylinder',edit,['scavenge','full_implicit','ownState','extras'],['histo'])
+            if cylinder.data['scavenge'].GetValue()==1:
+                cylinder.data['scavenge_type'].Enable(True)
             self.loadGeneric(cylinder.combustion,'combustion',edit,[])
             self.loadGeneric(cylinder.fuel,'fuel',edit)
             self.loadGeneric(cylinder.injection,'injection',edit)
             cylinder.edit = edit
+            if cylinder.combustion['combustion_model'].GetSelection()==0:
+                cylinder.combustion['xbdot_array'].Enable(True)
+            if cylinder.data['type_ig'].GetSelection()==1:
+                for key in cylinder.injection:
+                    cylinder.injection[key].Enable(True)
+                if cylinder.injection['pulse'].GetSelection()!=2:
+                    cylinder.injection['mfdot_array'].Enable(False)
+                if cylinder.injection['ignition_delay_model'].GetSelection()!=2:
+                    cylinder.injection['theta_id'].Enable(False)
 
         cylinder.onChangeNodes("")
         cylinder.setLabels()
@@ -656,10 +697,10 @@ class Home(wx.Frame):
              if not(edit=="default"):
                  Generic = self.Cylinders[edit]  
              if self.stateFromFile == 1:
-                 generic['state_ini'].Enable(0)
+                 generic['state_ini'].Enable(1)
              if self.calcEngine == 1:
-                 generic['ownState'].Enable(0)
-                 generic['extras'].Enable(0)
+                 generic['ownState'].Enable(1)
+                 generic['extras'].Enable(1)
         if tipo=='junction':
              dict_generic = default_values.dict_junction
              if not(edit=="default"):
@@ -675,7 +716,7 @@ class Home(wx.Frame):
              if not(edit=="default"):
                  Generic = self.Tanks[edit] 
              if self.stateFromFile == 1:
-                 generic['state_ini'].Enable(0) 
+                 generic['state_ini'].Enable(1) 
         if tipo=='valve':
              dict_generic = default_values.dict_valve
              if not(edit=="default"):
@@ -718,7 +759,7 @@ class Home(wx.Frame):
         else:
             for key in dict_generic:
                 if key in Generic.keys() and not(Generic[key]=="<none>"):
-                    #print names_generic[i],": ",Generic[names_generic[i]]
+                    # print names_generic[i],": ",Generic[names_generic[i]]
                     if isinstance(generic[key],wx.grid.Grid):
                         setGrid(Generic[key],generic[key])	
                     else:
@@ -729,7 +770,7 @@ class Home(wx.Frame):
                         elif key in listList:
                             generic[key].SetValue(List2String(Generic[key])) 
                         elif key not in listCheckList:
-                            generic[key].SetValue(str(Generic[key])) 
+                            generic[key].SetValue(str(Generic[key]))
                 else:
                     generic[key].Enable(0)
         if tipo=='cylinder' and self.calcEngine == 0: #malo, pero me salva aca
@@ -738,25 +779,25 @@ class Home(wx.Frame):
 
     def upGeneric(self,generic,tipo,listStr=[],listInt=[], listList=[], listCheckList=[]):
         if tipo=='simulation':
-             dict_generic = default_values.dict_simulation
+            dict_generic = default_values.dict_simulation
         if tipo=='cylinder':
-             dict_generic = default_values.dict_cylinder
+            dict_generic = default_values.dict_cylinder
         if tipo=='junction':
-             dict_generic = default_values.dict_junction
+            dict_generic = default_values.dict_junction
         if tipo=='tube':
-             dict_generic = default_values.dict_tube
+            dict_generic = default_values.dict_tube
         if tipo=='tank':
-             dict_generic = default_values.dict_tank
+            dict_generic = default_values.dict_tank
         if tipo=='valve':
-             dict_generic = default_values.dict_valve
+            dict_generic = default_values.dict_valve
         if tipo=='atmosphere':
-             dict_generic = default_values.dict_atmosphere
+            dict_generic = default_values.dict_atmosphere
         if tipo=='combustion':
-             dict_generic = default_values.dict_combustion
+            dict_generic = default_values.dict_combustion
         if tipo=='injection':
-             dict_generic = default_values.dict_injection
+            dict_generic = default_values.dict_injection
         if tipo=='fuel':
-             dict_generic = default_values.dict_fuel
+            dict_generic = default_values.dict_fuel
 
         Gen = dict()
         for key in generic:
@@ -854,6 +895,7 @@ class Home(wx.Frame):
         archi.close()
         print "Guardado: ",filename
         self.saved = 1
+        self.deparseData()
         decouplingCode(self)
 
 
@@ -864,43 +906,89 @@ class Home(wx.Frame):
     def completeData(self):
         self.canvas.GetDiagram().DeleteAllShapes()
         self.shapes = []
+        self.deparseData()
+
+    def deparseData(self):
+        rad2deg = 180.0 / 3.14159265358979
+        m2mm = 1000.0
+        sqm2sqcm = 10000.0
+        cm2ccm = 1000000.0
         for i in range(len(self.Simulator)):
             self.completeObject(self.Simulator[i],default_values.dict_simulation)
             self.Simulator[i]['nstroke'] = self.Simulator[i]['nstroke']/2 - 1 
         for i in range(len(self.Cylinders)):
+            # Geometric data
+            Vd = 0.5*3.14159265358979*self.Cylinders[i]['Bore']**2*self.Cylinders[i]['crank_radius']
+            Vc = self.Cylinders[i]['Vol_clearance']
+            self.Cylinders[i]['Bore'] *= m2mm
+            self.Cylinders[i]['crank_radius'] *= 2*m2mm # data is crank radious
+            self.Cylinders[i]['rod_length'] *= m2mm
+            self.Cylinders[i]['head_chamber_area'] *= sqm2sqcm
+            self.Cylinders[i]['piston_area'] *= sqm2sqcm
+            self.Cylinders[i]['delta_ca'] *= rad2deg
+            self.Cylinders[i]['Vol_clearance'] = Vd/Vc+1
+            # Heat transfer data
+            self.Cylinders[i]['model_ht'] -= 1
+
             self.completeObject(self.Cylinders[i],default_values.dict_cylinder)
             self.completeObject(self.Cylinders[i]['fuel'],default_values.dict_fuel)
+            # Fuel data
+            self.Cylinders[i]['fuel']['Q_fuel'] *= 1e-6
+            self.Cylinders[i]['fuel']['hvap_fuel'] *= 1e-3
+            # Combustion data
+            self.Cylinders[i]['combustion']['theta_ig_0'] *= rad2deg
+            self.Cylinders[i]['combustion']['dtheta_comb'] *= rad2deg
             self.completeObject(self.Cylinders[i]['combustion'],default_values.dict_combustion)
+            # Injection data
+            if self.Cylinders[i]['type_ig']==1:
+                self.Cylinders[i]['injection']['m_inj'] *= 1e3
+                self.Cylinders[i]['injection']['theta_inj_ini'] *= rad2deg
+                self.Cylinders[i]['injection']['dtheta_inj'] *= rad2deg
+                if self.Cylinders[i]['injection']['ignition_delay_model']==2:
+                    self.Cylinders[i]['injection']['theta_id'] *= rad2deg
             self.completeObject(self.Cylinders[i]['injection'],default_values.dict_injection)
             if "pulse" in self.Cylinders[i]['injection'].keys() and not(self.Cylinders[i]['injection']['pulse']=="<none>"):
-                self.Cylinders[i]['injection']['pulse'] = self.Cylinders[i]['injection']['pulse'] + 1          
+                self.Cylinders[i]['injection']['pulse'] -= 1
             self.addShape("Cylinders",i,self.Cylinders[i]['position'][0],self.Cylinders[i]['position'][1],1)
 
         for i in range(len(self.Junctions)):
-            self.Junctions[i]['modelo_junc'] = self.Junctions[i]['modelo_junc'] - 1
+            self.Junctions[i]['modelo_junc'] -= 1
             self.completeObject(self.Junctions[i],default_values.dict_junction)
             self.addShape("Junctions",i,self.Junctions[i]['position'][0],self.Junctions[i]['position'][1],1)
    
         for i in range(len(self.Tubes)):
+            self.Tubes[i]['longitud'] *= m2mm
+            for j in range(len(self.Tubes[i]['xnod'])):
+                self.Tubes[i]['xnod'][j] *= m2mm
+                self.Tubes[i]['diameter'][j] *= m2mm
             self.completeObject(self.Tubes[i],default_values.dict_tube)
             self.addShape("Tubes",i,self.Tubes[i]['position'][0],self.Tubes[i]['position'][1],1)
 
         for i in range(len(self.Tanks)):
             self.completeObject(self.Tanks[i],default_values.dict_tank)
             self.addShape("Tanks",i,self.Tanks[i]['position'][0],self.Tanks[i]['position'][1],1)
+            self.Tanks[i]['Volume'] *= cm2ccm
+            self.Tanks[i]['mass'] *= 1e3
+            self.Tanks[i]['Area_wall'] *= sqm2sqcm
 
         for i in range(len(self.Atmospheres)):
         #    self.completeObject(self.Atmospheres[i]['state_ini'],default_values.dict_atmosphere)
             self.addShape("Atmospheres",i,self.Atmospheres[i]['position'][0],self.Atmospheres[i]['position'][1],1)
 
         for i in range(len(self.Valves)):
-			self.Valves[i]['angle_V0'] = self.Valves[i]['angle_V0'] * 180 / 3.14159
-			self.Valves[i]['angle_VC'] = self.Valves[i]['angle_VC'] * 180 / 3.14159
-			self.Valves[i]['Lvmax'] = self.Valves[i]['Lvmax'] * 1000;
-			for lv in range(len(self.Valves[i]['Cd'])):
-				self.Valves[i]['Cd'][lv][0] = self.Valves[i]['Cd'][lv][0] * 1000
-			self.completeObject(self.Valves[i],default_values.dict_valve)
-			self.addShape("Valves",i,self.Valves[i]['position'][0],self.Valves[i]['position'][1],1)
+            self.Valves[i]['type_dat'] += 1
+            self.Valves[i]['angle_V0'] *= rad2deg
+            self.Valves[i]['angle_VC'] *= rad2deg
+            self.Valves[i]['Dv'] *= m2mm
+            if self.Valves[i]['type_dat'] != 2:
+                self.Valves[i]['Lvmax'] *= m2mm
+            for j in range(len(self.Valves[i]['Cd'])):
+                self.Valves[i]['Cd'][j][0] *= m2mm
+            if self.Valves[i]['type_dat']==2:
+                for j in range(len(self.Valves[i]['Lv'])):
+                    self.Valves[i]['Lv'][j][1] *= m2mm
+            self.completeObject(self.Valves[i],default_values.dict_valve)
+            self.addShape("Valves",i,self.Valves[i]['position'][0],self.Valves[i]['position'][1],1)
 
     def completeObject(self, objectData, dict_generic):
         for key in dict_generic:
@@ -910,20 +998,68 @@ class Home(wx.Frame):
 
 # modifica algunos valores paa que sean compatibles con el simulador en c++
     def parseData(self):
-		if len(self.Simulator)>0:
-			self.Simulator[0]['nstroke'] = self.Simulator[0]['nstroke']*2+2
-		for i in range(len(self.Junctions)):
-			self.Junctions[i]['modelo_junc'] = self.Junctions[i]['modelo_junc'] + 1
-		for i in range(len(self.Cylinders)):
-			if "pulse" in self.Cylinders[i]['injection'].keys() and not(self.Cylinders[i]['injection']['pulse']=="<none>"):
-				self.Cylinders[i]['injection']['pulse'] = self.Cylinders[i]['injection']['pulse'] + 1 
-		for i in range(len(self.Valves)):
-			self.Valves[i]['angle_V0'] = self.Valves[i]['angle_V0'] * 3.14159 / 180
-			self.Valves[i]['angle_VC'] = self.Valves[i]['angle_VC'] * 3.14159 / 180 #a radianes
-			self.Valves[i]['Lvmax'] = self.Valves[i]['Lvmax'] / 1000 #a metros
-			for lv in range(len(self.Valves[i]['Cd'])):
-				self.Valves[i]['Cd'][lv][0] = self.Valves[i]['Cd'][lv][0] / 1000
+        deg2rad = 3.14159265358979 / 180.0
+        mm2m = 0.001
+        sqcm2sqm = 0.0001
+        ccm2cm = 0.000001
+        if len(self.Simulator)>0:
+            self.Simulator[0]['nstroke'] = self.Simulator[0]['nstroke']*2+2
 
+        for i in range(len(self.Junctions)):
+            self.Junctions[i]['modelo_junc'] += 1
+
+        for i in range(len(self.Cylinders)):
+            # Geometric data
+            self.Cylinders[i]['Bore'] *= mm2m
+            self.Cylinders[i]['crank_radius'] *= 0.5*mm2m # input is the stroke
+            self.Cylinders[i]['rod_length'] *= mm2m
+            self.Cylinders[i]['head_chamber_area'] *= sqcm2sqm
+            self.Cylinders[i]['piston_area'] *= sqcm2sqm
+            self.Cylinders[i]['delta_ca'] *= deg2rad
+            Vd = 0.5*3.14159265358979*self.Cylinders[i]['Bore']**2*self.Cylinders[i]['crank_radius']
+            Vc = Vd/(self.Cylinders[i]['Vol_clearance']-1)
+            self.Cylinders[i]['Vol_clearance'] = Vc
+            # Heat transfer data
+            self.Cylinders[i]['model_ht'] += 1
+            # Fuel data
+            self.Cylinders[i]['fuel']['Q_fuel'] *= 1e6
+            self.Cylinders[i]['fuel']['hvap_fuel'] *= 1e3
+            # Combustion data
+            self.Cylinders[i]['combustion']['theta_ig_0'] *= deg2rad
+            self.Cylinders[i]['combustion']['dtheta_comb'] *= deg2rad
+            # Injection data
+            if self.Cylinders[i]['type_ig']==1:
+                self.Cylinders[i]['injection']['m_inj'] *= 1e-3
+                self.Cylinders[i]['injection']['theta_inj_ini'] *= deg2rad
+                self.Cylinders[i]['injection']['dtheta_inj'] *= deg2rad
+                if self.Cylinders[i]['injection']['ignition_delay_model']==2:
+                    self.Cylinders[i]['injection']['theta_id'] *= deg2rad
+            if "pulse" in self.Cylinders[i]['injection'].keys() and not(self.Cylinders[i]['injection']['pulse']=="<none>"):
+                self.Cylinders[i]['injection']['pulse'] += 1
+
+        for i in range(len(self.Valves)):
+            self.Valves[i]['type_dat'] -= 1
+            self.Valves[i]['angle_V0'] *= deg2rad
+            self.Valves[i]['angle_VC'] *= deg2rad
+            self.Valves[i]['Dv'] *= mm2m
+            if self.Valves[i]['type_dat'] != 1:
+                self.Valves[i]['Lvmax'] *= mm2m #a metros
+            for j in range(len(self.Valves[i]['Cd'])):
+                self.Valves[i]['Cd'][j][0] *= mm2m
+            if self.Valves[i]['type_dat']==1:
+                for j in range(len(self.Valves[i]['Lv'])):
+                    self.Valves[i]['Lv'][j][1] *= mm2m
+
+        for i in range(len(self.Tubes)):
+            self.Tubes[i]['longitud'] *= mm2m
+            for j in range(len(self.Tubes[i]['xnod'])):
+                self.Tubes[i]['xnod'][j] *= mm2m
+                self.Tubes[i]['diameter'][j] *= mm2m
+
+        for i in range(len(self.Tanks)):
+            self.Tanks[i]['Volume'] *= ccm2cm
+            self.Tanks[i]['mass'] *= 1e-3
+            self.Tanks[i]['Area_wall'] *= sqcm2sqm
 
 ####--------------------------------------------####
 
@@ -1292,7 +1428,7 @@ class Home(wx.Frame):
                     self.Tubes[indexTo]['tleft'] = "cylinder"
                     self.Tubes[indexTo]['nleft'] = self.Valves[indexFrom]['ncyl']
 
-    def OnKeyDown(self, evt):
+    def OnKeyUp(self, evt):
         print "key down"
         #if self.logKeyDn:
         #    self.GetParent().keylog.LogKeyEvent("KeyDown", evt)
@@ -1300,8 +1436,8 @@ class Home(wx.Frame):
         #    evt.Skip()
 
     #manejador de eventos de teclado
-    def OnKeyUp(self, evt):
-        
+    def OnKeyDown(self, evt):
+        print 'key up'
         keycode = evt.GetKeyCode()
         keyname = keyMap.get(keycode, None)
         if keyname is None:
@@ -1315,35 +1451,15 @@ class Home(wx.Frame):
             else:
                 keyname = "(%s)" % keycode
         
-        #print evt.ControlDown(), keyname
+        # print evt.ControlDown(), keyname
 
         #evento de copia (solo para componentes)
         if(evt.ControlDown() and keyname=='"C"'):
             self.OnMenuEditCopy("")
 
-
-        if(keyname == "WXK_DELETE"):
-            #print "eliminar seleccionado"
-            (shapeObject,index) = self.findSelected()
-            if shapeObject==-1 and index == -1:
-                return
-            
-            if isinstance(shapeObject,ogl.BitmapShape):
-                if self.canDeleteShape(index)==1:
-                    md = wx.MessageDialog(None, 'Are you Sure to delete this Element?','Confirm', wx.YES_NO | wx.ICON_QUESTION)
-                    res = md.ShowModal()
-                    if res == 5103:
-                        self.deleteShape(index, shapeObject)
-                else:
-                    wx.MessageBox("You can't delete this element because it has Connections", "Error")
-            else:
-                if self.canDeleteLine(index)==1:
-                    md = wx.MessageDialog(None, 'Are you Sure to delete this Connection?','Confirm', wx.YES_NO | wx.ICON_QUESTION)
-                    res = md.ShowModal()
-                    if res == 5103:
-                        self.deleteLine(index, shapeObject)
-                else:
-                    wx.MessageBox("You can't delete this connection, first you must delete valve-tube connection", "Error")
+        if keycode==wx.WXK_DELETE or (evt.ControlDown() and keyname=='"X"'):
+            # print "eliminar seleccionado"
+            self.OnMenuEditDelete("")
 
         if(evt.ControlDown() and keyname=='"V"'):
             self.OnMenuEditPaste("")

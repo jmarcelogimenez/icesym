@@ -105,7 +105,7 @@ Cylinders0['injection'] = injection0
 
 #--------- FIN Inicializacion de injection
 
-Cylinders0['position'] = (256,93)
+Cylinders0['position'] = (257,103)
 Cylinders0['exhaust_valves'] = []
 Cylinders0['intake_valves'] = []
 

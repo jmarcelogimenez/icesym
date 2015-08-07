@@ -30,26 +30,27 @@ class formTube(wx.Dialog):
         self.notebook_post = wx.ScrolledWindow(self.configure_notebook, -1, style=wx.TAB_TRAVERSAL)
         self.label_0 = wx.StaticText(self.notebook_general, -1, "Number of Nodes:")
         self.data['nnod'] = wx.TextCtrl(self.notebook_general, -1, "")
-        self.label_1 = wx.StaticText(self.notebook_general, -1, "Degress of Freedom: ")
+        self.label_1 = wx.StaticText(self.notebook_general, -1, "Degrees of Freedom: ")
         self.data['ndof'] = wx.TextCtrl(self.notebook_general, -1, "3", style=wx.TE_READONLY)
-        self.label_2 = wx.StaticText(self.notebook_general, -1, "Length: ")
+        self.label_2 = wx.StaticText(self.notebook_general, -1, "Length [mm]: ")
         self.data['longitud'] = wx.TextCtrl(self.notebook_general, -1, "")
         self.checkbox_1 = wx.CheckBox(self.notebook_general, -1, "Equispaced")
         self.checkbox_2 = wx.CheckBox(self.notebook_general, -1, "Has Curvature")
         self.panel_1 = wx.Panel(self.notebook_general, -1)
-        self.label_4 = wx.StaticText(self.notebook_general, -1, "Xnod:        ")
+        self.label_4 = wx.StaticText(self.notebook_general, -1, "Nodal Coord.:  ")
         self.button_1 = wx.Button(self.notebook_general, -1, "...")
         self.data['xnod'] = wx.grid.Grid(self.notebook_general, -1, size=(1, 1))
-        self.label_5 = wx.StaticText(self.notebook_general, -1, "Diameter:          ")
+        self.label_5 = wx.StaticText(self.notebook_general, -1, "Diameter:    ")
         self.button_2 = wx.Button(self.notebook_general, -1, "...")
         self.data['diameter'] = wx.grid.Grid(self.notebook_general, -1, size=(1, 1))
-        self.label_6 = wx.StaticText(self.notebook_general, -1, "TWall:       ")
+        self.label_6 = wx.StaticText(self.notebook_general, -1, "Temp. Wall:      ")
         self.button_3 = wx.Button(self.notebook_general, -1, "...")
         self.data['twall'] = wx.grid.Grid(self.notebook_general, -1, size=(1, 1))
-        self.label_7 = wx.StaticText(self.notebook_general, -1, "Curvature: ")
+        self.label_7 = wx.StaticText(self.notebook_general, -1, "Curvature:   ")
         self.button_4 = wx.Button(self.notebook_general, -1, "...")
         self.data['curvature'] = wx.grid.Grid(self.notebook_general, -1, size=(1, 1))
         self.data['state_ini'] = wx.grid.Grid(self.notebook_state, -1, size=(1, 1))
+        self.button_6 = wx.Button(self.notebook_state, -1, "const state")
         self.button_5 = wx.Button(self.notebook_state, -1, "...")
         self.data['typeSave'] = wx.RadioBox(self.notebook_post, -1, "", choices=["Save State for All Nodes","Save For Normalized Position Nodes","Nothing"], majorDimension=0, style=wx.RA_SPECIFY_ROWS)
         #self.data['numNorm'] = wx.CheckBox(self.notebook_post, -1, "Calculate Extras (mass I/O, rate, etc) for Selected Nodes")
@@ -84,6 +85,7 @@ class formTube(wx.Dialog):
         self.Bind(wx.EVT_BUTTON, self.onLoadTwall, self.button_3)
         self.Bind(wx.EVT_BUTTON, self.onLoadCurv, self.button_4)
         self.Bind(wx.EVT_BUTTON, self.onLoadState, self.button_5)
+        self.Bind(wx.EVT_BUTTON, self.onConstState, self.button_6)
         self.Bind(wx.EVT_BUTTON, self.ConfigureAccept, self.accept)
         self.Bind(wx.EVT_RADIOBOX, self.onHistoMode, self.data['typeSave'])
         self.Bind(wx.EVT_TEXT, self.onChangeNumNorm, self.data['numNorm'])
@@ -110,7 +112,8 @@ class formTube(wx.Dialog):
         self.data['longitud'].SetValidator(numberValidator())
         self.checkbox_1.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         self.checkbox_2.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.checkbox_2.SetValue(1)
+        self.data['curvature'].Enable(0)
+        # self.checkbox_2.SetValue(1)
         self.label_4.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         self.button_1.SetMinSize(wx.DLG_SZE(self.button_1, (16, 12)))
         self.data['xnod'].CreateGrid(1, 1)
@@ -209,6 +212,8 @@ class formTube(wx.Dialog):
         self.button_linearDiam.SetMinSize(wx.DLG_SZE(self.button_2, (25, 12)))
         self.button_linearTemp.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         self.button_linearTemp.SetMinSize(wx.DLG_SZE(self.button_2, (25, 12)))
+        self.button_6.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        self.button_6.SetMinSize(wx.DLG_SZE(self.button_2, (40, 12)))
         self.button_5.SetMinSize(wx.DLG_SZE(self.button_5, (16, 12)))
         self.notebook_state.SetScrollRate(10, 10)
         self.configure_notebook.SetMinSize(wx.DLG_SZE(self.configure_notebook, (270, 362)))
@@ -238,6 +243,7 @@ class formTube(wx.Dialog):
 
         grid_sizer_histo = wx.FlexGridSizer(4, 1, 10, 10)
         grid_sizer_state = wx.FlexGridSizer(1, 2, 0, 0)
+        grid_sizer_statesub = wx.FlexGridSizer(2, 1, 0, 0)
 
         grid_sizer_values.Add(self.label_12, 0, wx.ALIGN_CENTER_VERTICAL, 0)
         grid_sizer_values.Add(self.data['label'], 0, wx.ALIGN_CENTER_VERTICAL, 0)
@@ -283,8 +289,10 @@ class formTube(wx.Dialog):
 
         self.notebook_general.SetSizer(grid_sizer_back)
 
+        grid_sizer_statesub.Add(self.button_6, 0, wx.ALIGN_CENTER_VERTICAL, 0)
+        grid_sizer_statesub.Add(self.button_5, 0, 0, 0)
         grid_sizer_state.Add(self.data['state_ini'], 1, wx.EXPAND, 0)
-        grid_sizer_state.Add(self.button_5, 0, 0, 0)
+        grid_sizer_state.Add(grid_sizer_statesub, 1, wx.EXPAND, 0)
         self.notebook_state.SetSizer(grid_sizer_state)
 
         grid_sizer_histo.Add(self.label_9, 0, wx.ALIGN_CENTER_VERTICAL, 0) 
@@ -558,7 +566,7 @@ class formTube(wx.Dialog):
 		return indMin	
 
     def onConstTemp(self,event):
-		msg = wx.TextEntryDialog(self,"Input Constante Value for Temperature","Input","")
+		msg = wx.TextEntryDialog(self,"Input Temperature [k]","Input","")
 		ret = msg.ShowModal()
 		if ret==5100:
 			try:
@@ -571,7 +579,7 @@ class formTube(wx.Dialog):
 		 		wx.MessageBox("Input Format Error", "Error")
 		
     def onConstDiam(self,event):
-		msg = wx.TextEntryDialog(self,"Input Constante Value for Diameter","Input","")
+		msg = wx.TextEntryDialog(self,"Input Diameter [mm]","Input","")
 		ret = msg.ShowModal()
 		if ret==5100:
 			try:
@@ -584,12 +592,12 @@ class formTube(wx.Dialog):
 		 		wx.MessageBox("Input Format Error", "Error")
 		
     def onLinearTemp(self,event):
-		msg1 = wx.TextEntryDialog(self,"Input First Value for Temperature","Input","")
+		msg1 = wx.TextEntryDialog(self,"Input First Value for Temperature [K]","Input","")
 		ret = msg1.ShowModal()
 		if ret==5100:
 			try:
 				first_value = float(msg1.GetValue())
-				msg2 = wx.TextEntryDialog(self,"Input Last Value for Temperature","Input","")
+				msg2 = wx.TextEntryDialog(self,"Input Second Value for Temperature [K]","Input","")
 				ret = msg2.ShowModal()
 				if ret==5100:
 					try:
@@ -604,12 +612,12 @@ class formTube(wx.Dialog):
 		 		wx.MessageBox("Input Format Error", "Error")
 
     def onLinearDiam(self,event):
-		msg1 = wx.TextEntryDialog(self,"Input First Value for Temperature","Input","")
+		msg1 = wx.TextEntryDialog(self,"Input First Value for Diameter [mm]","Input","")
 		ret = msg1.ShowModal()
 		if ret==5100:
 			try:
 				first_value = float(msg1.GetValue())
-				msg2 = wx.TextEntryDialog(self,"Input Last Value for Temperature","Input","")
+				msg2 = wx.TextEntryDialog(self,"Input Second Value for Diameter [mm]","Input","")
 				ret = msg2.ShowModal()
 				if ret==5100:
 					try:
@@ -623,13 +631,45 @@ class formTube(wx.Dialog):
 			except ValueError:
 		 		wx.MessageBox("Input Format Error", "Error")
 
+    def onConstState(self,event):
+        msg1 = wx.TextEntryDialog(self,"Input Density [kg/m^3]","Input","")
+        ret = msg1.ShowModal()
+        if ret==5100:
+            try:
+                rho = float(msg1.GetValue())
+                str_rho = msg1.GetValue()
+                msg2 = wx.TextEntryDialog(self,"Input Velocity [m/s]","Input","")
+                ret = msg2.ShowModal()
+                if ret==5100:
+                    try:
+                        vel = float(msg2.GetValue())
+                        str_vel = msg2.GetValue()
+                        msg3 = wx.TextEntryDialog(self,"Input Pressure [Pa]","Input","")
+                        ret = msg3.ShowModal()
+                        if ret==5100:
+                            try:
+                                pre = float(msg3.GetValue())
+                                str_pre = msg3.GetValue()
+                                nodes = int(self.data['nnod'].GetValue())
+                                for i in range(nodes):
+                                    for j in range(3):
+                                        self.data['state_ini'].SetCellValue(i,0,str_rho)
+                                        self.data['state_ini'].SetCellValue(i,1,str_vel)
+                                        self.data['state_ini'].SetCellValue(i,2,str_pre)
+                            except ValueError:
+                                wx.MessageBox("Input Format Error", "Error")
+                    except ValueError:
+                        wx.MessageBox("Input Format Error", "Error")
+            except ValueError:
+                wx.MessageBox("Input Format Error", "Error")
+
     def setLabels(self):
 		self.data['state_ini'].SetColLabelValue(0, "Density")
 		self.data['state_ini'].SetColLabelValue(1, "Velocity")
 		self.data['state_ini'].SetColLabelValue(2, "Pressure")
-		self.data['xnod'].SetColLabelValue(0, "mts")
-		self.data['diameter'].SetColLabelValue(0, "mts")
-		self.data['twall'].SetColLabelValue(0, "K")
+		self.data['xnod'].SetColLabelValue(0, "[mm]")
+		self.data['diameter'].SetColLabelValue(0, "[mm]")
+		self.data['twall'].SetColLabelValue(0, "[K]")
 		self.data['curvature'].SetColLabelValue(0, "Curvature")
 
 # end of class formTube

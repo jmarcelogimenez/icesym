@@ -258,7 +258,8 @@ def data2tuple(grid):
 def String2List(string):
 	data = []
 	aux = ""
-	if not(string=="0") and not(string==""):
+	# if not(string=="0") and not(string==""):
+	if not(string==""):
 		for i in range(len(string)):
 			if string[i] == ",":
 				data.append(int(aux))
@@ -301,6 +302,8 @@ def couplingCode(home):
 				n = n+1
 				#for j in range(home.Cylinders[i]['ndof']):
 				#	home.Cylinders[i]['state_ini'][j] = home.Cylinders[i]['state_ini'][j] + v['state_ini'][j]
+                                # print home.Cylinders[i]['state_ini']
+                                # print v['state_ini']
 				home.Cylinders[i]['state_ini'] = home.Cylinders[i]['state_ini'] + v['state_ini']
 				home.Cylinders[i]['nvi'] = home.Cylinders[i]['nvi'] + 1
 				#print "para: ",n," valor: ",bool(v['histo']==1)
@@ -357,6 +360,8 @@ def loadAngleTXT(namefile,cycle,nnod,ndof,extras=-1):
 		elif ndof in [4,5]:
 			row = 2 #tercera fila de cada paso de tiempo
 			col = ndof - 4
+		elif ndof > 8:
+			col += 1
 		#print "row: ", row
 		#print "col: ", col
 		#print "cycle: ", cycle
@@ -382,14 +387,33 @@ def loadAngleTXT(namefile,cycle,nnod,ndof,extras=-1):
 			line = line + 1
 		archi.close()
 	elif extras == 2:
-		ndof = ndof - 3
-		for linea in archi.readlines():	
-			lista = string.split(linea)
-			if int(cycle) == int(lista[0]):
-				t = (float(lista[1]),float(lista[3+ndof]))
-				data.append(t)
+		ndof -= 3
+		line  = 0
+		read  = False
+		for linea in archi.readlines():
+			if line%2==0:
+				lista = string.split(linea)
+				if int(cycle) == int(lista[0]):
+					theta = float(lista[1])
+					ntubes = int(lista[3])
+					read   = True
+				else:
+					read = False
+			if line%2==1:
+				if read:
+					# Solo lee la entrada/salida del primer tubo conectado al tanque
+					lista = string.split(linea)
+					if ndof==0:
+						col = 0
+					elif ndof==1:
+						col = ntubes
+					else:
+						col = ndof+2*ntubes-2
+					t = (theta,float(lista[col]))
+					data.append(t)
+			line += 1
 		archi.close()
-	os.system("rm -r tests")
+	# os.system("rm -r tests")
 	return data
 
 
@@ -417,6 +441,8 @@ def loadCycleTXT(namefile,nnod,ndof,extras=-1):
 		elif ndof in [4,5]:
 			row = 2 #tercera fila de cada paso de tiempo
 			col = ndof - 4
+		elif ndof > 8:
+			col += 1
 		line = 0
 		theta = 0
 		for linea in archi.readlines():	
@@ -434,19 +460,32 @@ def loadCycleTXT(namefile,nnod,ndof,extras=-1):
 				cycles[c-1].append(t)
 			line = line + 1
 	elif extras == 2:
-		ndof = ndof - 3
-		for linea in archi.readlines():	
-			lista = string.split(linea)
-			c = int(lista[0])
-			if len(cycles) < c:
-				cycles.append([])
-			t = (float(lista[1]),float(lista[3+ndof]))
-			cycles[c-1].append(t)
+		ndof -= 3
+		line  = 0
+		for linea in archi.readlines():
+			if line%2==0:
+				lista = string.split(linea)
+				c = int(lista[0])
+				theta = float(lista[1])
+				ntubes = int(lista[3])
+				if len(cycles) < c:
+					cycles.append([])
+			if line%4==1:
+				lista = string.split(linea)
+				if ndof==0:
+					col = 0
+				elif ndof==1:
+					col = ntubes
+				else:
+					col = ndof+2*ntubes-2
+				t = (theta,float(lista[col]))
+				cycles[c-1].append(t)
+			line += 1
 
 	archi.close()
 	#data = meanCycles(cycles)
 	data = trapCycles(cycles)
-	os.system("rm -r tests")
+	# os.system("rm -r tests")
 	return data
 
 def loadSpaceTXT(namefile,time,ndof):
@@ -470,7 +509,7 @@ def loadSpaceTXT(namefile,time,ndof):
 			t = (float(lista[7]),float(lista[4+ndof]))
 			data.append(t)
 	archi.close()
-	os.system("rm -r tests")
+	# os.system("rm -r tests")
 	return data
 
 def calcGlobalsData(path, dataRPMS, pd):
@@ -521,7 +560,10 @@ def calcGlobalsData(path, dataRPMS, pd):
 				p = [firstp]
 			
 				#valores intermedios
-				for k in range(len(volData)):
+                                kk = len(volData)
+                                if len(pData) < len(volData):
+                                        kk = len(pData)
+				for k in range(kk):
 					dV.append(volData[k][1])
 					p.append(pData[k][1])
 				
@@ -559,7 +601,7 @@ def calcGlobalsData(path, dataRPMS, pd):
 	c4 = 9e-4 #bar/(m/s)^2
 	FMEP_per_cylinder = []
 	BMEP_per_cylinder = []
-	Bar2Pa = 1e6
+	Bar2Pa = 1e5
 	for j in range(ncyls):
 		IMEP_per_cylinder.append([])
 		FMEP_per_cylinder.append([])
@@ -597,7 +639,6 @@ def calcGlobalsData(path, dataRPMS, pd):
 			power_effective.append([])
 			torque_effective.append([])
 			mechanical_efficiency.append([])
-
 	
 	for icycle in range(ncycles):
 		for irpm in range(len(rpms)):
@@ -635,9 +676,10 @@ def calcGlobalsData(path, dataRPMS, pd):
 		SFC_effective.append([])
 		fuel_conversion_efficiency_indicated.append([])
 		fuel_conversion_efficiency_effective.append([])
-
+		
 	for icycle in range(ncycles):
 		for irpm in range(len(rpms)):
+			N = float(rpms[irpm])/60.0
 			mfcTotal = 0
 			for j in range(ncyls):
 				mfcTotal = mfcTotal + mfc[j][irpm][icycle]
@@ -680,15 +722,18 @@ def calcGlobalsData(path, dataRPMS, pd):
 			aux2 = 0
 			aux3 = 0
 			aux4 = 0
+			active_cyls = ncyls
 			for j in range(ncyls):
 				aux1 = aux1 + volumetric_efficiency[j][icycle][irpm][1]
 				aux2 = aux2 + IMEP_per_cylinder[j][icycle][irpm][1]
 				aux3 = aux3 + BMEP_per_cylinder[j][icycle][irpm][1]
 				aux4 = aux4 + FMEP_per_cylinder[j][icycle][irpm][1]
-			aux1 = aux1/ncyls
-			aux2 = aux2/ncyls
-			aux3 = aux3/ncyls
-			aux4 = aux4/ncyls
+				if IMEP_per_cylinder[j][icycle][irpm][1] <= 0.:
+					active_cyls -= 1
+			aux1 = aux1/active_cyls
+			aux2 = aux2/active_cyls
+			aux3 = aux3/active_cyls
+			aux4 = aux4/active_cyls
 			volumetric_efficiency_global[icycle].append((float(rpms[irpm]),aux1))
 			IMEP_global[icycle].append((float(rpms[irpm]),aux2))
 			BMEP_global[icycle].append((float(rpms[irpm]),aux3))
@@ -735,8 +780,8 @@ def getMasses(path, dataRPMS):
 			mair[-1].append([])
 			for icycle in range(ncycles):
 				namefile = path + "RPM_" + str(irpm) + "/cyl_extras_" + str(j) + ".txt"	
-				ndofmfc = 3 #cuarto de la fila 4
-				ndofmair = 4 #quinto de la fila 4
+				ndofmfc = 4 #quinto de la fila 4
+				ndofmair = 5 #sexto de la fila 4
 				row = 3
 				namecopy = decompress(namefile)
 				archi = open(namecopy, "r")
@@ -749,9 +794,9 @@ def getMasses(path, dataRPMS):
 				for linea in archi.readlines():	
 					if line%4 == 0: #leo cada 4 lineas el ciclo (esta en la primer linea)
 						lista = string.split(linea)
-						if int(icycle) == int(lista[0]) and angleClose < float(lista[1]):
+						if int(icycle)+1 == int(lista[0]) and angleClose >= float(lista[1]):
 							next = True
-						elif int(icycle) == int(lista[0]) and angleClose >= float(lista[1]):
+						elif int(icycle)+1 == int(lista[0]) and angleClose < float(lista[1]):
 							next = False
 							if angleClose == float(lista[1]):
 								interpola = False
@@ -761,7 +806,7 @@ def getMasses(path, dataRPMS):
 						if next == True:
 							mfcAux = float(lista[ndofmfc])
 							mairAux = float(lista[ndofmair])
-						else: 
+						else:
 							if interpola == True:
 								mfcAux = (mfcAux+float(lista[ndofmfc]))/2
 								mairAux = (mairAux+float(lista[ndofmair]))/2
@@ -775,7 +820,7 @@ def getMasses(path, dataRPMS):
 				mair[-1][-1].append(mairAux)
 				archi.close()
 				
-				os.system("rm -r tests")
+				# os.system("rm -r tests")
 
 	return (mfc,mair)
 	
@@ -786,7 +831,8 @@ def decompress(namefile):
 	namecopy = ''	
 	for j in range(len(namefile) - i1):
 		namecopy = namecopy + namefile[j+i1]
-	os.system("tar jvxf " + namefile + ".tar.bz2")
+	if not(os.system("test -e " + namefile + ".tar.bz2")):
+		os.system("tar jvxf " + namefile + ".tar.bz2")
 	return namecopy
 
 

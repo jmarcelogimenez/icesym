@@ -39,31 +39,31 @@ class formCylinder(wx.Dialog):
         self.notebook_post = wx.ScrolledWindow(self.configure_notebook, -1, style=wx.TAB_TRAVERSAL)
         self.label_0 = wx.StaticText(self.notebook_general, -1, "Number of Zones:")
         self.data['nnod'] = wx.TextCtrl(self.notebook_general, -1, "")
-        self.label_3 = wx.StaticText(self.notebook_general, -1, "Degress of Freedom:")
+        self.label_3 = wx.StaticText(self.notebook_general, -1, "Degrees of Freedom:")
         self.data['ndof'] = wx.TextCtrl(self.notebook_general, -1, "", style=wx.TE_READONLY)
-        self.label_4 = wx.StaticText(self.notebook_general, -1, "Bore:")
+        self.label_4 = wx.StaticText(self.notebook_general, -1, "Bore [mm]:")
         self.data['Bore'] = wx.TextCtrl(self.notebook_general, -1, "")
-        self.label_5 = wx.StaticText(self.notebook_general, -1, "Crank Radius:")
+        self.label_5 = wx.StaticText(self.notebook_general, -1, "Stroke [mm]:")
         self.data['crank_radius'] = wx.TextCtrl(self.notebook_general, -1, "")
-        self.label_6 = wx.StaticText(self.notebook_general, -1, "Vol Clearance:")
-        self.data['Vol_clearance'] = wx.TextCtrl(self.notebook_general, -1, "")
-        self.label_7 = wx.StaticText(self.notebook_general, -1, "Head Chamber Area:")
-        self.data['head_chamber_area'] = wx.TextCtrl(self.notebook_general, -1, "")
-        self.label_8 = wx.StaticText(self.notebook_general, -1, "Piston Area:")
-        self.data['piston_area'] = wx.TextCtrl(self.notebook_general, -1, "")
-        self.label_9 = wx.StaticText(self.notebook_general, -1, "Delta CA:")
-        self.data['delta_ca'] = wx.TextCtrl(self.notebook_general, -1, "")
-        self.label_21 = wx.StaticText(self.notebook_general, -1, "Rod Length:")
+        self.label_21 = wx.StaticText(self.notebook_general, -1, "Con-rod Length [mm]:")
         self.data['rod_length'] = wx.TextCtrl(self.notebook_general, -1, "")
-        self.label_28b = wx.StaticText(self.notebook_general, -1, "Temperature Type:")
+        self.label_6 = wx.StaticText(self.notebook_general, -1, "Compression Ratio:")
+        self.data['Vol_clearance'] = wx.TextCtrl(self.notebook_general, -1, "")
+        self.label_7 = wx.StaticText(self.notebook_general, -1, "Head Chamber Area [cm^2]:")
+        self.data['head_chamber_area'] = wx.TextCtrl(self.notebook_general, -1, "")
+        self.label_8 = wx.StaticText(self.notebook_general, -1, "Piston Area [cm^2]:")
+        self.data['piston_area'] = wx.TextCtrl(self.notebook_general, -1, "")
+        self.label_9 = wx.StaticText(self.notebook_general, -1, "Delta Crank Angle [deg]:")
+        self.data['delta_ca'] = wx.TextCtrl(self.notebook_general, -1, "")
+        self.label_28b = wx.StaticText(self.notebook_general, -1, "Wall Temperature:")
         self.data['type_temperature'] = wx.RadioBox(self.notebook_general, -1, "", choices=["Homogeneous", "No Homogeneous"], majorDimension=0, style=wx.RA_SPECIFY_ROWS)
         self.label_11 = wx.StaticText(self.notebook_general, -1, "Temperatures:")
         self.data['twall'] = wx.grid.Grid(self.notebook_general, -1, size=(1, 1))
-        self.label_12 = wx.StaticText(self.notebook_general, -1, "Model ht:")
+        self.label_12 = wx.StaticText(self.notebook_general, -1, "Heat Transfer Model:")
         self.data['model_ht'] = wx.RadioBox(self.notebook_general, -1, "", choices=["Annand", "Woschni 1", "Woschni 2", "Taylor"], majorDimension=0, style=wx.RA_SPECIFY_ROWS)
         self.label_13 = wx.StaticText(self.notebook_general, -1, "Factor ht:")
         self.data['factor_ht'] = wx.TextCtrl(self.notebook_general, -1, "")
-        self.label_18 = wx.StaticText(self.notebook_general, -1, "Mass C:")
+        self.label_18 = wx.StaticText(self.notebook_general, -1, "Mass Cyl.:")
         self.data['mass_C'] = wx.grid.Grid(self.notebook_general, -1, size=(1, 1))
         self.label_10 = wx.StaticText(self.notebook_general, -1, "Type Ignition:")
         self.data['type_ig'] = wx.RadioBox(self.notebook_general, -1, "", choices=["spark-ignition", "compression-ignition"], majorDimension=0, style=wx.RA_SPECIFY_ROWS)
@@ -73,54 +73,54 @@ class formCylinder(wx.Dialog):
         self.data['nvi'] = wx.TextCtrl(self.notebook_general, -1, "")
        #self.panel_18 = wx.Panel(self.notebook_general, -1)
        #self.panel_10 = wx.Panel(self.notebook_general, -1)
-        self.data['scavenge'] = wx.CheckBox(self.notebook_general, -1, "Has Scavenge")
+        self.data['scavenge'] = wx.CheckBox(self.notebook_general, -1, "Scavenge")
         self.panel_11 = wx.Panel(self.notebook_general, -1)
         self.label_15 = wx.StaticText(self.notebook_general, -1, "Scavenge Type:")
         self.data['scavenge_type'] = wx.RadioBox(self.notebook_general, -1, "", choices=["uniflow", "scre", "yam1", "yam6", "cd", "qubcr"], majorDimension=0, style=wx.RA_SPECIFY_ROWS)
-        self.label_16 = wx.StaticText(self.notebook_general, -1, "SRv:")
-        self.data['SRv'] = wx.TextCtrl(self.notebook_general, -1, "")
+        # self.label_16 = wx.StaticText(self.notebook_general, -1, "Scavenge Ratio (by Vol.):")
+        # self.data['SRv'] = wx.TextCtrl(self.notebook_general, -1, "")
         self.data['full_implicit'] = wx.CheckBox(self.notebook_general, -1, "Full Implicit")
         self.panel_12 = wx.Panel(self.notebook_general, -1)
-        self.label_19 = wx.StaticText(self.notebook_general, -1, "Data Crevice:")
+        self.label_19 = wx.StaticText(self.notebook_general, -1, "Crevice Data:")
         self.data['data_crevice'] = wx.grid.Grid(self.notebook_general, -1, size=(1, 1))
-        self.label_20 = wx.StaticText(self.notebook_general, -1, "U Crevice:")
+        self.label_20 = wx.StaticText(self.notebook_general, -1, "Crevice State:")
         self.data['U_crevice'] = wx.grid.Grid(self.notebook_general, -1, size=(1, 1))
-        self.label_22 = wx.StaticText(self.notebook_fuel, -1, "Q fuel:")
+        self.label_22 = wx.StaticText(self.notebook_fuel, -1, "Heating Value [MJ/kg]:")
         self.label_27b = wx.StaticText(self.notebook_general, -1, "Species Model:")
         self.data['species_model'] = wx.RadioBox(self.notebook_general, -1, "", choices=["<none>", "single component"], majorDimension=0, style=wx.RA_SPECIFY_ROWS)
 
         self.fuel['Q_fuel'] = wx.TextCtrl(self.notebook_fuel, -1, "")
-        self.label_23 = wx.StaticText(self.notebook_fuel, -1, "y:")
+        self.label_23 = wx.StaticText(self.notebook_fuel, -1, "H/C Ratio:")
         self.fuel['y'] = wx.TextCtrl(self.notebook_fuel, -1, "")
-        self.label_24 = wx.StaticText(self.notebook_fuel, -1, "Hvap Fuel:")
+        self.label_24 = wx.StaticText(self.notebook_fuel, -1, "Hvap Fuel [kJ/kg]:")
         self.fuel['hvap_fuel'] = wx.TextCtrl(self.notebook_fuel, -1, "")
         self.label_25 = wx.StaticText(self.notebook_injection, -1, "Pulse:")
-        self.injection['pulse'] = wx.RadioBox(self.notebook_injection, -1, "", choices=["sin^2", "square wave", "user-defined"], majorDimension=0, style=wx.RA_SPECIFY_ROWS)
-        self.label_26 = wx.StaticText(self.notebook_injection, -1, "Mass Injected for Cycle:")
+        self.injection['pulse'] = wx.RadioBox(self.notebook_injection, -1, "", choices=["squared sin", "squared wave", "user-defined"], majorDimension=0, style=wx.RA_SPECIFY_ROWS)
+        self.label_26 = wx.StaticText(self.notebook_injection, -1, "Mass Injected per Cycle [g]:")
         self.injection['m_inj'] = wx.TextCtrl(self.notebook_injection, -1, "")
-        self.label_27 = wx.StaticText(self.notebook_injection, -1, "dTheta Injected:")
+        self.label_27 = wx.StaticText(self.notebook_injection, -1, "Duration of Injection [deg]:")
         self.injection['dtheta_inj'] = wx.TextCtrl(self.notebook_injection, -1, "")
-        self.label_28 = wx.StaticText(self.notebook_injection, -1, "Temperature Fuel:")
+        self.label_28 = wx.StaticText(self.notebook_injection, -1, "Temperature of Fuel [K]:")
         self.injection['T_fuel'] = wx.TextCtrl(self.notebook_injection, -1, "")
-        self.label_29 = wx.StaticText(self.notebook_injection, -1, "theta Injected Initial:")
+        self.label_29 = wx.StaticText(self.notebook_injection, -1, "Start of Injection [deg]:")
         self.injection['theta_inj_ini'] = wx.TextCtrl(self.notebook_injection, -1, "")
-        self.label_30 = wx.StaticText(self.notebook_injection, -1, "theta Id:")
+        self.label_30 = wx.StaticText(self.notebook_injection, -1, "Ignition Delay [deg]:")
         self.injection['theta_id'] = wx.TextCtrl(self.notebook_injection, -1, "")
         self.label_31 = wx.StaticText(self.notebook_injection, -1, "Ignition Delay Model:")
         self.injection['ignition_delay_model'] = wx.RadioBox(self.notebook_injection, -1, "", choices=["L-W", "H-H", "user-defined"], majorDimension=0, style=wx.RA_SPECIFY_ROWS)
-        self.label_33 = wx.StaticText(self.notebook_injection, -1, "Mass Injected Rate:")
+        self.label_33 = wx.StaticText(self.notebook_injection, -1, "Mass Injection Rate:")
         self.button_3 = wx.Button(self.notebook_injection, -1, "load")
         self.button_3b = wx.Button(self.notebook_injection, -1, "plot")
         self.injection['mfdot_array'] = wx.grid.Grid(self.notebook_injection, -1, size=(1, 1))
         self.panel_22 = wx.Panel(self.notebook_injection, -1)
         self.panel_23 = wx.Panel(self.notebook_injection, -1)
-        self.label_34 = wx.StaticText(self.notebook_combustion, -1, "theta Ignition 0: ")
+        self.label_34 = wx.StaticText(self.notebook_combustion, -1, "Start of Combustion [deg]: ")
         self.combustion['theta_ig_0'] = wx.TextCtrl(self.notebook_combustion, -1, "")
-        self.label_35 = wx.StaticText(self.notebook_combustion, -1, "dtheta Combustion: ")
+        self.label_35 = wx.StaticText(self.notebook_combustion, -1, "Duration of Combustion [deg]: ")
         self.combustion['dtheta_comb'] = wx.TextCtrl(self.notebook_combustion, -1, "")
-        self.label_36 = wx.StaticText(self.notebook_combustion, -1, "Phi   [(a/f)/(a/f)steq]:")
+        self.label_36 = wx.StaticText(self.notebook_combustion, -1, "Equivalence Ratio [(F/A)/(A/F)s]:")
         self.combustion['phi'] = wx.TextCtrl(self.notebook_combustion, -1, "")
-        self.label_38 = wx.StaticText(self.notebook_combustion, -1, "Comb Efficiency Parameter:")
+        self.label_38 = wx.StaticText(self.notebook_combustion, -1, "Comb. Efficiency Parameter:")
         self.combustion['a_wiebe'] = wx.TextCtrl(self.notebook_combustion, -1, "")
         self.label_39 = wx.StaticText(self.notebook_combustion, -1, "Shape Parameter:")
         self.combustion['m_wiebe'] = wx.TextCtrl(self.notebook_combustion, -1, "")
@@ -129,7 +129,7 @@ class formCylinder(wx.Dialog):
         self.panel_26 = wx.Panel(self.notebook_combustion, -1)
         self.panel_24 = wx.Panel(self.notebook_combustion, -1)
         self.panel_25 = wx.Panel(self.notebook_combustion, -1)
-        self.label_41 = wx.StaticText(self.notebook_combustion, -1, "Burned Mass Fraction rate:")
+        self.label_41 = wx.StaticText(self.notebook_combustion, -1, "Burned Mass Fraction Rate:")
         self.button_2 = wx.Button(self.notebook_combustion, -1, "load")
         self.button_2b = wx.Button(self.notebook_combustion, -1, "plot")
         self.combustion['xbdot_array'] = wx.grid.Grid(self.notebook_combustion, -1, size=(1, 1))
@@ -186,6 +186,9 @@ class formCylinder(wx.Dialog):
         self.label_5.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         self.data['crank_radius'].SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         self.data['crank_radius'].SetValidator(numberValidator())
+        self.label_21.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        self.data['rod_length'].SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        self.data['rod_length'].SetValidator(numberValidator())
         self.label_6.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         self.data['Vol_clearance'].SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         self.data['Vol_clearance'].SetValidator(numberValidator())
@@ -198,9 +201,6 @@ class formCylinder(wx.Dialog):
         self.label_9.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         self.data['delta_ca'].SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         self.data['delta_ca'].SetValidator(numberValidator())
-        self.label_21.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.data['rod_length'].SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.data['rod_length'].SetValidator(numberValidator())
         self.label_11.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         self.data['twall'].CreateGrid(1, 1)
         self.data['twall'].SetRowLabelSize(55)
@@ -208,7 +208,7 @@ class formCylinder(wx.Dialog):
         self.data['twall'].EnableDragColSize(0)
         self.data['twall'].EnableDragRowSize(0)
         self.data['twall'].EnableDragGridSize(0)
-        self.data['twall'].SetColLabelValue(0, "ºK")
+        self.data['twall'].SetColLabelValue(0, "K")
         self.data['twall'].SetRowLabelValue(0, "Wall: ")
         self.data['twall'].SetMinSize(wx.DLG_SZE(self.data['U_crevice'], (75, 50)))
         self.data['twall'].SetDefaultCellFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
@@ -246,9 +246,9 @@ class formCylinder(wx.Dialog):
         self.data['scavenge_type'].Enable(False)
         self.data['scavenge_type'].SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         self.data['scavenge_type'].SetSelection(0)
-        self.label_16.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.data['SRv'].SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.data['SRv'].SetValidator(numberValidator())
+        # self.label_16.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        # self.data['SRv'].SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        # self.data['SRv'].SetValidator(numberValidator())
         self.data['full_implicit'].SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         self.data['full_implicit'].SetValue(1)
         self.label_19.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
@@ -432,6 +432,8 @@ class formCylinder(wx.Dialog):
         grid_sizer_12.Add(self.data['Bore'], 0, wx.ALIGN_CENTER_VERTICAL, 0)
         grid_sizer_12.Add(self.label_5, 0, wx.ALIGN_CENTER_VERTICAL, 0)
         grid_sizer_12.Add(self.data['crank_radius'], 0, wx.ALIGN_CENTER_VERTICAL, 0)
+        grid_sizer_12.Add(self.label_21, 0, wx.ALIGN_CENTER_VERTICAL, 0)
+        grid_sizer_12.Add(self.data['rod_length'], 0, wx.ALIGN_CENTER_VERTICAL, 0)
         grid_sizer_12.Add(self.label_6, 0, wx.ALIGN_CENTER_VERTICAL, 0)
         grid_sizer_12.Add(self.data['Vol_clearance'], 0, wx.ALIGN_CENTER_VERTICAL, 0)
         grid_sizer_12.Add(self.label_7, 0, wx.ALIGN_CENTER_VERTICAL, 0)
@@ -440,8 +442,6 @@ class formCylinder(wx.Dialog):
         grid_sizer_12.Add(self.data['piston_area'], 0, wx.ALIGN_CENTER_VERTICAL, 0)
         grid_sizer_12.Add(self.label_9, 0, wx.ALIGN_CENTER_VERTICAL, 0)
         grid_sizer_12.Add(self.data['delta_ca'], 0, wx.ALIGN_CENTER_VERTICAL, 0)
-        grid_sizer_12.Add(self.label_21, 0, wx.ALIGN_CENTER_VERTICAL, 0)
-        grid_sizer_12.Add(self.data['rod_length'], 0, wx.ALIGN_CENTER_VERTICAL, 0)
         grid_sizer_12.Add(self.label_28b, 0, wx.ALIGN_CENTER_VERTICAL, 0)
         grid_sizer_12.Add(self.data['type_temperature'], 0, wx.ALIGN_CENTER_VERTICAL, 0)
         grid_sizer_12.Add(self.label_11, 0, wx.ALIGN_CENTER_VERTICAL, 0)
@@ -465,8 +465,8 @@ class formCylinder(wx.Dialog):
         grid_sizer_13.Add(self.panel_11, 1, wx.EXPAND, 0)
         grid_sizer_13.Add(self.label_15, 0, wx.ALIGN_CENTER_VERTICAL, 0)
         grid_sizer_13.Add(self.data['scavenge_type'], 0, wx.ALIGN_CENTER_VERTICAL, 0)
-        grid_sizer_13.Add(self.label_16, 0, wx.ALIGN_CENTER_VERTICAL, 0)
-        grid_sizer_13.Add(self.data['SRv'], 0, wx.ALIGN_CENTER_VERTICAL, 0)
+        # grid_sizer_13.Add(self.label_16, 0, wx.ALIGN_CENTER_VERTICAL, 0)
+        # grid_sizer_13.Add(self.data['SRv'], 0, wx.ALIGN_CENTER_VERTICAL, 0)
         grid_sizer_13.Add(self.data['full_implicit'], 0, 0, 0)
         grid_sizer_13.Add(self.panel_12, 1, wx.EXPAND, 0)
         grid_sizer_13.Add(self.label_19, 0, wx.ALIGN_CENTER_VERTICAL, 0)
@@ -498,7 +498,7 @@ class formCylinder(wx.Dialog):
         grid_sizer_injection.Add(self.injection['ignition_delay_model'], 0, wx.ALIGN_CENTER_VERTICAL, 0)
         grid_sizer_injection.Add(self.label_30, 0, wx.ALIGN_CENTER_VERTICAL, 0)
         grid_sizer_injection.Add(self.injection['theta_id'], 0, wx.ALIGN_CENTER_VERTICAL, 0)
-        msg = wx.StaticText(self.notebook_injection, -1, "\nONLY AVALAIBLE FOR DIESEL INJECTS")
+        msg = wx.StaticText(self.notebook_injection, -1, "\nAVAILABLE ONLY FOR DIESEL ENGINES")
         grid_sizer_injection.Add(msg, 0, wx.ALIGN_CENTER_VERTICAL, 0)
         grid_sizer_16.Add(grid_sizer_injection, 1, wx.EXPAND, 0)
         grid_sizer_31.Add(self.label_33, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
@@ -572,8 +572,8 @@ class formCylinder(wx.Dialog):
                 if(not(self.data[key].GetValidator().Validate(self,'number'))):
                     can_out=0
         for key in self.combustion:
-            if (self.data[key].GetValidator()):
-                if(not(self.data[key].GetValidator().Validate(self,'number'))):
+            if self.data[key].GetValidator():
+                if not(self.data[key].GetValidator().Validate(self,'number')):
                     can_out=0
         for key in self.fuel:
             if (self.data[key].GetValidator()):
@@ -625,18 +625,28 @@ class formCylinder(wx.Dialog):
             if (self.data[key].GetValidator()):
                 if(not(self.data[key].GetValidator().Validate(self,'number'))):
                     can_out=0
+        no_check_comb = []
+        if self.data['type_ig'].GetSelection()==0: 
+            if self.combustion['combustion_model'].GetSelection()==0:
+                no_check_comb = ['a_wiebe','m_wiebe']
+        elif self.data['type_ig'].GetSelection()==1:
+            no_check_comb = ['phi']
         for key in self.combustion:
-            if (self.combustion[key].GetValidator()):
+            if self.combustion[key].GetValidator() and not(key in no_check_comb):
                 if(not(self.combustion[key].GetValidator().Validate(self,'number'))):
                     can_out=0
         for key in self.fuel:
             if (self.fuel[key].GetValidator()):
                 if(not(self.fuel[key].GetValidator().Validate(self,'number'))):
                     can_out=0
-        for key in self.injection:
-            if (self.injection[key].GetValidator()):
-                if(not(self.injection[key].GetValidator().Validate(self,'number'))):
-                    can_out=0
+        if self.data['type_ig'].GetSelection()==1:
+            no_check_inj = []
+            if self.injection['ignition_delay_model'].GetSelection()!=2:
+                no_check_inj = ['theta_id']
+            for key in self.injection:
+                if self.injection[key].GetValidator() and not(key in no_check_inj):
+                    if(not(self.injection[key].GetValidator().Validate(self,'number'))):
+                        can_out=0
         
         if(can_out==1):
             self.EndModal(wx.ID_OK)
@@ -659,8 +669,10 @@ class formCylinder(wx.Dialog):
         scav = self.data['scavenge'].GetValue()
         if scav == 1:
             self.data['scavenge_type'].Enable(1)
+            # self.data['SRv'].Enable(1)
         else:
             self.data['scavenge_type'].Enable(0)
+            # self.data['SRv'].Enable(0)
 
     def onPulse(self, event): # wxGlade: formCylinder.<event_handler>
         pulse = self.injection['pulse'].GetSelection()
@@ -743,7 +755,7 @@ class formCylinder(wx.Dialog):
             points = data2tuple(self.injection['mfdot_array'])
             if points:
                 formPlot = Plots(None,-1, "")
-                formPlot.plotData(points,"Mass Injected Rate")
+                formPlot.plotData(points,"Mass Injection Rate")
                 formPlot.ShowModal()
                 formPlot.Destroy()
                 
@@ -754,7 +766,7 @@ class formCylinder(wx.Dialog):
             points = data2tuple(self.combustion['xbdot_array'])
             if points:
                 formPlot = Plots(None,-1, "")
-                formPlot.plotData(points,"Burned Mass rate")
+                formPlot.plotData(points,"Burned Mass Rate")
                 formPlot.ShowModal()
                 formPlot.Destroy()
                 
@@ -766,10 +778,10 @@ class formCylinder(wx.Dialog):
 			self.data['state_ini'].SetColLabelValue(3, "Species 1")
 			self.data['state_ini'].SetColLabelValue(4, "Species 2")
 			self.data['state_ini'].SetColLabelValue(5, "Species 3")
-		self.combustion['xbdot_array'].SetColLabelValue(0, "open")
-		self.combustion['xbdot_array'].SetColLabelValue(1, "Value")
-		self.injection['mfdot_array'].SetColLabelValue(0, "open")
-		self.injection['mfdot_array'].SetColLabelValue(1, "Value")
+		self.combustion['xbdot_array'].SetColLabelValue(0, "Angle [deg]")
+		self.combustion['xbdot_array'].SetColLabelValue(1, "Value [1/s]")
+		self.injection['mfdot_array'].SetColLabelValue(0, "Angle [deg]")
+		self.injection['mfdot_array'].SetColLabelValue(1, "Value [kg/s]")
 		self.data['U_crevice'].SetColLabelValue(0, "Data")
 		self.data['data_crevice'].SetColLabelValue(0, "Value")
 		if self.data['type_temperature'].GetSelection() == 0:

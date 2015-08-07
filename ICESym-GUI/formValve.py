@@ -32,21 +32,21 @@ class formValve(wx.Dialog):
         self.notebook_general = wx.ScrolledWindow(self.configure_notebook, -1, style=wx.TAB_TRAVERSAL)
         self.label_0 = wx.StaticText(self.notebook_general, -1, "Number of Valves:")
         self.data['Nval'] = wx.TextCtrl(self.notebook_general, -1, "")
-        self.label_1 = wx.StaticText(self.notebook_general, -1, "Type Data:")
-        self.data['type_dat'] = wx.RadioBox(self.notebook_general, -1, "", choices=["Exponential", u"Sin²", "user-defined"], majorDimension=0, style=wx.RA_SPECIFY_ROWS)
-        self.label_2 = wx.StaticText(self.notebook_general, -1, "Open Angle [degress]:")
+        self.label_1 = wx.StaticText(self.notebook_general, -1, "Valve Lift:")
+        self.data['type_dat'] = wx.RadioBox(self.notebook_general, -1, "", choices=["Exponential", "Squared Sin", "User-defined"], majorDimension=0, style=wx.RA_SPECIFY_ROWS)
+        self.label_2 = wx.StaticText(self.notebook_general, -1, "Opening Angle [deg]:")
         self.data['angle_V0'] = wx.TextCtrl(self.notebook_general, -1, "")
-        self.label_3 = wx.StaticText(self.notebook_general, -1, "Close Angle [degress]:")
+        self.label_3 = wx.StaticText(self.notebook_general, -1, "Closing Angle [deg]:")
         self.data['angle_VC'] = wx.TextCtrl(self.notebook_general, -1, "")
-        self.label_4 = wx.StaticText(self.notebook_general, -1, "Diameter Valve [mts]:")
+        self.label_4 = wx.StaticText(self.notebook_general, -1, "Diameter [mm]:")
         self.data['Dv'] = wx.TextCtrl(self.notebook_general, -1, "")
         self.label_5 = wx.StaticText(self.notebook_general, -1, "Valve Model:")
         self.data['valve_model'] = wx.RadioBox(self.notebook_general, -1, "", choices=["Toyota", "Alessandri"], majorDimension=0, style=wx.RA_SPECIFY_ROWS)
         self.label_6 = wx.StaticText(self.notebook_general, -1, "Type of Valve:")
         self.data['type'] = wx.RadioBox(self.notebook_general, -1, "", choices=["Intake Valve", "Exhaust Valve"], majorDimension=0, style=wx.RA_SPECIFY_ROWS)
-        self.label_7 = wx.StaticText(self.notebook_general, -1, "Lv Max [mm]:")
+        self.label_7 = wx.StaticText(self.notebook_general, -1, "Max. Valve Lift [mm]:")
         self.data['Lvmax'] = wx.TextCtrl(self.notebook_general, -1, "")
-        self.label_8 = wx.StaticText(self.notebook_general, -1, "Lv Define:")
+        self.label_8 = wx.StaticText(self.notebook_general, -1, "Valve Lift Definition:")
         self.button_1 = wx.Button(self.notebook_general, -1, "load")
         self.button_1b = wx.Button(self.notebook_general, -1, "plot")
         self.data['Lv'] = wx.grid.Grid(self.notebook_general, -1, size=(1, 1))
@@ -116,8 +116,8 @@ class formValve(wx.Dialog):
         self.data['Lv'].EnableDragColSize(0)
         self.data['Lv'].EnableDragRowSize(0)
         self.data['Lv'].EnableDragGridSize(0)
-        self.data['Lv'].SetColLabelValue(0, "Angle")
-        self.data['Lv'].SetColLabelValue(1, "Value")
+        self.data['Lv'].SetColLabelValue(0, "Angle [deg]")
+        self.data['Lv'].SetColLabelValue(1, "Lift [mm]")
         self.data['Lv'].SetMinSize(wx.DLG_SZE(self.data['Lv'], (120, 100)))
         self.data['Lv'].SetDefaultCellFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         self.data['Lv'].SetDefaultRowSize(18)
@@ -127,13 +127,13 @@ class formValve(wx.Dialog):
         self.button_2.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         self.button_2b.SetMinSize(wx.DLG_SZE(self.button_2b, (20, 13)))
         self.button_2b.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.data['Cd'].CreateGrid(2, 2)
+        self.data['Cd'].CreateGrid(10, 2)
         self.data['Cd'].SetRowLabelSize(20)
         self.data['Cd'].SetColLabelSize(20)
         self.data['Cd'].EnableDragColSize(0)
         self.data['Cd'].EnableDragRowSize(0)
         self.data['Cd'].EnableDragGridSize(0)
-        self.data['Cd'].SetColLabelValue(0, "Lv (mm)")
+        self.data['Cd'].SetColLabelValue(0, "Lift [mm]")
         self.data['Cd'].SetColLabelValue(1, "Cd")
         self.data['Cd'].SetMinSize(wx.DLG_SZE(self.data['Cd'], (120, 99)))
         self.data['Cd'].SetDefaultCellFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
@@ -260,8 +260,11 @@ class formValve(wx.Dialog):
 
     def ConfigureAccept(self, event): # wxGlade: formValve.<event_handler>
         can_out=1
+        no_check = []
+        if self.data['type_dat'].GetSelection()==2: 
+            no_check = ['Lvmax']
         for key in self.data:
-            if (self.data[key].GetValidator()):
+            if self.data[key].GetValidator() and not(key in no_check):
                 if(not(self.data[key].GetValidator().Validate(self,'number'))):
                     can_out=0
         
@@ -304,6 +307,7 @@ class formValve(wx.Dialog):
     def onTypeDat(self, event): # wxGlade: formValve.<event_handler>       
         td = self.data['type_dat'].GetSelection()
         if td == 2:
+            self.data['Lvmax'].Enable(0)
             self.data['Lv'].Enable(1)
         else:
             self.data['Lv'].Enable(0)
@@ -354,9 +358,9 @@ class formValve(wx.Dialog):
 		#self.data['histo'].SetColLabelValue(0, "Density")
 		#self.data['histo'].SetColLabelValue(1, "Velocity")
 		#self.data['histo'].SetColLabelValue(2, "Pressure")
-		self.data['Lv'].SetColLabelValue(0, "Angle")
-		self.data['Lv'].SetColLabelValue(1, "Value")
-		self.data['Cd'].SetColLabelValue(0, "Lv (mm)")
+		self.data['Lv'].SetColLabelValue(0, "Angle [deg]")
+		self.data['Lv'].SetColLabelValue(1, "Lift [mm]")
+		self.data['Cd'].SetColLabelValue(0, "Lift [mm]")
 		self.data['Cd'].SetColLabelValue(1, "Cd")
 
     def setContextualHelp(self):

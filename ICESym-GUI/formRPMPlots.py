@@ -326,4 +326,3 @@ class RPMPlots(wx.Dialog):
 			self.data['units'].Enable(False)
 
 
-

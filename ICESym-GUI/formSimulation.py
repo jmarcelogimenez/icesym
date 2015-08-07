@@ -24,42 +24,42 @@ class formSimulation(wx.Dialog):
         self.configure_notebook = wx.Notebook(self.panel_configure, -1, style=0)
         self.notebook_saves = wx.ScrolledWindow(self.configure_notebook, -1, style=wx.TAB_TRAVERSAL)
         self.notebook_general = wx.ScrolledWindow(self.configure_notebook, -1, style=wx.TAB_TRAVERSAL)
-        self.label_0 = wx.StaticText(self.notebook_general, -1, "List of RPMS (separe with \",\"):")
+        self.label_0 = wx.StaticText(self.notebook_general, -1, "List of RPMS (separated with \",\"):")
         self.data['rpms'] = wx.TextCtrl(self.notebook_general, -1, "")
-        self.label_1 = wx.StaticText(self.notebook_general, -1, "Number of Cycles for rpm:")
+        self.label_1 = wx.StaticText(self.notebook_general, -1, "Number of Cycles per rpm:")
         self.data['ncycles'] = wx.TextCtrl(self.notebook_general, -1, "")
-        self.label_2 = wx.StaticText(self.notebook_saves, -1, "Iterations per Save: ")
+        self.label_2 = wx.StaticText(self.notebook_saves, -1, "Saving Frequency :")
         self.data['nsave'] = wx.TextCtrl(self.notebook_saves, -1, "")
-        self.label_3 = wx.StaticText(self.notebook_general, -1, "dTheta Rpm:")
+        self.label_3 = wx.StaticText(self.notebook_general, -1, "Max. Delta Crank Angle:")
         self.data['dtheta_rpm'] = wx.TextCtrl(self.notebook_general, -1, "")
-        self.label_4 = wx.StaticText(self.notebook_general, -1, "Courant: ")
+        self.label_4 = wx.StaticText(self.notebook_general, -1, "Courant Number: ")
         self.data['Courant'] = wx.TextCtrl(self.notebook_general, -1, "")
-        self.label_5 = wx.StaticText(self.notebook_general, -1, "Ga:")
+        self.label_5 = wx.StaticText(self.notebook_general, -1, "Gas Specific Heat Ratio:")
         self.data['ga'] = wx.TextCtrl(self.notebook_general, -1, "")
         self.label_6 = wx.StaticText(self.notebook_general, -1, "Viscous Flow:")
         self.data['viscous_flow'] = wx.TextCtrl(self.notebook_general, -1, "")
         self.label_7 = wx.StaticText(self.notebook_general, -1, "Heat Flow:")
         self.data['heat_flow'] = wx.TextCtrl(self.notebook_general, -1, "")
-        self.label_8 = wx.StaticText(self.notebook_general, -1, "R Gas:")
+        self.label_8 = wx.StaticText(self.notebook_general, -1, "Gas Constat:")
         self.data['R_gas'] = wx.TextCtrl(self.notebook_general, -1, "")
-        self.label_9 = wx.StaticText(self.notebook_general, -1, "Number Stroke:")
+        self.label_9 = wx.StaticText(self.notebook_general, -1, "Strokes per Cycle:")
         self.data['nstroke'] = wx.RadioBox(self.notebook_general, -1, "", choices=["2", "4"], majorDimension=0, style=wx.RA_SPECIFY_ROWS)
-        self.label_10 = wx.StaticText(self.notebook_general, -1, "Engine Type:")
-        self.data['engine_type'] = wx.RadioBox(self.notebook_general, -1, "", choices=["Alternative", "Oppossed Pistons"], majorDimension=0, style=wx.RA_SPECIFY_ROWS)
+        self.label_10 = wx.StaticText(self.notebook_general, -1, "Engine Geometry:")
+        self.data['engine_type'] = wx.RadioBox(self.notebook_general, -1, "", choices=["Alternative", "Opposed-Piston"], majorDimension=0, style=wx.RA_SPECIFY_ROWS)
         self.label_11 = wx.StaticText(self.notebook_general, -1, "Ignition Order:")
         self.data['ig_order'] = wx.TextCtrl(self.notebook_general, -1, "")
         self.label_12 = wx.StaticText(self.notebook_saves, -1, "File Save State: ")
         self.data['filesave_state'] = wx.TextCtrl(self.notebook_saves, -1, "")
-        self.label_13 = wx.StaticText(self.notebook_saves, -1, "File Save SPD:")
+        self.label_13 = wx.StaticText(self.notebook_saves, -1, "File Save Species:")
         self.data['filesave_spd'] = wx.TextCtrl(self.notebook_saves, -1, "")
-        self.label_14 = wx.StaticText(self.notebook_saves, -1, "Get State From: ")
-        self.data['get_state'] = wx.RadioBox(self.notebook_saves, -1, "", choices=["Here", "File", "Fortran"], majorDimension=0, style=wx.RA_SPECIFY_ROWS)
+        self.label_14 = wx.StaticText(self.notebook_saves, -1, "Get Initial State From: ")
+        self.data['get_state'] = wx.RadioBox(self.notebook_saves, -1, "", choices=["Here", "File", "Solver"], majorDimension=0, style=wx.RA_SPECIFY_ROWS)
         self.label_15 = wx.StaticText(self.notebook_saves, -1, "find:")
         self.button_1 = wx.Button(self.notebook_saves, -1, "load...")
         self.filename = wx.StaticText(self.notebook_saves, -1, "\" \"")
         self.data['filein_state'] = wx.TextCtrl(self.notebook_saves, -1, "")
         self.data['calc_engine_data'] = wx.CheckBox(self.notebook_saves, -1, "Calculate Engine Performance Characteristics")
-        self.label_17 = wx.StaticText(self.notebook_saves, -1, "Iterations per Append:")
+        self.label_17 = wx.StaticText(self.notebook_saves, -1, "Appending Frequency :")
         self.data['nappend'] = wx.TextCtrl(self.notebook_saves, -1, "")
         self.data['folder_name'] = wx.TextCtrl(self.notebook_saves, -1, "")
         self.label_18 = wx.StaticText(self.notebook_saves, -1, "Folder Name:")
@@ -228,21 +228,21 @@ class formSimulation(wx.Dialog):
 			self.data[key].SetHelpText(help_simulation[key])
 
     def ConfigureAccept(self, event): # wxGlade: formSimulation.<event_handler>
-		can_out=1
-		for key in self.data:
-			if (self.data[key].GetValidator()):
-				if not(key in self.listas):
-					if(not(self.data[key].GetValidator().Validate(self,'list'))):
-						can_out=0
-				else:
-					if(not(self.data[key].GetValidator().Validate(self,'number'))):
-						can_out=0
+        can_out=1
+        for key in self.data:
+            if (self.data[key].GetValidator()):
+                if not(key in self.listas):
+                    if(not(self.data[key].GetValidator().Validate(self,'list'))):
+                        can_out=0
+                    else:
+                        if(not(self.data[key].GetValidator().Validate(self,'number'))):
+                            can_out=0
 
-		if(can_out == 0):
-			wx.MessageBox("Some fields have some error (empty or no-digit value)!", "Error")
+        if(can_out == 0):
+            wx.MessageBox("Some fields have some error (empty or no-digit value)!", "Error")
 
-		if can_out == 1:        
-			self.EndModal(wx.ID_OK)
+        if can_out == 1:        
+            self.EndModal(wx.ID_OK)
             
 
     def ConfigureCancel(self, event): # wxGlade: formSimulation.<event_handler>

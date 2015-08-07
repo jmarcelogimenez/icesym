@@ -550,15 +550,15 @@ class PostProcess(wx.Frame):
 				self.canvas_list[nf] = pc
 
     def onXAxis(self,event):
-		nf = int(event.GetId() / self.nButtons) - self.nDelete
-		msg = wx.TextEntryDialog(self,"Insert X Axis label: ","Input",str(self.dataFigures[nf][-1]['x_axis']))
-		ret = msg.ShowModal()
-		if ret==5100:
-			lab = msg.GetValue()
-			self.dataFigures[nf][-1]['x_axis'] = str(lab)
-			pc = self.plotData(nf,self.dataFigures[nf])
-			self.canvas_list[nf] = pc
-		
+        nf = int(event.GetId() / self.nButtons) - self.nDelete
+        msg = wx.TextEntryDialog(self,"Insert X Axis label: ","Input",str(self.dataFigures[nf][-1]['x_axis']))
+        ret = msg.ShowModal()
+        if ret==5100:
+            lab = msg.GetValue()
+            self.dataFigures[nf][-1]['x_axis'] = str(lab)
+            pc = self.plotData(nf,self.dataFigures[nf])
+            self.canvas_list[nf] = pc
+    
     def onYAxis(self,event):
 		nf = int(event.GetId() / self.nButtons) - self.nDelete
 		msg = wx.TextEntryDialog(self,"Insert Y Axis label: ","Input",str(self.dataFigures[nf][-1]['y_axis']))
@@ -583,8 +583,7 @@ class PostProcess(wx.Frame):
 		Globals = dict()
 		Globals['labels'] = []
 		if self.configData.Globals['engine_data'] == 1: # si esta activada la bandera
-			Globals['labels'] = ['power_indicated','power_effective','torque_indicated','torque_effective','IMEP_per_cylinder','IMEP_global','FMEP_per_cylinder','FMEP_global', 'BMEP_per_cylinder','BMEP_global','SFC_indicated','SFC_effective','mechanical_efficiency','volumetric_efficiency_per_cylinder','volumetric_efficiency_global',
-'fuel_conversion_efficiency_indicated', 'fuel_conversion_efficiency_effective']
+			Globals['labels'] = ['power_indicated','power_effective','torque_indicated','torque_effective','IMEP_per_cylinder','IMEP_global','FMEP_per_cylinder','FMEP_global', 'BMEP_per_cylinder','BMEP_global','SFC_indicated','SFC_effective','mechanical_efficiency','volumetric_efficiency_per_cylinder','volumetric_efficiency_global','fuel_conversion_efficiency_indicated','fuel_conversion_efficiency_effective']
 			
 		self.spaceData['time'] = List2StringList(self.configData.final_times)
 		Cylinders = dict()

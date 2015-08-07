@@ -8,7 +8,7 @@ class anglePlots(wx.Dialog):
     listNdofA = ['density', 'velocity', 'pressure']
     listNdofB = ['density', 'pressure','temperature']
     cylExtras= ['convective heat-transfer coeff','radiactive heat-transfer coeff','convective heat-transfer rate','radiactive heat-transfer rate','burned mass fraction','burned mass fraction rate','mass flow rate trought intake port','mass flow rate trought exhaust port','Volume','mass of fuel','mass of air', 'mass of residual gas','total heat-transfer rate','fuel chemical energy release', 'torque']
-    tankExtras = ['mass flow rate','enthalpy flow rate','mass','heat-transfer rate']
+    tankExtras = ['mass flow rate','enthalpy flow rate','mass','convective heat-transfer rate']
     parsedData = dict()
     def __init__(self, *args, **kwds):
 		# begin wxGlade: anglePlots.__init__
