@@ -114,6 +114,7 @@ contains
     fixed = 0
     dx = hnod(1)
     if(myData%t_left.eq.0) then
+       fixed = 1
        call cv2pv(U_old(:,1), Upv, ga, 1)
        Upv2(:,1) = Upv
        Upv2(:,2) = Upv
@@ -125,14 +126,16 @@ contains
             globalData%R_gas, globalData%dt, &
             globalData%viscous_flow, globalData%heat_flow, RHS)
 
-       call solve_valve_implicit(Urv, Upv2, -1, 0.8*Area(1), &
-            Area(1), RHS, ga, Upipe, Uthroat, solved_case)
-       Uref(:,1) = Upipe
+       ! call solve_valve_implicit(Urv, Upv2, -1, 0.9*Area(1), &
+       !      Area(1), RHS, ga, Upipe, Uthroat, solved_case)
+       ! Uref(:,1) = Upipe
     end if
     call bc_tubes(U(:,1), Uref(:,1), U_old(:,2), ga, -1, dt, dx, fixed)
+    ! call bc_tubes(U(:,1), Uref(:,1), U(:,2), ga, -1, dt, dx, fixed)
     fixed = 0
     dx = hnod(myData%nnod-1)
     if(myData%t_right.eq.0) then
+       fixed = 1
        call cv2pv(U_old(:,myData%nnod), Upv, ga, 1)
        Upv2(:,1) = Upv
        Upv2(:,2) = Upv
@@ -144,12 +147,14 @@ contains
             Twall(myData%nnod), ga, globalData%R_gas, globalData%dt, &
             globalData%viscous_flow, globalData%heat_flow, RHS)
        
-       call solve_valve_implicit(Urv, Upv2, 1, 0.8*Area(myData%nnod), &
-            Area(myData%nnod), RHS, ga, Upipe, Uthroat, solved_case)
-       Uref(:,2) = Upipe
+       ! call solve_valve_implicit(Urv, Upv2, 1, 0.9*Area(myData%nnod), &
+       !      Area(myData%nnod), RHS, ga, Upipe, Uthroat, solved_case)
+       ! Uref(:,2) = Upipe
     end if
     call bc_tubes(U(:,myData%nnod), Uref(:,2), &
          U_old(:,myData%nnod-1), ga, 1, dt, dx, fixed)
+    ! call bc_tubes(U(:,myData%nnod), Uref(:,2), &
+    !      U(:,myData%nnod-1), ga, 1, dt, dx, fixed)
     
     ! From conservative basis to primitive basis
     call cv2pv(U, Up, ga, myData%nnod)
@@ -160,6 +165,7 @@ contains
        enddo
     enddo
 
+    ! myData%dt_max = dt
     call critical_dt(globalData, Up, hnod, myData%nnod, ga, myData%dt_max)
 
     call actualize_valves(itube, Area, Twall, dAreax, myData%nnod, &
@@ -519,6 +525,7 @@ contains
     g1    =  ga-1.
 
     ucell =  U(2,:)/U(1,:)
+    ! pres  =  (U(3,:)-0.5*U(1,:)*U(2,:))*g1 ! CHEQUEAR
     pres  =  (U(3,:)-0.5*U(2,:)**2/U(1,:))*g1
     cc    =  dsqrt(ga*pres/U(1,:))
 
@@ -619,8 +626,6 @@ contains
 
   subroutine bc_tubes(U, Uref, Uin, ga, normal, dt, dx, fixed)
     !
-    !  WARNING! Saco las bc Dirichlet, todas son abso
-    !
     !  bc_tubes is called by: solve_tube
     !  bc_tubes calls the following subroutines and functions: bc_abso_unsteady, bc_abso
     !
@@ -642,6 +647,7 @@ contains
        call cv2pv(U, Uref_C, ga, 1)
        Uref_C(3,1) = Uref(3,1)
        if(Uref_C(2,1)*normal.lt.0) then
+       ! if(normal.lt.0) then
           Uref_C(1,1) = Uref(1,1)
        end if
        call pv2cv(Uref_C, Ubc, ga, 1)
@@ -741,6 +747,7 @@ contains
     vref(2,:) = P1(2,:)*Uref(1,:)+P1(5,:)*Uref(2,:)+P1(8,:)*Uref(3,:)
     vref(3,:) = P1(3,:)*Uref(1,:)+P1(6,:)*Uref(2,:)+P1(9,:)*Uref(3,:)
 
+    !where(D.le.0.0) dvdx = (vref-vin)/dx
     where(D.le.0.0) dvdx = (vref-v)/dx
     where(D.gt.0.0) dvdx = (v-vin)/dx
 
@@ -833,13 +840,18 @@ contains
 
                 vchar_0 = U(2,:)
                 vchar_plus = U(2,:)+dsqrt(ga*U(3,:)/U(1,:))
+                ! dx_S = vchar_plus*dt
                 dx_S = vchar_plus(2)*dt/ &
                      (1.+dt/hnod(nnod-1)*(vchar_plus(2)-vchar_plus(1)))
                 if(vchar_0(2).gt.0.) then
+                   ! dx_R = vchar_0*dt
                    dx_R = vchar_0(2)*dt/ &
                         (1.+dt/hnod(nnod-1)*(vchar_0(2)-vchar_0(1)))
                 else
                    dx_R = -vchar_0(2)*dt
+                   ! dx_R = dx_S
+                   ! dx_R = -vchar_0(2)*dt/ &
+                   !      (1.-dt/hnod(nnod-1)*(vchar_0(2)-vchar_0(1)))
                 end if
                 do j=1,3
                    cyl(k)%intake_valves(i)%state_ref(j,1) = &
@@ -862,13 +874,18 @@ contains
 
                 vchar_0 = U(2,:)
                 vchar_minus = U(2,:)-dsqrt(ga*U(3,:)/U(1,:))
+                ! dx_S = vchar_minus*dt
                 dx_S = vchar_minus(1)*dt/ &
                      (1.+dt/hnod(1)*(vchar_minus(2)-vchar_minus(1)))
                 if(vchar_0(1).lt.0.) then
+                   ! dx_R = vchar_0*dt
                    dx_R = vchar_0(1)*dt/ &
                         (1.+dt/hnod(1)*(vchar_0(2)-vchar_0(1)))
                 else
                    dx_R = -vchar_0(1)*dt
+                   ! dx_R = dx_S
+                   ! dx_R = -vchar_0(1)*dt/ &
+                   !      (1.-dt/hnod(nnod-1)*(vchar_0(2)-vchar_0(1)))
                 end if
                 do j=1,3
                    cyl(k)%exhaust_valves(i)%state_ref(j,1) = &

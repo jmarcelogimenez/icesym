@@ -116,7 +116,7 @@ class Cylinder: public Component
 	Cylinder(unsigned int, unsigned int, unsigned int, int, vector<double>, vector<int>, 
 			 char*, double, double, double, double, double, double,
 	         double, double, vector<double>, vector<double>, vector<double>, 
-			 vector<double>,vector<double>, int, double, int, char*, int, int, fuel, 
+			 vector<double>,vector<double>, int, double, int, int, int, int, fuel, 
 			 combustion, injection,vector<valve>, vector<valve>, Scavenge, int,int,
 			 int, double, double, double);
 	Cylinder(Cylinder* c);
@@ -158,7 +158,7 @@ class Cylinder: public Component
 	int model_ht;             /**< Heat transfer model (0:"Annand", 1:"Woschni 1", 2:"Woschni 2", 3:"Taylor") */
 	double factor_ht;	      /**< Factor to heat transfer law (Factor multiplicativo que se aplica a la ley de transferencia de calor) */
 	bool scavenge;			  /**< Indicates if will be used scavenge (Indica si se va a utilizar un modelo de barrido) */
-	char* scavenge_type;	  /**< Scavenge type ("uniflow", "scre", "yam1", "yam6", "cd", "qubcr") */
+	int scavenge_type;	  /**< Scavenge type ("uniflow", "scre", "yam1", "yam6", "cd", "qubcr") */
 	int type_ig;			  /**< Ignition type 1:diesel , 0:naftero */
 	bool full_implicit;
 	Scavenge scavenge_data;		

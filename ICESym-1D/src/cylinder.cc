@@ -29,7 +29,7 @@ Cylinder::Cylinder(unsigned int nnod, unsigned int ndof, unsigned int nnod_input
 				   double head_chamber_area, double piston_area, double theta_0, double delta_ca, 
 				   vector<double> Twall, vector<double> prop, vector<double> U_crevice, 
 				   vector<double> data_crevice, vector<double> mass_C, int model_ht, 
-				   double factor_ht, int scavenge,char* scavenge_type, int type_ig, 
+				   double factor_ht, int scavenge, int scavenge_type, int type_ig, 
 				   int full_implicit, fuel fuel_data, combustion combustion_data, 
 				   injection injection_data,vector<valve> intake_valves, 
 				   vector<valve> exhaust_valves, Scavenge scavenge_data, int extras,
@@ -57,7 +57,7 @@ Component(nnod,ndof,nnod_input,implicit,state_ini,histo,label){
 	this->model_ht				= model_ht;
 	this->factor_ht				= factor_ht;
 	this->scavenge				= scavenge;
-	strcopy(this->scavenge_type,scavenge_type);
+	this->scavenge_type         = scavenge_type;
 	this->scavenge_data			= scavenge_data;
 	this->type_ig				= type_ig;
 	this->full_implicit			= full_implicit;
@@ -99,7 +99,7 @@ Cylinder::Cylinder(Cylinder* c):Component(c->nnod,c->ndof,c->nnod_input,c->impli
 	this->model_ht			= c->model_ht;
 	this->factor_ht			= c->factor_ht;
 	this->scavenge			= c->scavenge;
-	strcopy(this->scavenge_type,c->scavenge_type);
+	this->scavenge_type     = c->scavenge_type;
 	this->type_ig			= c->type_ig;
 	this->full_implicit		= c->full_implicit;
 	this->extras			= c->extras;

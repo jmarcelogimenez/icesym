@@ -138,7 +138,8 @@ cdef class Tube:
 		else:
 			print 'It is not indicated the type of tube'
 			print 'Options are: intake or exhaust'
-			raise ValueError
+			# raise ValueError
+			type = 1
 
 		self.thisptr = new_Tube(nnod, ndof, nnod_input, implicit, 
 					state_ini,histo, label, longitud, 

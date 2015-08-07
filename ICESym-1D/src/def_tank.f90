@@ -57,7 +57,8 @@ contains
     real*8 :: Area_P, Area_T, alpha, dAreax_P, Twall_P, ga, R_gas
     real*8, dimension(myData%ndof) :: Utank, Utube, Uthroat, RHS
     real*8, dimension(myData%ndof,myData%nnod-1) :: Upipe, Uref, Utpipe
-    
+    real*8 :: a2
+
     ntubes = myData%nnod-1
 
     ! Get the tank state from state vector
@@ -95,7 +96,15 @@ contains
        if(.true.) then
           call solve_valve(Utank, Uref(:,itube), type_end(itube-1), Area_T, &
                Area_P, ga, R_gas, Utube, Uthroat)
-          alpha = 0.15
+          alpha = 0.15d0
+          if(any(isnan(Utube)) .or. any(isnan(Uthroat))) then
+             Utube = Uref(:,itube)
+             Uthroat(2) = Utube(2)*Area_P/Area_T
+             a2 = ga*Utube(3)/Utube(1)+ &
+                  0.5*(ga-1.)*Utube(2)**2.*(1.-(Area_P/Area_T)**2.)
+             Uthroat(3) = Utube(3)*(ga*Utube(3)/Utube(1)/a2)**(ga/(ga-1.))
+             Uthroat(1) = ga*Uthroat(3)/a2
+          end if
        else
           call rhschar(Uref(:,itube), Area_P, dAreax_P, Twall_P, ga, &
                R_gas, globalData%dt, globalData%viscous_flow, &
@@ -196,9 +205,12 @@ contains
     Utank(1) = rho_tank
     Utank(2) = p_tank
     Utank(3) = T_tank
-    !if(globalData%save_extras) then
-    !   write(myData%nunit,*) globalData%icycle, globalData%theta, globalData%time, mdots,hdots,mass_new,dQ_ht
-    !endif
+    if(globalData%save_extras) then
+      write(myData%nunit,901) globalData%icycle, globalData%theta*180./pi, &
+           globalData%time, ntubes
+901   format (I12,F12.4,F15.10,I12)
+      write(myData%nunit,*) mdots, hdots, mass_new, dQ_ht
+    endif
   end subroutine tank_solver
 
   subroutine flow_rates(ntubes, type_end, ga, Area_P, Cd_ports, Upipe, Utpipe, &

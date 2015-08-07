@@ -103,12 +103,12 @@ cdef extern from "cylinder.h":
 		int model_ht
 		double factor_ht
 		int scavenge
-		char* scavenge_type
+		int scavenge_type
 		int type_ig
 		int full_implicit
 		int extras
 		int species_model
-		# Definiions for the MRCVC
+		# Definitions for the MRCVC engine
 		int nvanes
 		double major_radius
 		double minor_radius
@@ -126,7 +126,7 @@ cdef extern from "cylinder.h":
 						 double Vol_clearance, double rod_length, double head_chamber_area,
 						 double piston_area, double theta_0, double delta_ca, doublevec Twall, doublevec prop,
 						 doublevec U_crevice, doublevec data_crevice, doublevec mass_C, int model_ht,
-						 double factor_ht, int scavenge,char* scavenge_type, int type_ig, int full_implicit,
+						 double factor_ht, int scavenge, int scavenge_type, int type_ig, int full_implicit,
 						 fuel fuel_data, combustion combustion_data, injection injection_data,
 						 valvevec intake_valves, valvevec exhaust_valves, Scavenge scavenge_data, 
 						 int extras, int species_model, int nvanes, double major_radius, double minor_radius,
@@ -232,40 +232,35 @@ cdef class Cylinder:
 		for i in range(len(kargs['mass_C'])):
 			mass_C.push_back(kargs['mass_C'][i])
     	
-		cdef int model_ht     = assignOptional(kargs,'model_ht',0)
-		cdef double factor_ht = assignOptional(kargs,'factor_ht',1.0)
-		cdef int scavenge     = assignOptional(kargs,'scavenge',0)
-		s		      = assignOptional(kargs,'scavenge_type','uniflow')
-		cdef char* scavenge_type = s
-		cdef int extras		 = boolean(kargs,'extras','Cylinder',0)
-		cdef int species_model	 = assignOptional(kargs,'species_model',0)
+		cdef int model_ht      = assignOptional(kargs,'model_ht',0)
+		cdef double factor_ht  = assignOptional(kargs,'factor_ht',1.0)
+		cdef int scavenge      = assignOptional(kargs,'scavenge',0)
+		cdef int scavenge_type = assignOptional(kargs,'scavenge_type',0) # uniflow
+		cdef int extras	       = boolean(kargs,'extras','Cylinder',0)
+		cdef int species_model = assignOptional(kargs,'species_model',0)
     	
     	#condiciones para scavenge
 		cdef Scavenge scavenge_data
-		if(not(kargs['scavenge']==0)):
+		if not(kargs['scavenge']==0):
 			print "tengo scavenge"
-			if(kargs['scavenge_type']=='scre'):
+			if(kargs['scavenge_type']==1): # scre
 				scavenge_data.val_1 = -1.6709
 				scavenge_data.val_2 = 0.1899
-			else:
-				if(kargs['scavenge_type']=='yam1'):
-					scavenge_data.val_1 = -1.6993
-					scavenge_data.val_2 = 0.3053
-				else:
-					if(kargs['scavenge_type']=='yam6'):
-						scavenge_data.val_1 = -1.3516
-						scavenge_data.val_2 = 0.1435
-					else:
-						if(kargs['scavenge_type']=='cd'):
-							scavenge_data.val_1 = -1.0104
-							scavenge_data.val_2 = -0.117
-						else:
-							if(kargs['scavenge_type']=='qubcr'):
-								scavenge_data.val_1 = -1.6325
-								scavenge_data.val_2 = 0.1397
-							else :	#'uniflow'
-								scavenge_data.val_1 = -1.7827
-								scavenge_data.val_2 = 0.2094
+			elif kargs['scavenge_type']==2: # yam1
+				scavenge_data.val_1 = -1.6993
+				scavenge_data.val_2 = 0.3053
+			elif kargs['scavenge_type']==3: # yam6
+				scavenge_data.val_1 = -1.3516
+				scavenge_data.val_2 = 0.1435
+			elif kargs['scavenge_type']==4: # cd
+				scavenge_data.val_1 = -1.0104
+				scavenge_data.val_2 = -0.117
+			elif kargs['scavenge_type']==5: # qubcr
+				scavenge_data.val_1 = -1.6325
+				scavenge_data.val_2 = 0.1397
+			else :	# uniflow
+				scavenge_data.val_1 = -1.7827
+				scavenge_data.val_2 = 0.2094
 		else:
 			scavenge_data.val_1 = 0
 			scavenge_data.val_2 = 0
@@ -339,13 +334,12 @@ cdef class Cylinder:
 			auxValve.Lv 	     = doublevec_factory(0)
 			auxValve.Lvmax 	     = validatePositive(vargs[i],'Lvmax','Valve-Cylinder',0)
 			auxValve.valve_model = validateInList(vargs[i],'valve_model','Valve-Cylinder',[0,1],0)
-			if (auxValve.type_dat == 0): 		# ley senoidal cuadrada, a calcular en Fortran
+			if auxValve.type_dat == 0: # ley senoidal cuadrada, a calcular en Fortran
 				auxValve.Lv.push_back(-1)
 				auxValve.Lv.push_back(-1)
-			else:
-				if (auxValve.type_dat == -1):	# ley exponencial, a calcular en Fortran
-					auxValve.Lv.push_back(-1)
-					auxValve.Lv.push_back(-1)
+			elif auxValve.type_dat == -1:  # ley exponencial, a calcular en Fortran
+				auxValve.Lv.push_back(-1)
+				auxValve.Lv.push_back(-1)
 			#	else:   # se debe ingresar un array(2x721) y lo mapea a un array unidimensional [ang,val,ang,val...]
 			#		# if (validateSize(vargs[i],'Lv','Valve-Cylinder',721)):
 			#		auxValve.Lv = []
@@ -353,11 +347,11 @@ cdef class Cylinder:
 			#			auxValve.Lv.push_back(vargs[i]['Lv'][0][j])
 			#			auxValve.Lv.push_back(vargs[i]['Lv'][1][j])
 			# ahora se recibe pares [angulo,valor]
-				else:
-					auxValve.Lv = []
-					for j in range(len(vargs[i]['Lv'])):
-						auxValve.Lv.push_back(vargs[i]['Lv'][j][0])
-						auxValve.Lv.push_back(vargs[i]['Lv'][j][1])
+			else:
+				auxValve.Lv = []
+				for j in range(len(vargs[i]['Lv'])):
+					auxValve.Lv.push_back(vargs[i]['Lv'][j][0])
+					auxValve.Lv.push_back(vargs[i]['Lv'][j][1])
 				
 			auxValve.Cd = []
 			#for j in range(len(vargs[i]['Cd'][0])):

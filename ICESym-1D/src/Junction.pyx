@@ -93,7 +93,8 @@ cdef class Junction:
 		else:
 			print 'It is not indicated the type of junction'
 			print 'Options are: intake or exhaust'
-			raise ValueError
+			# raise ValueError
+			type = 1
 
 		self.thisptr = new_Junction(nnod, ndof, nnod_input, implicit,
 					    state_ini, histo, label, type_end, 

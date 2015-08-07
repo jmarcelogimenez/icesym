@@ -125,7 +125,8 @@ cdef class Tank:
 		else:
 			print 'It is not indicated the type of tank'
 			print 'Options are: intake or exhaust'
-			raise ValueError
+			# raise ValueError
+			type = 1
 
 		self.thisptr = new_Tank(nnod, ndof, nnod_input, implicit, 
 					state_ini, histo, label, Volume, 

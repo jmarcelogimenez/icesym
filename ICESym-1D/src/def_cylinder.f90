@@ -716,7 +716,7 @@ contains
                         Upipe(1)/Upipe(2)/Area_P
                 else
                    cyl(icyl)%intake_valves(ival)%solved_case = 0
-                   Uthroat = 2.*cyl(icyl)%intake_valves(ival)%state- &
+                    Uthroat = 2.*cyl(icyl)%intake_valves(ival)%state- &
                         cyl(icyl)%intake_valves(ival)%state_old
                    Upipe = 2.*Uiv(:,ival)- &
                         cyl(icyl)%intake_valves(ival)%state_pipe_old
@@ -727,7 +727,7 @@ contains
                 Uthroat = cyl(icyl)%intake_valves(ival)%state
                 
                 Uref = cyl(icyl)%intake_valves(ival)%state_ref
-                
+
                 call solve_valve_implicit(Ucyl, Uref, 1, Area_T, Area_P, &
                      RHSiv(:,ival), ga, Upipe, Uthroat, solved_case)
                 
@@ -741,7 +741,6 @@ contains
                    Upipe = 2.*Uiv(:,ival)- &
                         cyl(icyl)%intake_valves(ival)%state_pipe_old
                 end if
-                
              end if
           case default
              stop ' Wrong valve model option '
@@ -819,6 +818,7 @@ contains
        end if
 
        ga    = cyl(icyl)%gas_properties%gamma
+       ! ga    = globalData%ga_exhaust
        R_gas = cyl(icyl)%gas_properties%R_gas
 
        if(cyl(icyl)%exhaust_valves(ival)%valve_model.eq.1 .or. myData%full_implicit) then
@@ -850,6 +850,7 @@ contains
              if(globalData%engine_type==2 .and. &
                   cyl(icyl)%exhaust_valves(ival)%Area.gt.tol_Area .and. &
                   (AreaT_leading.gt.tol_Area .or. AreaT_trailing.gt.tol_Area)) then
+
                 ! Multivalve
                 Ucyl_MV(:,1) = Ucyl(:,1)
                 AreaT_MV(1) = Area_T
@@ -882,10 +883,10 @@ contains
                 Uthroat = cyl(icyl)%exhaust_valves(ival)%state
                 
                 Uref = cyl(icyl)%exhaust_valves(ival)%state_ref
-                
+
                 call solve_valve_implicit(Ucyl, Uref, -1, Area_T, Area_P, &
                      RHSev(:,ival), ga, Upipe, Uthroat, solved_case)
-                
+
                 if(solved_case.eq.0 .and. Area_T/Area_P.gt.1d-6) then
                    Uthroat = 2.*cyl(icyl)%exhaust_valves(ival)%state- &
                         cyl(icyl)%exhaust_valves(ival)%state_old
@@ -899,7 +900,6 @@ contains
                    Upipe = 2.*Uev(:,ival)- &
                         cyl(icyl)%exhaust_valves(ival)%state_pipe_old
                 end if
-                
              end if
           case default
              stop ' Wrong valve model option '
@@ -1240,12 +1240,16 @@ contains
     if(cyl(icyl)%combustion_data%combustion_model.eq.1) then
        !  Two Wiebe's functions to model the premixed and diffussive
        !    stages in the CI combustion
+       ! a       = 5.0
        a       = cyl(icyl)%combustion_data%a_wiebe
        mp      = 1.5
        mdi     = 1.05
-       x_p     = 0.15
+       x_p     = 0.3
+       !x_p     = 0.2
+       !x_p     = 0.15
        x_di    = 1.-x_p
-       factor  = 0.125
+       factor  = 0.17857
+       !factor  = 0.125
 
        dtheta_p  = factor*dtheta_comb
        dtheta_di = dtheta_comb-dtheta_p
@@ -1472,7 +1476,7 @@ contains
           theta_id = (0.36d0+0.22d0*Sp)*dexp(Ea*(1d0/(8.3143d0*T_TC)-1d0/17190d0)* &
                (21.2d0/(1d-5*p_TC-12.4d0))**0.63d0)
           theta_id = theta_id*pi/180.
-          ! write(*,*) theta_id, T_TC, p_TC
+          write(*,*) theta_id, T_TC, p_TC
        endif
     elseif(ignition_delay_model.eq.2) then
        ! A constant user-defined ignition delay angle

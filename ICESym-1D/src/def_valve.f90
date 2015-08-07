@@ -450,14 +450,14 @@ contains
                do_cases = .false.
        end do
        ! For debugging
-       if(.not.conv_flag .or. any(isnan(Uthroat))) then
-          write(*,*) 'VALVE SOLVER'
-          write(*,*) 'n_P: ', n_P, 'psi: ', psi
-          write(*,*) 'U_S: ', Uref
-          write(*,*) 'U_C: ', Ucyl
-          write(*,*) 'RHS: ', RHS
-          ! stop
-       end if
+       ! if(.not.conv_flag .or. any(isnan(Uthroat))) then
+       !    write(*,*) 'VALVE SOLVER'
+       !    write(*,*) 'n_P: ', n_P, 'psi: ', psi
+       !    write(*,*) 'U_S: ', Uref
+       !    write(*,*) 'U_C: ', Ucyl
+       !    write(*,*) 'RHS: ', RHS
+       !    ! stop
+       ! end if
     else
        a_S = dsqrt(ga*p_S/rho_S)
        v_P = 0.
