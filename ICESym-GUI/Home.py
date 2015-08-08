@@ -915,7 +915,10 @@ class Home(wx.Frame):
         cm2ccm = 1000000.0
         for i in range(len(self.Simulator)):
             self.completeObject(self.Simulator[i],default_values.dict_simulation)
-            self.Simulator[i]['nstroke'] = self.Simulator[i]['nstroke']/2 - 1 
+            self.Simulator[i]['nstroke'] = self.Simulator[i]['nstroke']/2 - 1
+            for j in range(len(self.Cylinders)):
+                self.Simulator[i]['ig_order'][j] += 1
+
         for i in range(len(self.Cylinders)):
             # Geometric data
             Vd = 0.5*3.14159265358979*self.Cylinders[i]['Bore']**2*self.Cylinders[i]['crank_radius']
@@ -1004,6 +1007,8 @@ class Home(wx.Frame):
         ccm2cm = 0.000001
         if len(self.Simulator)>0:
             self.Simulator[0]['nstroke'] = self.Simulator[0]['nstroke']*2+2
+            for j in range(len(self.Cylinders)):
+                self.Simulator[0]['ig_order'][j] -= 1
 
         for i in range(len(self.Junctions)):
             self.Junctions[i]['modelo_junc'] += 1
