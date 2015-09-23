@@ -82,7 +82,7 @@ class Home(wx.Frame):
         self.Edit.AppendItem(self.EditCopy)
         self.EditPaste = wx.MenuItem(self.Edit, 61, "Paste", "Paste the object in clipboard", wx.ITEM_NORMAL)
         self.Edit.AppendItem(self.EditPaste)
-        self.EditDelete = wx.MenuItem(self.Edit, 61, "Delete", "Delete the object in clipboard", wx.ITEM_NORMAL)
+        self.EditDelete = wx.MenuItem(self.Edit, 62, "Delete", "Delete the object in clipboard", wx.ITEM_NORMAL)
         self.Edit.AppendItem(self.EditDelete)
         self.home_menubar.Append(self.Edit, "Edit")
 
