@@ -247,6 +247,9 @@ class Home(wx.Frame):
 
        
     def OnMenuFileOpen(self, event): # wxGlade: Home.<event_handler>
+        if self.thisFile != 'untitled.py':
+            self.closeFile()
+
         dlg = wx.FileDialog(self, message="Open a File", defaultDir="./saves",defaultFile="", wildcard="*.py", style=wx.OPEN)
         if dlg.ShowModal() == wx.ID_OK:
             namefile = dlg.GetPath()
@@ -269,14 +272,17 @@ class Home(wx.Frame):
 				self.saveFile(self.thisFile)
 
     def OnMenuFileSaveAs(self, event): # wxGlade: Home.<event_handler>
-		if self.Simulator == []:
-			wx.MessageBox("You must Configure this Simulation Before", "Error")
-		else:
-			dlg = wx.FileDialog(self, message="Save File As", defaultDir="./saves",defaultFile=self.thisFile, wildcard="*.py", style=wx.SAVE|wx.OVERWRITE_PROMPT)
-			if dlg.ShowModal() == wx.ID_OK:
-				namefile = dlg.GetPath()
-				self.saveFile(namefile)
-			dlg.Destroy()
+        if self.Simulator == []:
+            wx.MessageBox("You must Configure this Simulation Before", "Error")
+        else:
+            dlg = wx.FileDialog(self, message="Save File As", defaultDir="./saves",defaultFile=self.thisFile, wildcard="*.py", style=wx.SAVE|wx.OVERWRITE_PROMPT)
+            if dlg.ShowModal() == wx.ID_OK:
+                namefile = dlg.GetPath()
+                self.saveFile(namefile)
+                self.thisFile = namefile
+                self.SetTitle("ICESym-GUI: "+namefile)
+                self.saved = 1
+            dlg.Destroy()
 
     def OnMenuFileExit(self, event): # wxGlade: Home.<event_handler>
         if self.saved == 1:
@@ -292,31 +298,38 @@ class Home(wx.Frame):
             #if res == 5104: #CANCEL retorna al Simulador
 
     def OnMenuFileClose(self, event): # wxGlade: Home.<event_handler>
-		if not(self.saved == 1):
-			md = wx.MessageDialog(None, 'Save changes in ' + self.thisFile + ' ?','Confirm', wx.YES_NO| wx.CANCEL | wx.ICON_QUESTION)
-			res = md.ShowModal()
-			if res == 5103: #YES
-				self.OnMenuFileSave("")
-			if res == 5101: 
-				return
-		self.Simulator = []
-		self.Cylinders = []
-		self.Tanks = []
-		self.Junctions = []
-		self.Tubes = []
-		self.Valves = []
-		self.Atmospheres = []
-		self.shapes = []
-		self.connectionLines = []
-		self.stateFromFile = 0
-		self.thisFile = 'untitled.py'
-		self.copyboard = ''
-		self.canvas.GetDiagram().DeleteAllShapes()
-		self.canvas.Refresh()	
-		for e in self.itemsTree:
-			for i in self.itemsTree[e]:
-				self.tree.Delete(self.itemsTree[e][i])
-		self.itemsTree = dict()			
+        if not(self.saved == 1):
+            md = wx.MessageDialog(None, 'Save changes in ' + self.thisFile + ' ?','Confirm', wx.YES_NO| wx.CANCEL | wx.ICON_QUESTION)
+            res = md.ShowModal()
+            if res == 5103: #YES
+                self.OnMenuFileSave("")
+            if res == 5101: 
+                return
+        self.closeFile()
+
+    def closeFile(self):
+        couplingCode(self)
+        self.parseData()
+        self.SetTitle("ICESym-GUI")
+        self.Simulator = []
+        self.Cylinders = []
+        self.Tanks = []
+        self.Junctions = []
+        self.Tubes = []
+        self.Valves = []
+        self.Atmospheres = []
+        self.shapes = []
+        self.connectionLines = []
+        self.stateFromFile = 0
+        self.thisFile = 'untitled.py'
+        self.copyboard = ''
+        self.canvas.GetDiagram().DeleteAllShapes()
+        self.canvas.Refresh()	
+        for e in self.itemsTree:
+            for i in self.itemsTree[e]:
+                self.tree.Delete(self.itemsTree[e][i])
+            self.itemsTree[e] = {}
+        # self.itemsTree = dict()
 
     def OnMenuEditCopy(self, event): # wxGlade: Home.<event_handler>
 		(shapeObject,index) = self.findSelected()
@@ -437,8 +450,8 @@ class Home(wx.Frame):
             md = wx.MessageDialog(None, 'This Elements are disconnected: ' + sd,'WARNING!!', wx.ICON_EXCLAMATION)
             md.ShowModal()
         else:
-            if not(self.saved):
-                self.OnMenuFileSave('')
+            # if not(self.saved):
+            self.OnMenuFileSave('')
             filename = self.thisFile
             
             import sys
@@ -850,7 +863,7 @@ class Home(wx.Frame):
             
             sys.path.append(str(pathName))
             externalData = __import__(str(moduleName))
-						
+			
             self.Simulator.append(externalData.Simulator)
             self.Cylinders = externalData.Cylinders
             self.Tanks = externalData.Tanks
@@ -1075,7 +1088,7 @@ class Home(wx.Frame):
     def addShape(self,element,index,x=25,y=25, load=-1): 
         
         if not(element=="Valves"):
-		    name = 'images/'+ element +'IconeSmall.bmp'
+            name = 'images/'+ element +'IconeSmall.bmp'
         else:
             if self.Valves[index]['type']==0:
                 name = 'images/'+ element +'IntakeIconeSmall.bmp' 
@@ -1838,26 +1851,26 @@ class Home(wx.Frame):
 
 
     def OnActivate(self, event):
-		pass
+        pass
         #if self.item:
             #self.log.WriteText("OnActivate: %s\n" % self.tree.GetItemText(self.item))
 
     def initTree(self):
-		self.childs = dict()
-		for name in self.names:
-			self.itemsTree[name] = dict()
-			self.childs[name] = self.tree.AppendItem(self.root, name)
-			self.tree.SetPyData(self.childs[name], None)
-			self.tree.SetItemImage(self.childs[name], self.fldridx, wx.TreeItemIcon_Normal)
-			self.tree.SetItemImage(self.childs[name], self.fldropenidx, wx.TreeItemIcon_Expanded)
+        self.childs = dict()
+        for name in self.names:
+            self.itemsTree[name] = dict()
+            self.childs[name] = self.tree.AppendItem(self.root, name)
+            self.tree.SetPyData(self.childs[name], None)
+            self.tree.SetItemImage(self.childs[name], self.fldridx, wx.TreeItemIcon_Normal)
+            self.tree.SetItemImage(self.childs[name], self.fldropenidx, wx.TreeItemIcon_Expanded)
 
     def addItemTree(self,element,index,label="ssaas"):
-		last = self.tree.AppendItem(self.childs[element],label)
-		self.tree.SetPyData(last, None)
-		peer = (element,index)
-		self.tree.SetItemPyData(last,peer)
-		self.itemsTree[element][index] = last
-		self.tree.SetItemImage(last, self.tipdx, wx.TreeItemIcon_Normal)
+        last = self.tree.AppendItem(self.childs[element],label)
+        self.tree.SetPyData(last, None)
+        peer = (element,index)
+        self.tree.SetItemPyData(last,peer)
+        self.itemsTree[element][index] = last
+        self.tree.SetItemImage(last, self.tipdx, wx.TreeItemIcon_Normal)
 			
     def deleteItemTree(self,element,index):
 		self.tree.Delete(self.itemsTree[element][index])

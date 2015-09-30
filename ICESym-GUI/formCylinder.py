@@ -118,7 +118,7 @@ class formCylinder(wx.Dialog):
         self.combustion['theta_ig_0'] = wx.TextCtrl(self.notebook_combustion, -1, "")
         self.label_35 = wx.StaticText(self.notebook_combustion, -1, "Duration of Combustion [deg]: ")
         self.combustion['dtheta_comb'] = wx.TextCtrl(self.notebook_combustion, -1, "")
-        self.label_36 = wx.StaticText(self.notebook_combustion, -1, "Equivalence Ratio [(F/A)/(A/F)s]:")
+        self.label_36 = wx.StaticText(self.notebook_combustion, -1, "Equivalence Ratio [(F/A)/(F/A)s]:")
         self.combustion['phi'] = wx.TextCtrl(self.notebook_combustion, -1, "")
         self.label_38 = wx.StaticText(self.notebook_combustion, -1, "Comb. Efficiency Parameter:")
         self.combustion['a_wiebe'] = wx.TextCtrl(self.notebook_combustion, -1, "")
