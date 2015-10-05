@@ -125,7 +125,7 @@ class formCylinder(wx.Dialog):
         self.label_39 = wx.StaticText(self.notebook_combustion, -1, "Shape Parameter:")
         self.combustion['m_wiebe'] = wx.TextCtrl(self.notebook_combustion, -1, "")
         self.label_40 = wx.StaticText(self.notebook_combustion, -1, "Combustion Model:")
-        self.combustion['combustion_model'] = wx.RadioBox(self.notebook_combustion, -1, "", choices=["user-defined", "Wiebe-2", "Wiebe-3", "Watson", "<none>"], majorDimension=0, style=wx.RA_SPECIFY_ROWS)
+        self.combustion['combustion_model'] = wx.RadioBox(self.notebook_combustion, -1, "", choices=["user-defined", "Wiebe", "Wiebe-3", "Watson", "<none>"], majorDimension=0, style=wx.RA_SPECIFY_ROWS)
         self.panel_26 = wx.Panel(self.notebook_combustion, -1)
         self.panel_24 = wx.Panel(self.notebook_combustion, -1)
         self.panel_25 = wx.Panel(self.notebook_combustion, -1)
@@ -659,8 +659,12 @@ class formCylinder(wx.Dialog):
             for key in self.injection:
                 self.injection[key].Enable(0)
             self.combustion['phi'].Enable(1)
+            self.combustion['combustion_model'].EnableItem(2, False)
+            self.combustion['combustion_model'].EnableItem(3, False)
         else:
             self.combustion['phi'].Enable(0)
+            self.combustion['combustion_model'].EnableItem(2, True)
+            self.combustion['combustion_model'].EnableItem(3, True)
             for key in self.injection:
                 self.injection[key].Enable(1)
 
@@ -682,15 +686,15 @@ class formCylinder(wx.Dialog):
             self.injection['mfdot_array'].Enable(0)
 
     def onCombustionModel(self, event): # wxGlade: formCylinder.<event_handler>
-		cm = self.combustion['combustion_model'].GetSelection()
-		if cm == 0:
-			self.combustion['xbdot_array'].Enable(1)
-		if cm == 1 or cm == 2:
-			self.combustion['a_wiebe'].Enable(1)
-			self.combustion['m_wiebe'].Enable(1)
-		else:
-			self.combustion['a_wiebe'].Enable(0)
-			self.combustion['m_wiebe'].Enable(0)
+        cm = self.combustion['combustion_model'].GetSelection()
+        if cm == 0:
+            self.combustion['xbdot_array'].Enable(1)
+        if cm == 1 or cm == 2:
+            self.combustion['a_wiebe'].Enable(1)
+            self.combustion['m_wiebe'].Enable(1)
+        else:
+            self.combustion['a_wiebe'].Enable(0)
+            self.combustion['m_wiebe'].Enable(0)
 
     def onLoadmfdot(self, event): # wxGlade: formCylinder.<event_handler>
         if self.injection['mfdot_array'].IsEnabled():

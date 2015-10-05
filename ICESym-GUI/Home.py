@@ -61,28 +61,28 @@ class Home(wx.Frame):
         # Menu Bar
         self.home_menubar = wx.MenuBar()
         self.File = wx.Menu()
-        self.FileOpen = wx.MenuItem(self.File, 10, "Open", "Load another simulation", wx.ITEM_NORMAL)
+        self.FileOpen = wx.MenuItem(self.File, wx.ID_OPEN, "Open", "Load another simulation", wx.ITEM_NORMAL)
         self.File.AppendItem(self.FileOpen)
-        self.FileSave = wx.MenuItem(self.File, 11, "Save", "Save this simulation with the actual name", wx.ITEM_NORMAL)
+        self.FileSave = wx.MenuItem(self.File, wx.ID_SAVE, "Save", "Save this simulation with the actual name", wx.ITEM_NORMAL)
         self.File.AppendItem(self.FileSave)
-        self.FileSaveAs = wx.MenuItem(self.File, 12, "Save As...", "Save this simulation with the another name", wx.ITEM_NORMAL)
+        self.FileSaveAs = wx.MenuItem(self.File, wx.ID_SAVEAS, "Save As...", "Save this simulation with the another name", wx.ITEM_NORMAL)
         self.File.AppendItem(self.FileSaveAs)
         #Export = wx.Menu()
         #self.pythonScript = wx.MenuItem(Export, 15, "as python Script", "", wx.ITEM_NORMAL)
         #Export.AppendItem(self.pythonScript)
         #self.File.AppendMenu(wx.NewId(), "Export...", Export, "")
-        self.FileClose = wx.MenuItem(self.File, 13, "Close", "Close this simulation and start other new", wx.ITEM_NORMAL)
+        self.FileClose = wx.MenuItem(self.File, wx.ID_CLOSE, "Close", "Close this simulation and start other new", wx.ITEM_NORMAL)
         self.File.AppendItem(self.FileClose)
-        self.FileExit = wx.MenuItem(self.File, 14, "Exit", "Exit Simulator", wx.ITEM_NORMAL)
+        self.FileExit = wx.MenuItem(self.File, wx.ID_EXIT, "Exit", "Exit Simulator", wx.ITEM_NORMAL)
         self.File.AppendItem(self.FileExit)
         self.home_menubar.Append(self.File, "File")
 
         self.Edit = wx.Menu()
-        self.EditCopy = wx.MenuItem(self.Edit, 60, "Copy", "Copy the selected object", wx.ITEM_NORMAL)
+        self.EditCopy = wx.MenuItem(self.Edit, wx.ID_COPY, "Copy", "Copy the selected object", wx.ITEM_NORMAL)
         self.Edit.AppendItem(self.EditCopy)
-        self.EditPaste = wx.MenuItem(self.Edit, 61, "Paste", "Paste the object in clipboard", wx.ITEM_NORMAL)
+        self.EditPaste = wx.MenuItem(self.Edit, wx.ID_PASTE, "Paste", "Paste the object in clipboard", wx.ITEM_NORMAL)
         self.Edit.AppendItem(self.EditPaste)
-        self.EditDelete = wx.MenuItem(self.Edit, 62, "Delete", "Delete the object in clipboard", wx.ITEM_NORMAL)
+        self.EditDelete = wx.MenuItem(self.Edit, wx.ID_DELETE, "Delete", "Delete the object in clipboard", wx.ITEM_NORMAL)
         self.Edit.AppendItem(self.EditDelete)
         self.home_menubar.Append(self.Edit, "Edit")
 
@@ -489,21 +489,20 @@ class Home(wx.Frame):
 		
 		
     def OnMenuSimulationPost(self, event): # wxGlade: Home.<event_handler>
-		folder_name = self.pathTests + "tests/" + self.Simulator[0]['folder_name']
-		if self.Simulator == []:
-			wx.MessageBox("This Simulation Haven't Results yet!!", "Error")
-		else:
-			post = PostProcess(None,-1,"")
-			if(post.loadResults(folder_name)):
-				post.Show()	
-			else:
-				wx.MessageBox("This Simulation Haven't Results yet", "Error")
+        folder_name = self.pathTests + "tests/" + self.Simulator[0]['folder_name']
+        if self.Simulator == []:
+            wx.MessageBox("This Simulation Haven't Results yet!!", "Error")
+        else:
+            post = PostProcess(None,-1,"")
+            if(post.loadResults(folder_name)):
+                post.Show()	
+            else:
+                wx.MessageBox("This Simulation Haven't Results yet", "Error")
 
     def OnMenuHelpAbout(self, event): # wxGlade: Home.<event_handler>
-		dlg = About(self)
-		dlg.ShowModal()
-		dlg.Destroy()
-
+        dlg = About(self)
+        dlg.ShowModal()
+        dlg.Destroy()
 
     def OnMenuUserHelp(self, event): # wxGlade: Home.<event_handler>
 		help = Help(None, -1, "")
@@ -563,6 +562,8 @@ class Home(wx.Frame):
                     cylinder.injection['mfdot_array'].Enable(False)
                 if cylinder.injection['ignition_delay_model'].GetSelection()!=2:
                     cylinder.injection['theta_id'].Enable(False)
+                cylinder.combustion['combustion_model'].EnableItem(2, True)
+                cylinder.combustion['combustion_model'].EnableItem(3, True)
 
         cylinder.onChangeNodes("")
         cylinder.setLabels()
@@ -723,7 +724,7 @@ class Home(wx.Frame):
              if not(edit=="default"):
                  Generic = self.Tubes[edit]  
              if self.stateFromFile == 1:
-                 generic['state_ini'].Enable(0)
+                 generic['state_ini'].Enable(1)
         if tipo=='tank':
              dict_generic = default_values.dict_tank
              if not(edit=="default"):
