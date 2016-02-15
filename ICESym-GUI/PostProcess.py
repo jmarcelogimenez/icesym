@@ -23,7 +23,9 @@ import sys
 # end wxGlade
 
 class PostProcess(wx.Frame):
-    colours = ['blue','red','green','yellow','black','pink','cyan','grey']	    
+    # colours = ['blue','red','green','yellow','black','pink','cyan','grey']
+    colours = ['blue','red','green','black','pink','cyan','grey']
+    styles  = [wx.SOLID, wx.LONG_DASH, wx.DOT_DASH, wx.SHORT_DASH, wx.DOT]
     figures = []
     typeFigures = []
     dataFigures = []
@@ -37,6 +39,7 @@ class PostProcess(wx.Frame):
     panel_buttons = []
     buttons_figure = []
     canvas_list = []
+    infoFigSaved = []
     path = "../ICESym/src/"
     files = ['cyl_','tube_','tank_','junc_']
     id_button = 0;
@@ -45,84 +48,87 @@ class PostProcess(wx.Frame):
     thisFile = "untitled.post"
     saved = 1
     calcGlobals = []
-    def __init__(self, *args, **kwds):
-		# begin wxGlade: PostProcess.__init__
-		kwds["style"] = wx.DEFAULT_FRAME_STYLE
-		wx.Frame.__init__(self, *args, **kwds)
 
-		# Menu Bar
-		self.PostProcess_menubar = wx.MenuBar()
-		wxglade_tmp_menu = wx.Menu()
-		self.openPost = wx.MenuItem(wxglade_tmp_menu, wx.NewId(), "Open Post", "Open other Post", wx.ITEM_NORMAL)
-		wxglade_tmp_menu.AppendItem(self.openPost)
-		self.savePost = wx.MenuItem(wxglade_tmp_menu, wx.NewId(), "Save", "Save the Current Status", wx.ITEM_NORMAL)
-		wxglade_tmp_menu.AppendItem(self.savePost)
-		self.saveAsPost = wx.MenuItem(wxglade_tmp_menu, wx.NewId(), "Save As...", "Save As the Current Status", wx.ITEM_NORMAL)
-		wxglade_tmp_menu.AppendItem(self.saveAsPost)
-		self.close = wx.MenuItem(wxglade_tmp_menu, wx.NewId(), "Close", "Close Post Process", wx.ITEM_NORMAL)
-		wxglade_tmp_menu.AppendItem(self.close)
-		self.PostProcess_menubar.Append(wxglade_tmp_menu, "File")
-		wxglade_tmp_menu = wx.Menu()
-		self.timePlots = wx.MenuItem(wxglade_tmp_menu, wx.NewId(), "Time Plots", "Time Plots", wx.ITEM_NORMAL)
-		wxglade_tmp_menu.AppendItem(self.timePlots)
-		self.anglePlots = wx.MenuItem(wxglade_tmp_menu, wx.NewId(), "Angle Plots", "Angle Plots", wx.ITEM_NORMAL)
-		wxglade_tmp_menu.AppendItem(self.anglePlots)
-		self.spacePlots = wx.MenuItem(wxglade_tmp_menu, wx.NewId(), "Space Plots", "Space Plots", wx.ITEM_NORMAL)
-		wxglade_tmp_menu.AppendItem(self.spacePlots)
-		self.cyclePlots = wx.MenuItem(wxglade_tmp_menu, wx.NewId(), "Cycle Plots", "Cycle Plots", wx.ITEM_NORMAL)
-		wxglade_tmp_menu.AppendItem(self.cyclePlots)
-		self.rpmPlots = wx.MenuItem(wxglade_tmp_menu, wx.NewId(), "RPM Plots", "RPM Plots", wx.ITEM_NORMAL)
-		wxglade_tmp_menu.AppendItem(self.rpmPlots)
-		self.PostProcess_menubar.Append(wxglade_tmp_menu, "Graphics")
-		self.Help = wx.Menu()
-		self.About = wx.MenuItem(self.Help, 30, "About", "About ICESym-GUI", wx.ITEM_NORMAL)
-		self.UserHelp = wx.MenuItem(self.Help, 31, "User Help [F1]", "Help ICESym-GUI", wx.ITEM_NORMAL)
-		self.Help.AppendItem(self.UserHelp)
-		self.Help.AppendItem(self.About)
-		self.PostProcess_menubar.Append(self.Help, "Help")
-		self.SetMenuBar(self.PostProcess_menubar)
-		self.notebook = wx.Notebook(self, -1, style=0)
-		# Menu Bar end
+    def __init__(self, *args, **kwds):
+
+        # begin wxGlade: PostProcess.__init__
+        kwds["style"] = wx.DEFAULT_FRAME_STYLE
+        wx.Frame.__init__(self, *args, **kwds)
+
+        # Menu Bar
+        self.PostProcess_menubar = wx.MenuBar()
+        wxglade_tmp_menu = wx.Menu()
+        self.openPost = wx.MenuItem(wxglade_tmp_menu, wx.ID_OPEN, "Open Post", "Open other Post", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.AppendItem(self.openPost)
+        self.savePost = wx.MenuItem(wxglade_tmp_menu, wx.ID_SAVE, "Save", "Save the Current Status", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.AppendItem(self.savePost)
+        self.saveAsPost = wx.MenuItem(wxglade_tmp_menu, wx.ID_SAVEAS, "Save As...", "Save As the Current Status", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.AppendItem(self.saveAsPost)
+        self.close = wx.MenuItem(wxglade_tmp_menu, wx.ID_CLOSE, "Close", "Close Post Process", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.AppendItem(self.close)
+        self.PostProcess_menubar.Append(wxglade_tmp_menu, "File")
+        wxglade_tmp_menu = wx.Menu()
+        self.timePlots = wx.MenuItem(wxglade_tmp_menu, wx.NewId(), "Time Plots", "Time Plots", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.AppendItem(self.timePlots)
+        self.anglePlots = wx.MenuItem(wxglade_tmp_menu, wx.NewId(), "Angle Plots", "Angle Plots", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.AppendItem(self.anglePlots)
+        self.spacePlots = wx.MenuItem(wxglade_tmp_menu, wx.NewId(), "Space Plots", "Space Plots", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.AppendItem(self.spacePlots)
+        self.cyclePlots = wx.MenuItem(wxglade_tmp_menu, wx.NewId(), "Cycle Plots", "Cycle Plots", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.AppendItem(self.cyclePlots)
+        self.rpmPlots = wx.MenuItem(wxglade_tmp_menu, wx.NewId(), "RPM Plots", "RPM Plots", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.AppendItem(self.rpmPlots)
+        self.PostProcess_menubar.Append(wxglade_tmp_menu, "Graphics")
+        self.Help = wx.Menu()
+        self.About = wx.MenuItem(self.Help, 30, "About", "About ICESym-GUI", wx.ITEM_NORMAL)
+        self.UserHelp = wx.MenuItem(self.Help, 31, "User Help [F1]", "Help ICESym-GUI", wx.ITEM_NORMAL)
+        self.Help.AppendItem(self.UserHelp)
+        self.Help.AppendItem(self.About)
+        self.PostProcess_menubar.Append(self.Help, "Help")
+        self.SetMenuBar(self.PostProcess_menubar)
+        self.notebook = wx.Notebook(self, -1, style=0)
+        # Menu Bar end
 
        	#self.__set_properties()
-		self.__do_layout()
-		self.__set_properties()
-		self.Bind(wx.EVT_MENU, self.onOpenPost, self.openPost)
-		self.Bind(wx.EVT_MENU, self.onSavePost, self.savePost)
-		self.Bind(wx.EVT_MENU, self.onSaveAsPost, self.saveAsPost)
-		self.Bind(wx.EVT_MENU, self.onClose, self.close)
-		self.Bind(wx.EVT_MENU, self.onTimePlots, self.timePlots)
-		self.Bind(wx.EVT_MENU, self.onAnglePlots, self.anglePlots)
-		self.Bind(wx.EVT_MENU, self.onSpacePlots, self.spacePlots)
-		self.Bind(wx.EVT_MENU, self.onCyclePlots, self.cyclePlots)
-		self.Bind(wx.EVT_MENU, self.onRPMPlots, self.rpmPlots)
-		self.Bind(wx.EVT_MENU, self.OnMenuUserHelp, self.UserHelp)
-		self.Bind(wx.EVT_MENU, self.OnMenuHelpAbout, self.About)
-		#self.Bind(wx.EVT_SIZE, self, self.onResize)
-		wx.EVT_SIZE(self, self.onResize)
+        self.__do_layout()
+        self.__set_properties()
+        self.Bind(wx.EVT_MENU, self.onOpenPost, self.openPost)
+        self.Bind(wx.EVT_MENU, self.onSavePost, self.savePost)
+        self.Bind(wx.EVT_MENU, self.onSaveAsPost, self.saveAsPost)
+        self.Bind(wx.EVT_MENU, self.onClose, self.close)
+        self.Bind(wx.EVT_MENU, self.onTimePlots, self.timePlots)
+        self.Bind(wx.EVT_MENU, self.onAnglePlots, self.anglePlots)
+        self.Bind(wx.EVT_MENU, self.onSpacePlots, self.spacePlots)
+        self.Bind(wx.EVT_MENU, self.onCyclePlots, self.cyclePlots)
+        self.Bind(wx.EVT_MENU, self.onRPMPlots, self.rpmPlots)
+        self.Bind(wx.EVT_MENU, self.OnMenuUserHelp, self.UserHelp)
+        self.Bind(wx.EVT_MENU, self.OnMenuHelpAbout, self.About)
+        #self.Bind(wx.EVT_SIZE, self, self.onResize)
+        wx.EVT_SIZE(self, self.onResize)
 
-		x = [(wx.ACCEL_NORMAL, wx.WXK_F1, self.UserHelp.GetId())]
-		atable = wx.AcceleratorTable(x)
-		self.SetAcceleratorTable(atable)
-		# end wxGlade
+        x = [(wx.ACCEL_NORMAL, wx.WXK_F1, self.UserHelp.GetId())]
+        atable = wx.AcceleratorTable(x)
+        self.SetAcceleratorTable(atable)
+        # end wxGlade
 
     def __set_properties(self):
-		# begin wxGlade: PostProcess.__set_properties
-		self.SetTitle("PostProcess")
-		self.notebook.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-		# end wxGlade
+        # begin wxGlade: PostProcess.__set_properties
+        self.SetTitle("PostProcess")
+        self.notebook.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        # end wxGlade
 
     def __do_layout(self):
-		# begin wxGlade: PostProcess.__do_layout
-		sizer_1 = wx.GridSizer(1, 1, 0, 0)
-		for i in range(len(self.dataFigures)):
-			self.addNewTab(i)
-			pc = self.plotData(i,self.dataFigures[i])
-			self.canvas_list.append(pc)
-		sizer_1.Add(self.notebook, 0, wx.EXPAND, 0)
-		self.SetSizer(sizer_1)
-		self.Layout()
-		# end wxGlade
+        # begin wxGlade: PostProcess.__do_layout
+        sizer_1 = wx.GridSizer(1, 1, 0, 0)
+        for i in range(len(self.dataFigures)):
+            self.addNewTab(i)
+            pc = self.plotData(i,self.dataFigures[i])
+            self.canvas_list.append(pc)
+            self.infoFigSaved.append([False, "none"])
+        sizer_1.Add(self.notebook, 0, wx.EXPAND, 0)
+        self.SetSizer(sizer_1)
+        self.Layout()
+        # end wxGlade
 
     def onOpenPost(self,event):
         dlg = wx.FileDialog(self, message="Open a File", defaultDir=self.path,defaultFile="", wildcard="*.post", style=wx.OPEN)
@@ -149,18 +155,16 @@ class PostProcess(wx.Frame):
 		dlg.Destroy()
 
     def onClose(self, event): # wxGlade: PostProcess.<event_handler>
-        if self.saved == 1:
-            self.Close()
-        else:
-            md = wx.MessageDialog(None, 'Save changes in ' + self.thisFile + ' ?','Confirm', wx.YES_NO| wx.CANCEL | wx.ICON_QUESTION)
+        if self.saved == 0:
+            md = wx.MessageDialog(None, 'Save changes in ' + self.thisFile + ' ?','Confirm', wx.YES_NO | wx.CANCEL | wx.ICON_QUESTION)
             res = md.ShowModal()
-            print res
-            if res == 5104: #NO
-                self.Close()
+            # print res
+            # if res == 5104: #NO
+            #    self.Close()
             if res == 5103: #YES
                 self.onSavePost("")
-                self.Close()
-            #if res == 5104: #CANCEL retorna al Simulador
+            md.Destroy()
+        self.Close()
 
     def onTimePlots(self, event): # wxGlade: PostProcess.<event_handler>
 		plot = timePlots(self, -1, "")
@@ -179,10 +183,10 @@ class PostProcess(wx.Frame):
 		if(ret==5100):
 			for rpm in plot.parsedData['rpm']:
 				if plot.parsedData['element'] > 0:
-					dataFile = self.path + "RPM_" + str(rpm) + "/" + self.files[int(plot.parsedData['element'])-1]	
-					e = -1			
+					dataFile = self.path + "RPM_" + str(rpm) + "/" + self.files[int(plot.parsedData['element'])-1]
+					e = -1
 					if plot.parsedData['element_ndof'] < 3: #caso de variables de estado
-						dataFile = dataFile + str(plot.parsedData['element_number']) + ".txt" 
+						dataFile = dataFile + str(plot.parsedData['element_number']) + ".txt"
 					else:
 						dataFile = dataFile + "extras_" + str(plot.parsedData['element_number']) + ".txt"
 						if self.files[int(plot.parsedData['element'])-1] == "cyl_":
@@ -194,23 +198,26 @@ class PostProcess(wx.Frame):
 						dataFig['label'] = plot.parsedData['label'] + "_" + str(rpm)
 						dataFig['data'] = loadAngleTXT(dataFile,int(c),int(plot.parsedData['element_nnod']),plot.parsedData['element_ndof'],e)
 						dataFig['data'] = conversion(dataFig['data'],plot.parsedData['units'])
+                                                dataFig['data'] = sorted(dataFig['data'])
+
 						dataFig['y_axis'] = plot.parsedData['element_number_str'] + " - " + plot.parsedData['element_ndof_str'] + " ["+str(plot.parsedData['units'])+"]"
 						dataFig['x_axis'] = 'Angle'
 						if (plot.parsedData['figure'] == "new figure"):
-							l = len(self.dataFigures)					
+							l = len(self.dataFigures)
 							self.dataFigures.append([])
 							self.dataFigures[l].append(dataFig)
 							self.addNewTab(l)
 							pc = self.plotData(l,self.dataFigures[l])
 							self.canvas_list.append(pc)
+                                                        self.infoFigSaved.append([False, "none"])
 							self.typeFigures.append('Angle')
 							plot.parsedData['figure'] = l
 						else:
 							l = int(plot.parsedData['figure'])
-							self.dataFigures[l].append(dataFig)	
+							self.dataFigures[l].append(dataFig)
 							pc = self.plotData(l,self.dataFigures[l])
 							self.canvas_list[l] = pc
-				
+
     def onSpacePlots(self, event): # wxGlade: PostProcess.<event_handler>
 		plot = spacePlots(self, -1, "")
 		fig = []
@@ -237,6 +244,7 @@ class PostProcess(wx.Frame):
 					self.addNewTab(l)
 					pc = self.plotData(l,self.dataFigures[l])
 					self.canvas_list.append(pc)
+                                        self.infoFigSaved.append([False, "none"])
 					self.typeFigures.append('Space')
 					plot.parsedData['figure'] = l
 				else:
@@ -282,6 +290,7 @@ class PostProcess(wx.Frame):
 						self.addNewTab(l)
 						pc = self.plotData(l,self.dataFigures[l])
 						self.canvas_list.append(pc)
+                                                self.infoFigSaved.append([False, "none"])
 						self.typeFigures.append('Cycle')
 						plot.parsedData['figure'] = l
 					else:
@@ -342,6 +351,7 @@ class PostProcess(wx.Frame):
 								self.addNewTab(l)
 								pc = self.plotData(l,self.dataFigures[l])
 								self.canvas_list.append(pc)
+                                                                self.infoFigSaved.append([False, "none"])
 								self.typeFigures.append('RPM')
 								plot.parsedData['figure'] = l
 							else:
@@ -368,6 +378,7 @@ class PostProcess(wx.Frame):
 					self.addNewTab(l)
 					pc = self.plotData(l,self.dataFigures[l])
 					self.canvas_list.append(pc)
+                                        self.infoFigSaved.append([False, "none"])
 					self.typeFigures.append('RPM')
 					plot.parsedData['figure'] = l
 				else:
@@ -426,9 +437,10 @@ class PostProcess(wx.Frame):
 		title = ''
 		#title = " FIGURE 1"
 		#print "en plotdata, datafigure: ", dataFigure
+                ncolours = len(self.colours)
 		for i in range(len(dataFigure)):
 			#print "dataFigure[i]['data']", dataFigure[i]['data']
-			lines.append(libPlot.PolyLine(dataFigure[i]['data'], colour=self.colours[i], width=1, legend=dataFigure[i]['label']))
+			lines.append(libPlot.PolyLine(dataFigure[i]['data'], colour=self.colours[i%ncolours], width=1, style=self.styles[i/ncolours], legend=dataFigure[i]['label']))
 			#title = title + dataFigure[i]['label'] + " (" +  self.colours[i] + ") - "
 
 		gc = libPlot.PlotGraphics(lines,title,dataFigure[-1]['x_axis'],dataFigure[-1]['y_axis'])
@@ -497,17 +509,22 @@ class PostProcess(wx.Frame):
 		self.canvas_list[nf].Reset()
 
     def onSaveCanvas(self,event):
-		nf = int(event.GetId() / self.nButtons)
-		aux = 0
-		for d in self.nDelete:
-			if nf > d:
-				aux = aux + 1
-		nf = nf - aux
-		dlg = wx.FileDialog(self, message="Save Figure As", defaultDir=self.path,defaultFile="untitled.jpg", wildcard="*.jpg", style=wx.SAVE)
-		if dlg.ShowModal() == wx.ID_OK:
-			namefile = dlg.GetPath()
-			self.canvas_list[nf].SaveFile(namefile) #bug en wxpython, ver: http://www.daniweb.com/forums/thread196744.html#
-		dlg.Destroy()
+        nf = int(event.GetId() / self.nButtons)
+        aux = 0
+        for d in self.nDelete:
+            if nf > d:
+                aux = aux + 1
+        nf = nf - aux
+        if self.infoFigSaved[nf][0]:
+            self.canvas_list[nf].SaveFile(self.infoFigSaved[nf][1])
+        else:
+            dlg = wx.FileDialog(self, message="Save Figure As", defaultDir=self.path,defaultFile="untitled.jpg", wildcard="*.jpg", style=wx.SAVE)
+            if dlg.ShowModal() == wx.ID_OK:
+                namefile = dlg.GetPath()
+                self.canvas_list[nf].SaveFile(namefile) #bug en wxpython, ver: http://www.daniweb.com/forums/thread196744.html#
+                self.infoFigSaved[nf][0] = True
+                self.infoFigSaved[nf][1] = namefile
+                dlg.Destroy()
 
     def onGridCanvas(self,event):
 		nf = int(event.GetId() / self.nButtons)
@@ -544,13 +561,14 @@ class PostProcess(wx.Frame):
 				del self.panel_figure[nf]
 				del self.buttons_figure[nf]
 				del self.canvas_list[nf]
+                                del self.infoFigSaved[nf]
 				self.nDelete = self.nDelete + [nf]
 			else:
 				pc = self.plotData(nf,self.dataFigures[nf])
 				self.canvas_list[nf] = pc
 
     def onXAxis(self,event):
-        nf = int(event.GetId() / self.nButtons) - self.nDelete
+        nf = int(event.GetId() / self.nButtons) - len(self.nDelete)
         msg = wx.TextEntryDialog(self,"Insert X Axis label: ","Input",str(self.dataFigures[nf][-1]['x_axis']))
         ret = msg.ShowModal()
         if ret==5100:
@@ -560,14 +578,14 @@ class PostProcess(wx.Frame):
             self.canvas_list[nf] = pc
     
     def onYAxis(self,event):
-		nf = int(event.GetId() / self.nButtons) - self.nDelete
-		msg = wx.TextEntryDialog(self,"Insert Y Axis label: ","Input",str(self.dataFigures[nf][-1]['y_axis']))
-		ret = msg.ShowModal()
-		if ret==5100:
-			lab = msg.GetValue()
-			self.dataFigures[nf][-1]['y_axis'] = str(lab)
-			pc = self.plotData(nf,self.dataFigures[nf])
-			self.canvas_list[nf] = pc
+        nf = int(event.GetId() / self.nButtons) - len(self.nDelete)
+        msg = wx.TextEntryDialog(self,"Insert Y Axis label: ","Input",str(self.dataFigures[nf][-1]['y_axis']))
+        ret = msg.ShowModal()
+        if ret==5100:
+            lab = msg.GetValue()
+            self.dataFigures[nf][-1]['y_axis'] = str(lab)
+            pc = self.plotData(nf,self.dataFigures[nf])
+            self.canvas_list[nf] = pc
 
 #fijarse de ordenar todos los datos no solo de angle
     def orderingData(self):

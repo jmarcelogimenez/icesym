@@ -495,7 +495,7 @@ class Home(wx.Frame):
         else:
             post = PostProcess(None,-1,"")
             if(post.loadResults(folder_name)):
-                post.Show()	
+               post.Show()
             else:
                 wx.MessageBox("This Simulation Haven't Results yet", "Error")
 

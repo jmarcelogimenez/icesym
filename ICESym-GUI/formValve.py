@@ -310,6 +310,7 @@ class formValve(wx.Dialog):
             self.data['Lvmax'].Enable(0)
             self.data['Lv'].Enable(1)
         else:
+            self.data['Lvmax'].Enable(1)
             self.data['Lv'].Enable(0)
 
     def onLoadState(self, event): # wxGlade: formValve.<event_handler>

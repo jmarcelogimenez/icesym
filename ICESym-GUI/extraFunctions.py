@@ -755,7 +755,7 @@ def calcGlobalsData(path, dataRPMS, pd):
 	data['mechanical_efficiency'] = mechanical_efficiency
 	data['SFC_indicated'] = SFC_indicated
 	data['SFC_effective'] = SFC_effective
-	data['volumetric_efficiency'] = volumetric_efficiency
+	data['volumetric_efficiency_per_cylinder'] = volumetric_efficiency
 	data['volumetric_efficiency_global'] = volumetric_efficiency_global
 	data['fuel_conversion_efficiency_indicated'] = fuel_conversion_efficiency_indicated
 	data['fuel_conversion_efficiency_effective'] = fuel_conversion_efficiency_effective
@@ -791,35 +791,42 @@ def getMasses(path, dataRPMS):
 				line = 0
 				next = True
 				interpola = True
+				skip = True
 				for linea in archi.readlines():	
 					if line%4 == 0: #leo cada 4 lineas el ciclo (esta en la primer linea)
 						lista = string.split(linea)
-						if int(icycle)+1 == int(lista[0]) and angleClose >= float(lista[1]):
-							next = True
-						elif int(icycle)+1 == int(lista[0]) and angleClose < float(lista[1]):
-							next = False
-							if angleClose == float(lista[1]):
-								interpola = False
+						if int(icycle)+1 == int(lista[0]) and skip:
+							if angleClose < float(lista[1]):
+								skip = True
+							else:
+								skip = False
+						if not skip:
+							if int(icycle)+1 == int(lista[0]) and angleClose >= float(lista[1]):
+								next = True
+							elif int(icycle)+1 == int(lista[0]) and angleClose < float(lista[1]):
+								next = False
+								if angleClose == float(lista[1]):
+									interpola = False
 						
-					if line%4 == row: #leo cada 4 lineas la variable
+					if not skip and line%4 == row: #leo cada 4 lineas la variable
 						lista = string.split(linea)
-						if next == True:
+						if next:
 							mfcAux = float(lista[ndofmfc])
 							mairAux = float(lista[ndofmair])
 						else:
-							if interpola == True:
+							if interpola:
 								mfcAux = (mfcAux+float(lista[ndofmfc]))/2
 								mairAux = (mairAux+float(lista[ndofmair]))/2
 							else:
 								mfcAux = float(lista[ndofmfc])
 								mairAux = float(lista[ndofmair])
-							break	
-					line = line + 1			
-		
+							break
+					line = line + 1
+
 				mfc[-1][-1].append(mfcAux)		
 				mair[-1][-1].append(mairAux)
 				archi.close()
-				
+				print irpm, icycle, j, mairAux 
 				# os.system("rm -r tests")
 
 	return (mfc,mair)
