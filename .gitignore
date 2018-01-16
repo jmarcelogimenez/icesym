@@ -1,0 +1,13 @@
+# git-ls-files --others --exclude-from=.git/info/exclude
+# Lines that start with '#' are comments.
+
+# Files to ignore
+*.dat       # Data files
+fort.*      # compilation files
+*.pyc       # compilation files
+
+# Case output files and logs
+*.log
+*.txt
+src/tests/*
+
