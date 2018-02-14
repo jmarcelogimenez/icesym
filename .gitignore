@@ -1,0 +1,16 @@
+# Do not update fortran compilation files
+fort.*
+
+# Do not update cython compilation files
+*.pyc
+
+# Do not update Latex compilation files
+main.pdf
+*.aux
+*.log
+*.backup
+*.toc
+*.spl
+*.blg
+*.out
+*.nlo

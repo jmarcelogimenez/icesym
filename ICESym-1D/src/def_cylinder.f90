@@ -1058,6 +1058,7 @@ contains
     if(globalData%engine_type==0.or.globalData%engine_type==1) then
        call heat_transfer_alternative(myData, globalData, Ucyl, &
             Area, cp, dQ_ht)
+
     elseif(globalData%engine_type==2) then
        call heat_transfer_mrcvc(myData, globalData, Ucyl, &
             Area, cp, dQ_ht)

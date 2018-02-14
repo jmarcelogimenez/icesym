@@ -1,0 +1,30 @@
+# Things to do
+
+## Repo layout
+* Clean repository
+* Tutorial list and description
+* Complete this to-do list
+
+## Running tools
+* Parametric run script
+* Automatic model adjustment
+* Optimization algorithms
+
+## Models
+* Define test case to compare results
+* Valve model: correct failure for high area
+* Combustion:
+**Chemistry detailed models
+**Hydrogen combustion model
+* Heat transfer
+** Pipe wall transfer (consider inner and outer convection)
+** Cylinder
+
+## GUI
+* Debug current GUI version
+* Port version to new wxPython
+* Generate new GUI: wxPython, TKinter, jupyter-notebook?
+
+## Compatibility
+* Virtual machine with running version?
+* Full python code?

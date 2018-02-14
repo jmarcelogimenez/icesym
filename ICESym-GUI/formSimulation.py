@@ -195,8 +195,8 @@ class formSimulation(wx.Dialog):
         grid_sizer_15.Add(self.panel_23, 0, wx.ALIGN_CENTER_VERTICAL, 0)
         grid_sizer_15.Add(self.label_2, 0, wx.ALIGN_CENTER_VERTICAL, 0)
         grid_sizer_15.Add(self.data['nsave'], 0, 0, 0)
-        grid_sizer_15.Add(self.label_17, 0, wx.ALIGN_CENTER_VERTICAL, 0)
-        grid_sizer_15.Add(self.data['nappend'], 0, 0, 0)
+#        grid_sizer_15.Add(self.label_17, 0, wx.ALIGN_CENTER_VERTICAL, 0)
+#        grid_sizer_15.Add(self.data['nappend'], 0, 0, 0)
 
         grid_sizer_16b = wx.FlexGridSizer(1, 2, 0, 0)
         grid_sizer_16b.Add(self.label_18, 0, wx.ALIGN_CENTER_VERTICAL, 0)

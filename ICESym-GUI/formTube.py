@@ -297,10 +297,9 @@ class formTube(wx.Dialog):
 
         grid_sizer_histo.Add(self.label_9, 0, wx.ALIGN_CENTER_VERTICAL, 0) 
         grid_sizer_histo.Add(self.data['typeSave'], 0, 0, 0)
-        grid_sizer_histo.Add(self.label_9, 0, wx.ALIGN_CENTER_VERTICAL, 0) 
         grid_sizer_histo.Add(self.data['numNorm'], 0, 0, 0)
         grid_sizer_histo.Add(self.data['posNorm'], 0, 0, 0)
-        grid_sizer_histo.Add(self.data['histo'], 0, 0, 0)
+        #grid_sizer_histo.Add(self.data['histo'], 0, 0, 0)
         self.notebook_post.SetSizer(grid_sizer_histo)
  
         self.configure_notebook.AddPage(self.notebook_general, "General")

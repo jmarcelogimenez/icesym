@@ -158,7 +158,7 @@ class Home(wx.Frame):
   
         self.initTree()
 
-        self.tree.Expand(self.root)
+#        self.tree.Expand(self.root)
 
         self.__set_properties()
         self.__do_layout()
@@ -763,7 +763,7 @@ class Home(wx.Frame):
                     setGrid(dict_generic[key],generic[key])	
                 else:
                     if isinstance(generic[key],wx.RadioBox):
-                         generic[key].SetSelection(dict_generic[key])
+                         generic[key].SetSelection(0)#dict_generic[key])
                     elif key in listCheck:
                         generic[key].SetValue(dict_generic[key])
                     elif key in listList:

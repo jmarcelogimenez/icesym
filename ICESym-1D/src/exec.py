@@ -4,7 +4,7 @@ import sys
 import os
 from simCythonCPP import Simulator
 
-sys.path.append("/home/ejlopez/soft/icesym/ICESym-GUI/saves")
+sys.path.append("/home/cip/Sources/icesym/ICESym-GUI/saves")
 data = __import__("compBiCyl")
 now = time.time()
 Sim = Simulator(**data.kargs)
