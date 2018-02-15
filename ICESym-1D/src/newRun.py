@@ -3,8 +3,8 @@ import time
 
 from simCythonCPP import Simulator
 
-test = raw_input("Choise the Script with the data for the TEST (without '.py'): ")
-#test='BoscaMono'
+#test = raw_input("Choise the Script with the data for the TEST (without '.py'): ")
+test='BoscaNew'
 data=__import__(test)
 now = time.time()
 

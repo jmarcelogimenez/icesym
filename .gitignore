@@ -1,8 +1,15 @@
-# Do not update fortran compilation files
-fort.*
+# git-ls-files --others --exclude-from=.git/info/exclude
+# Lines that start with '#' are comments.
 
-# Do not update cython compilation files
-*.pyc
+# Files to ignore
+*.dat       # Data files
+fort.*      # compilation files
+*.pyc       # compilation files
+
+# Case output files and logs
+*.log
+*.txt
+src/tests/*
 
 # Do not update Latex compilation files
 main.pdf
