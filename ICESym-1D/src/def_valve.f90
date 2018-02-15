@@ -49,7 +49,7 @@ contains
     p_C = Ucyl(2)
     rp  = (p_P/p_C)**(delta/ga)
 
-    psi = Area_val/Area_pipe
+    psi = DMIN1(Area_val/Area_pipe,1.0)
     if(psi.gt.1.) &
          write(*,*) ' *** WARNING *** Area_throat > Area_pipe the nozzle flow convergence could fail '
 
@@ -360,7 +360,8 @@ contains
 
     U_P = Upipe
     U_T = Uthroat
-    psi = Area_val/Area_pipe
+    !psi = Area_val/Area_pipe
+    psi = DMIN1(Area_val/Area_pipe,1.0)
 
     old_case = 1
     try_case = old_case
