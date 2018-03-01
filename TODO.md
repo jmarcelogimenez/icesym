@@ -1,18 +1,31 @@
 # Things to do
+Tasks are divided by priorities
 
-## Repo layout
-* Clean repository
+## High priority (group A)
+
+### Repo layout
+* Clean repository: add a TUTORIAL folder with all the examples
 * Tutorial list and description
 * Complete this to-do list
 
-## Running tools
+### Running tools
 * Parametric run script
+
+### GUI
+* Debug current GUI version
+
+### Compatibility
+* Docker script to install in windows
+
+## Middle priority (group B)
+
+### Running tools
 * Automatic model adjustment
 * Optimization algorithms
 
 ## Models
 * Define test case to compare results
-* Valve model: correct failure for high area
+* Valve model: correct failure for high area (it is now avoided)
 * Combustion:
 **Chemistry detailed models
 **Hydrogen combustion model
@@ -21,11 +34,14 @@
 ** Cylinder
 
 ## GUI
-* Debug current GUI version
 * Port version to new wxPython
+
+## Low priority (group C)
+
+## GUI
 * Generate new GUI: wxPython, TKinter, jupyter-notebook?
+
 
 ## Compatibility
 * Virtual machine with running version?
 * Full python code?
-* Docker --> 
