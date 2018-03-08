@@ -13,6 +13,12 @@ Tasks are divided by priorities
 
 ### GUI
 * Debug current GUI version
+* Move to pyqt
+* Set valid default values
+* Post-process: pyqt-graph
+* Open from template
+* Set parameter (further optimization)
+* Mandatory parameter values
 
 ### Compatibility
 * Docker script to install in windows
