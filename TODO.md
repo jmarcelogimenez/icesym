@@ -14,10 +14,12 @@ Tasks are divided by priorities
 ### GUI
 * Debug current GUI version
 * Move to pyqt
-* Set valid default values
+* Set valid default values (pre-computed)
 * Post-process: pyqt-graph
-* Open from template
-* Set parameter (further optimization)
+* Std-output 
+* Open from template: spark-compression, 1, 2 o 4 cylinder
+* See copy of elements 
+* Set parameter (further optimization) Global variables
 * Mandatory parameter values
 
 ### Compatibility

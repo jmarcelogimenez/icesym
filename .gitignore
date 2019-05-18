@@ -3,8 +3,8 @@
 
 # Files to ignore
 *.dat       # Data files
-*fort.*      # compilation files
-**.pyc       # compilation files
+*fort.*     # Compilation files
+**.pyc      # Compilation files
 
 # Case output files and logs
 *.log
@@ -21,3 +21,14 @@ main.pdf
 *.blg
 *.out
 *.nlo
+
+# Special directories
+
+ICESym-GUI/*/*.pyc
+ICESym-GUI/*.pyc
+ICESym-GUI/saves
+ICESym-1D/src/build
+ICESym-1D/src/fort*
+ICESym-1D/src/tests
+ICESym-1D/src/exec.py
+ICESym-1D/src/simCythonCPP.cpp
