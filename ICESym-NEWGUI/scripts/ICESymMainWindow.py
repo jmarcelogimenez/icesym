@@ -163,6 +163,8 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
     def addSceneItem(self, itype, position = QtCore.QPoint(0,0), iobject = None):
         if not iobject:
             iobject = copy.deepcopy(self.default_dict[itype])
+            if 'label' in iobject.keys():
+                iobject['label'] = '%s_%s'%(iobject['label'],len(self.objects[itype]))
         item = SceneItem(itype, position, iobject)
         self.scene_items.append(item)
         self.scene.addItem(item.pixmap)
