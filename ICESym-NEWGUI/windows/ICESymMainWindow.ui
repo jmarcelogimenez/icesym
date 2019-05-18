@@ -1,0 +1,995 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ICESymMainWindow</class>
+ <widget class="QMainWindow" name="ICESymMainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1036</width>
+    <height>642</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <family>Ubuntu</family>
+    <pointsize>9</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>ICESym Main Window</string>
+  </property>
+  <property name="iconSize">
+   <size>
+    <width>20</width>
+    <height>20</height>
+   </size>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QWidget" name="componentsWidget" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QTabWidget" name="tabWidget">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="autoFillBackground">
+           <bool>true</bool>
+          </property>
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <property name="elideMode">
+           <enum>Qt::ElideNone</enum>
+          </property>
+          <widget class="QWidget" name="tab_configuration">
+           <attribute name="title">
+            <string>Configuration</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="0" column="0">
+             <layout class="QHBoxLayout" name="horizontalLayout_3"/>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_modeling">
+           <attribute name="title">
+            <string>Modeling</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="0" column="0">
+             <spacer name="horizontalSpacer">
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>5</width>
+                <height>10</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="0" column="1">
+             <widget class="QSplitter" name="splitter_2">
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <widget class="QWidget" name="tree_widget" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                 <horstretch>10</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>150</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>9</pointsize>
+                </font>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout">
+                <item>
+                 <spacer name="verticalSpacer_2">
+                  <property name="font">
+                   <font>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeType">
+                   <enum>QSizePolicy::Fixed</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>9</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QTreeWidget" name="componentsTreeWidget">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                    <horstretch>10</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>200</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Sunken</enum>
+                  </property>
+                  <property name="autoScrollMargin">
+                   <number>16</number>
+                  </property>
+                  <property name="indentation">
+                   <number>20</number>
+                  </property>
+                  <attribute name="headerMinimumSectionSize">
+                   <number>25</number>
+                  </attribute>
+                  <column>
+                   <property name="text">
+                    <string>Components</string>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>9</pointsize>
+                    </font>
+                   </property>
+                  </column>
+                  <item>
+                   <property name="text">
+                    <string>Cylinders</string>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>9</pointsize>
+                    </font>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="../images/images.qrc">
+                     <normaloff>:/fromHelyx/newicons/cylinder_thumb.svg</normaloff>:/fromHelyx/newicons/cylinder_thumb.svg</iconset>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Tubes</string>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>9</pointsize>
+                    </font>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="../images/images.qrc">
+                     <normaloff>:/fromHelyx/newicons/tube_thumb.svg</normaloff>:/fromHelyx/newicons/tube_thumb.svg</iconset>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Junctions</string>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>9</pointsize>
+                    </font>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="../images/images.qrc">
+                     <normaloff>:/fromHelyx/newicons/Junction_thumb.svg</normaloff>:/fromHelyx/newicons/Junction_thumb.svg</iconset>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Tanks</string>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>9</pointsize>
+                    </font>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="../images/images.qrc">
+                     <normaloff>:/fromHelyx/newicons/tank_thumb.svg</normaloff>:/fromHelyx/newicons/tank_thumb.svg</iconset>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Valves</string>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>9</pointsize>
+                    </font>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="../images/images.qrc">
+                     <normaloff>:/fromHelyx/newicons/valve_intake_thumb.svg</normaloff>:/fromHelyx/newicons/valve_intake_thumb.svg</iconset>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Atmospheres</string>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>9</pointsize>
+                    </font>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="../images/images.qrc">
+                     <normaloff>:/fromHelyx/newicons/atmosphere_thumb.svg</normaloff>:/fromHelyx/newicons/atmosphere_thumb.svg</iconset>
+                   </property>
+                  </item>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer">
+                  <property name="font">
+                   <font>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeType">
+                   <enum>QSizePolicy::Fixed</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>9</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+               <zorder>componentsTreeWidget</zorder>
+               <zorder>verticalSpacer</zorder>
+               <zorder>verticalSpacer_2</zorder>
+              </widget>
+              <widget class="QWidget" name="canvas_widget" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>9</pointsize>
+                </font>
+               </property>
+              </widget>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_run">
+           <property name="autoFillBackground">
+            <bool>true</bool>
+           </property>
+           <attribute name="title">
+            <string>Run</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_4"/>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_postProcess">
+           <attribute name="title">
+            <string>Post Process</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_6"/>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1036</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>9</pointsize>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>true</bool>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="font">
+     <font>
+      <family>Ubuntu</family>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionSave_As"/>
+    <addaction name="actionClose"/>
+    <addaction name="separator"/>
+    <addaction name="actionSave_Post_Process"/>
+    <addaction name="actionLoad_Post_Process"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="title">
+     <string>Edit</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuSimulation">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="title">
+     <string>Simulation</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuComponents">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="title">
+     <string>Components</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="title">
+     <string>Help</string>
+    </property>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuSimulation"/>
+   <addaction name="menuComponents"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="autoFillBackground">
+    <bool>true</bool>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::AllToolBarAreas</set>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>30</width>
+     <height>30</height>
+    </size>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonIconOnly</enum>
+   </property>
+   <property name="floatable">
+    <bool>true</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionNew_Tube"/>
+   <addaction name="actionNew_Cylinder"/>
+   <addaction name="actionNew_Junction"/>
+   <addaction name="actionNew_Tank"/>
+   <addaction name="actionNew_Atmosphere"/>
+   <addaction name="actionNew_Valve"/>
+   <addaction name="separator"/>
+   <addaction name="actionTerminal"/>
+  </widget>
+  <action name="actionNew_Tube">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../images/images.qrc">
+     <normaloff>:/fromHelyx/newicons/tube_thumb.svg</normaloff>:/fromHelyx/newicons/tube_thumb.svg</iconset>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="toolTip">
+    <string/>
+   </property>
+   <property name="whatsThis">
+    <string/>
+   </property>
+   <property name="font">
+    <font/>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::WindowShortcut</enum>
+   </property>
+  </action>
+  <action name="actionNew_Cylinder">
+   <property name="icon">
+    <iconset resource="../images/images.qrc">
+     <normaloff>:/fromHelyx/newicons/cylinder_thumb.svg</normaloff>:/fromHelyx/newicons/cylinder_thumb.svg</iconset>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="font">
+    <font/>
+   </property>
+  </action>
+  <action name="actionNew_Junction">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../images/images.qrc">
+     <normaloff>:/fromHelyx/newicons/Junction_thumb.svg</normaloff>:/fromHelyx/newicons/Junction_thumb.svg</iconset>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="font">
+    <font/>
+   </property>
+  </action>
+  <action name="actionNew_Tank">
+   <property name="icon">
+    <iconset resource="../images/images.qrc">
+     <normaloff>:/fromHelyx/newicons/tank_thumb.svg</normaloff>:/fromHelyx/newicons/tank_thumb.svg</iconset>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="font">
+    <font/>
+   </property>
+  </action>
+  <action name="actionNew_Atmosphere">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../images/images.qrc">
+     <normaloff>:/fromHelyx/newicons/atmosphere_thumb.svg</normaloff>:/fromHelyx/newicons/atmosphere_thumb.svg</iconset>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="font">
+    <font/>
+   </property>
+  </action>
+  <action name="actionNew_Valve">
+   <property name="icon">
+    <iconset resource="../images/images.qrc">
+     <normaloff>:/fromHelyx/newicons/valve_exhaust_thumb.svg</normaloff>:/fromHelyx/newicons/valve_exhaust_thumb.svg</iconset>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="font">
+    <font/>
+   </property>
+  </action>
+  <action name="actionTerminal">
+   <property name="icon">
+    <iconset resource="../images/images.qrc">
+     <normaloff>:/fromHelyx/fromHelyx/console16.png</normaloff>:/fromHelyx/fromHelyx/console16.png</iconset>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="font">
+    <font/>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="../images/images.qrc">
+     <normaloff>:/fromHelyx/fromHelyx/folder-open16.png</normaloff>:/fromHelyx/fromHelyx/folder-open16.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open Case</string>
+   </property>
+   <property name="font">
+    <font>
+     <family>Ubuntu</family>
+     <pointsize>9</pointsize>
+    </font>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="icon">
+    <iconset resource="../images/images.qrc">
+     <normaloff>:/fromHelyx/fromHelyx/save16.png</normaloff>:/fromHelyx/fromHelyx/save16.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save Case</string>
+   </property>
+   <property name="font">
+    <font>
+     <family>Ubuntu</family>
+     <pointsize>9</pointsize>
+    </font>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionSave_As">
+   <property name="icon">
+    <iconset resource="../images/images.qrc">
+     <normaloff>:/fromHelyx/fromHelyx/saveAs16.png</normaloff>:/fromHelyx/fromHelyx/saveAs16.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save Case As...</string>
+   </property>
+   <property name="font">
+    <font>
+     <family>Ubuntu</family>
+     <pointsize>9</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="icon">
+    <iconset resource="../images/images.qrc">
+     <normaloff>:/fromHelyx/fromHelyx/win_close16.png</normaloff>:/fromHelyx/fromHelyx/win_close16.png</iconset>
+   </property>
+   <property name="text">
+    <string>Close Case</string>
+   </property>
+   <property name="font">
+    <font>
+     <family>Ubuntu</family>
+     <pointsize>9</pointsize>
+    </font>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="icon">
+    <iconset resource="../images/images.qrc">
+     <normaloff>:/fromHelyx/fromHelyx/exit16.png</normaloff>:/fromHelyx/fromHelyx/exit16.png</iconset>
+   </property>
+   <property name="text">
+    <string>Exit</string>
+   </property>
+   <property name="font">
+    <font>
+     <family>Ubuntu</family>
+     <pointsize>9</pointsize>
+    </font>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionSave_Post_Process">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../images/images.qrc">
+     <normaloff>:/fromHelyx/fromHelyx/rulerWidget16.png</normaloff>:/fromHelyx/fromHelyx/rulerWidget16.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save Post Process</string>
+   </property>
+  </action>
+  <action name="actionLoad_Post_Process">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../images/images.qrc">
+     <normaloff>:/fromHelyx/fromHelyx/download16.png</normaloff>:/fromHelyx/fromHelyx/download16.png</iconset>
+   </property>
+   <property name="text">
+    <string>Load Post Process</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../images/images.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>actionNew_Valve</sender>
+   <signal>triggered()</signal>
+   <receiver>ICESymMainWindow</receiver>
+   <slot>addValve()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>517</x>
+     <y>314</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionNew_Atmosphere</sender>
+   <signal>triggered()</signal>
+   <receiver>ICESymMainWindow</receiver>
+   <slot>addAtmosphere()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>517</x>
+     <y>314</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionNew_Tube</sender>
+   <signal>triggered()</signal>
+   <receiver>ICESymMainWindow</receiver>
+   <slot>addTube()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>517</x>
+     <y>314</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionNew_Cylinder</sender>
+   <signal>triggered()</signal>
+   <receiver>ICESymMainWindow</receiver>
+   <slot>addCylinder()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>517</x>
+     <y>314</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionNew_Tank</sender>
+   <signal>triggered()</signal>
+   <receiver>ICESymMainWindow</receiver>
+   <slot>addTank()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>517</x>
+     <y>314</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionNew_Junction</sender>
+   <signal>triggered()</signal>
+   <receiver>ICESymMainWindow</receiver>
+   <slot>addJunction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>517</x>
+     <y>314</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSave</sender>
+   <signal>triggered()</signal>
+   <receiver>ICESymMainWindow</receiver>
+   <slot>save_data()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>517</x>
+     <y>314</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionOpen</sender>
+   <signal>triggered()</signal>
+   <receiver>ICESymMainWindow</receiver>
+   <slot>open_case()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>517</x>
+     <y>320</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSave_As</sender>
+   <signal>triggered()</signal>
+   <receiver>ICESymMainWindow</receiver>
+   <slot>save_as()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>517</x>
+     <y>320</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionClose</sender>
+   <signal>triggered()</signal>
+   <receiver>ICESymMainWindow</receiver>
+   <slot>close_case()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>517</x>
+     <y>320</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionExit</sender>
+   <signal>triggered()</signal>
+   <receiver>ICESymMainWindow</receiver>
+   <slot>exit()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>517</x>
+     <y>320</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionTerminal</sender>
+   <signal>triggered()</signal>
+   <receiver>ICESymMainWindow</receiver>
+   <slot>open_terminal()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>517</x>
+     <y>320</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>componentsTreeWidget</sender>
+   <signal>itemDoubleClicked(QTreeWidgetItem*,int)</signal>
+   <receiver>ICESymMainWindow</receiver>
+   <slot>updateCaseSetup()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>123</x>
+     <y>154</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>427</x>
+     <y>321</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSave_Post_Process</sender>
+   <signal>triggered()</signal>
+   <receiver>ICESymMainWindow</receiver>
+   <slot>save_postpro()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>517</x>
+     <y>320</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLoad_Post_Process</sender>
+   <signal>triggered()</signal>
+   <receiver>ICESymMainWindow</receiver>
+   <slot>load_postpro()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>517</x>
+     <y>320</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>updateCaseSetup()</slot>
+  <slot>addValve()</slot>
+  <slot>addAtmosphere()</slot>
+  <slot>addTube()</slot>
+  <slot>addCylinder()</slot>
+  <slot>addJunction()</slot>
+  <slot>addTank()</slot>
+  <slot>save_data()</slot>
+  <slot>open_case()</slot>
+  <slot>save_as()</slot>
+  <slot>close_case()</slot>
+  <slot>exit()</slot>
+  <slot>open_terminal()</slot>
+  <slot>redraw_grid()</slot>
+  <slot>save_postpro()</slot>
+  <slot>load_postpro()</slot>
+ </slots>
+</ui>

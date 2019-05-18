@@ -24,6 +24,7 @@ main.pdf
 
 # Special directories
 
+# Old GUI and Simulator
 ICESym-GUI/*/*.pyc
 ICESym-GUI/*.pyc
 ICESym-GUI/saves
@@ -32,3 +33,10 @@ ICESym-1D/src/fort*
 ICESym-1D/src/tests
 ICESym-1D/src/exec.py
 ICESym-1D/src/simCythonCPP.cpp
+# New GUI
+ICESym-NEWGUI/scripts/*.pyc
+ICESym-NEWGUI/scripts/*_ui.py
+ICESym-NEWGUI/scripts/*_rc.py
+ICESym-NEWGUI/runs
+ICESym-NEWGUI/simulator/exec
+ICESym-NEWGUI/simulator/*.so

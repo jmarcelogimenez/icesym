@@ -1,0 +1,1 @@
+{"label": "default_tank", "nnod": 1, "ndof": 3, "Volume": 0.003, "mass": 0.00354, "h_film": 300.0, "Area_wall": 0.15, "T_wall": 300.0, "Cd_ports": [], "state_ini": [[1.1769, 101330.0, 300.0]], "exh2tube": [], "int2tube": [], "histo": [], "extras": 0}

@@ -1,0 +1,2 @@
+{"diameter": [0.001, 0.001], "nnod": 2, "label": "default_tube", "twall": [1, 1], "ndof": 3, "state_ini": [[1,1,101300], [1,1,101300]], "xnod": [0, 0.4], "longitud": 0.4,
+"nleft": -1, "tleft": "<none>", "nright": -1, "tright": "<none>", "typeSave": 0, "numNorm": 2, "posNorm": [0.0, 1.0], "histo": [0, 1]}
