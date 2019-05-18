@@ -914,8 +914,8 @@ void Simulator::saveState(){
 void Simulator::createDir(bool newRPM){
 	if(!newRPM){
 		char mk[] = "mkdir -p ";
-		char testsChar[] = "tests/";
-		char* folder = strconcat(testsChar,folder_name);
+		char runsChar[] = "runs/";
+		char* folder = strconcat(runsChar,folder_name);
 		char* makeFolder = strconcat(mk,folder);	
 		system(makeFolder);
 		strcopy(this->folderGral,folder);
