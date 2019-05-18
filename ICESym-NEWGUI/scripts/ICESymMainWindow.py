@@ -110,6 +110,9 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             self.open_data()
         elif case_type==2: # caso nuevo en blanco
             self.current_configuration = self.default_dict['Configurations']
+            self.current_configuration['folder_name']    = '%s_folder'%case_name
+            self.current_configuration['filesave_state'] = '%s_state'%case_name
+            self.current_configuration['filesave_spd']   = '%s_species'%case_name
 
         self.set_configuration_run_and_postProcess_widgets()
         return

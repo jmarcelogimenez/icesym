@@ -71,6 +71,10 @@ class NewCaseDialog(QtWidgets.QDialog):
         ncyls = self.ui_ncd.ncyls.value()
         for icyl in range(0,ncyls):
             default_dict['Configurations']['ig_order'].append(icyl)
+        # Cambiar los nombres de los folders segun el elegido por el usario
+        default_dict['Configurations']['folder_name']    = '%s_folder'%self.case_name
+        default_dict['Configurations']['filesave_state'] = '%s_state'%self.case_name
+        default_dict['Configurations']['filesave_spd']   = '%s_species'%self.case_name
         cw = configurationWidget(self.current_dir, default_dict['Configurations'], self.case_name)
 
         INITIAL_Y = Y_SIZE*(ncyls-1)
