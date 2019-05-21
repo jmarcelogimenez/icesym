@@ -30,13 +30,26 @@ class ValveDialog(QtWidgets.QDialog):
         self.current_dir = current_dir
         self.setWindowTitle( self.windowTitle() + " " + str(item_index) )
         if not current_valve_scene_item:
-            self.load_default()
+            self.current_dict = self.load_default()
         else:
             self.current_dict = current_valve_scene_item.object
-            self.set_parameters()
+        self.check_keys()
+        self.set_parameters()
         self.parent = parent
         self.current_scene_item = current_valve_scene_item
-#        self.save_valve_template()
+        return
+    
+    def check_keys(self):
+        """
+        check that the essential keys of the object exists, otherwise put a 
+        default one
+        """
+        default_dict = []
+        for ikey in JSON_VALVE_KEYS:
+            if ikey not in self.current_dict:
+                if not default_dict:
+                    default_dict = self.load_default()
+                self.current_dict[ikey] = default_dict[ikey]
         return
 
     def set_restrictions(self):
@@ -62,32 +75,20 @@ class ValveDialog(QtWidgets.QDialog):
         """
         load the default valve template
         """
-        filename = self.current_dir + "templates/valve_default.json"
+        filename = self.current_dir + "/templates/valve_default.json"
         if not os.path.isfile(filename):
             show_message("Cannot find default valve configuration file")
             return
         with open(filename) as openedfile:
             try:
-                self.current_dict = json.load(openedfile)
+                default_dict = json.load(openedfile)
             except ValueError, error:
-                print 'JSON object issue: %s'%error
-        if self.current_dict is None:
+                show_message('JSON object issue: %s'%error)
+                return []
+        if default_dict is None:
             show_message("An error ocurred with the json default valve archive")
-            return
-        if not self.check_json_keys():
-            return
-        self.set_parameters()
-        return
-
-    def check_json_keys(self):
-        """
-        check if the loaded json include all the obligatory keys
-        """
-        for ikey in JSON_VALVE_KEYS:
-            if ikey not in self.current_dict.keys():
-                show_message("Wrong number of keys in json default valve archive")
-                return False
-        return True
+            return []
+        return default_dict
 
     def set_parameters(self):
         """
