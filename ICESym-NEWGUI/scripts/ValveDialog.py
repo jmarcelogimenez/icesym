@@ -15,6 +15,21 @@ JSON_VALVE_KEYS = ['Lvmax', 'angle_VC', 'label', 'Nval', 'Dv', \
                    'type_dat', 'typeVal', 'angle_V0', 'valve_model', 'Cd', 'Lv', \
                    'ncyl', 'tube', 'histo']
 
+def configure_default_valve(object_valve, nstroke = 4):
+    """
+    input: a dictionary corresponding to a valve
+    Function to select the correct opening/closing angle depending on the nstrokes
+    and the type of valve
+    """
+    if nstroke==2:
+        object_valve['angle_V0'] = np.deg2rad(120.0) if object_valve['typeVal']=='int' else np.deg2rad(180.5)
+        object_valve['angle_VC'] = np.deg2rad(240.0) if object_valve['typeVal']=='int' else np.deg2rad(179.5)
+    elif nstroke==4:
+        object_valve['angle_V0'] = np.deg2rad(710.0) if object_valve['typeVal']=='int' else np.deg2rad(490.0)
+        object_valve['angle_VC'] = np.deg2rad(220.0) if object_valve['typeVal']=='int' else np.deg2rad(20.0)
+            
+    return object_valve
+
 class ValveDialog(QtWidgets.QDialog):
     """
     class to manage the valve atributes. If current_valve is None, we are creating

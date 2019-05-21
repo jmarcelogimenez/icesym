@@ -1,1 +1,2 @@
-{"valve_model": 1, "angle_VC": 3.83972435439, "label": "default_valve", "typeVal": "int", "Nval": 1, "Dv": 0.035, "type_dat": 0, "Cd": [[0.0, 0.8], [0.009, 0.8]], "Lv": [], "type": 0, "angle_V0": 12.3918376892, "Lvmax": 0.009, "ncyl": -1, "tube": -1, "histo": 0}
+{"valve_model": 1, "angle_VC": 3.83972435439, "label": "default_valve", "typeVal": "int", "Nval": 1, "Dv": 0.035, "type_dat": 0, "Cd": [[0.0, 0.8], [0.009, 0.8]], "Lv": [], "type": 0, "angle_V0": 12.3918376892, "Lvmax": 0.009, 
+"ncyl": -1, "tube": -1, "histo": 0}

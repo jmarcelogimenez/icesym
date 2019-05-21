@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from ICESymMainWindow_ui import Ui_ICESymMainWindow
 from configurationWidget import configurationWidget
 from postProcessWidget import postProcessWidget
-from ValveDialog import ValveDialog
+from ValveDialog import ValveDialog, configure_default_valve
 from AtmosphereDialog import AtmosphereDialog
 from TubeDialog import TubeDialog, configure_default_tube
 from CylinderDialog import CylinderDialog
@@ -94,6 +94,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         self.objects['Tanks']            = []
         
         self.configure_default = {}
+        self.configure_default['Valves'] = configure_default_valve
         self.configure_default['Tubes']  = configure_default_tube
 
         self.drawGrid(QtWidgets.QDesktopWidget().screenGeometry())
@@ -172,7 +173,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             if 'label' in iobject.keys():
                 iobject['label'] = '%s_%s'%(iobject['label'],len(self.objects[itype]))
             if itype in self.configure_default.keys():
-                self.configure_default[itype](iobject)
+                self.configure_default[itype](iobject,self.current_configuration['nstroke'])
         item = SceneItem(itype, position, iobject)
         self.scene_items.append(item)
         self.scene.addItem(item.pixmap)

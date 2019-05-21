@@ -17,7 +17,7 @@ JSON_TUBE_KEYS = ['diameter', 'nnod', 'label', 'twall', 'ndof', 'state_ini', \
                    'histo', 'xnod', 'longitud', "tleft", "nleft", "tright", \
                    "nright", 'typeSave', 'numNorm', 'posNorm', 'histo']
 
-def configure_default_tube(object_tube):
+def configure_default_tube(object_tube, nstroke = -1):
     """
     input: a dictionary corresponding to a tube
     Function to create the arrays of values depending on the number of nodes

@@ -13,6 +13,7 @@ from utils import show_message, load_templates, save_data_aux, check_if_float, M
 from configurationWidget import configurationWidget
 from SceneItem import SceneItem
 from TubeDialog import configure_default_tube
+from ValveDialog import configure_default_valve
 
 class NewCaseDialog(QtWidgets.QDialog):
     def __init__(self, current_dir):
@@ -54,9 +55,6 @@ class NewCaseDialog(QtWidgets.QDialog):
         return
     
     def create_case_from_wizard(self):
-
-        # TODO: ponerle nombre a los elementos, luego sirve mejor para el postproceso...
-        # tube_0, tube_1.... tube_N
 
         default_dict = load_templates(self.current_dir)
         objects = {}
@@ -124,6 +122,7 @@ class NewCaseDialog(QtWidgets.QDialog):
             iobject['ncyl']     = icyl
             iobject['typeVal']  = 'int'
             iobject['label']    = 'Intake_Valve_%s'%icyl
+            configure_default_valve(iobject,default_dict['Configurations']['nstroke'])
             position = QtCore.QPoint(X_SIZE*8,Y_SIZE*icyl*2)
             item_valve = SceneItem('Valves', position, iobject)
             objects['Valves'].append(item_valve)
@@ -172,6 +171,7 @@ class NewCaseDialog(QtWidgets.QDialog):
             iobject['ncyl']     = icyl
             iobject['typeVal']  = 'exh'
             iobject['label']    = 'Exhaust_Valve_%s'%icyl
+            configure_default_valve(iobject,default_dict['Configurations']['nstroke'])
             position = QtCore.QPoint(X_SIZE*12,Y_SIZE*icyl*2)
             item_valve = SceneItem('Valves', position, iobject)
             objects['Valves'].append(item_valve)
