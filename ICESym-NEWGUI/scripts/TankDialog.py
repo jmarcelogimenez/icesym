@@ -110,10 +110,12 @@ class TankDialog(QtWidgets.QDialog):
             key = 'Cd_ports'
             ncols = 1
             off = 1
+            table = self.ui_td.Cd_ports
         elif self.sender().objectName()=="load_state_ini_pushButton":
             key = 'state_ini'
             ncols = 3
             off = 0
+            table = self.ui_td.state_ini
             
         assert(key!='' and ncols>0)
 
@@ -144,7 +146,7 @@ class TankDialog(QtWidgets.QDialog):
             return
         
         self.current_dict[key] = list(self.current_dict[key]) # para que no sea numpy array
-        self.set_table(key,self.ui_td.Cd_ports,self.current_dict)
+        self.set_table(key,table,self.current_dict)
         return
     
     
@@ -346,5 +348,11 @@ class TankDialog(QtWidgets.QDialog):
         return
     
     def cancel(self):
+        self.close()
+        return
+    
+    def closeEvent(self, event):
+        if not self.sender() or self.sender().objectName()=='cancel_pushButton':
+            self.current_dict['state_ini'].insert(0,self.current_dict['state_ini_0'][0])
         self.close()
         return
