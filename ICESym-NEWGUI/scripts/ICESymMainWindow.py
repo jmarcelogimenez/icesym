@@ -370,6 +370,8 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             item1.object[keydict] = item2_index
         if item1.type=='Tanks':
             item1.object['exh2tube'].append( item2_index )
+            item1.object['state_ini'].append ( item2.object['state_ini'][-1] )
+            item1.object['Cd_ports'].append ( 0.8 )
         if item1.type=='Junctions':
             item1.object['type_end'].append(-1)
             item1.object['node2tube'].append( item2_index )
@@ -390,6 +392,8 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             item2.object[keydict] = item1_index
         if item2.type=='Tanks':
             item2.object['int2tube'].append( item1_index )
+            item2.object['state_ini'].append ( item1.object['state_ini'][-1] )
+            item2.object['Cd_ports'].append ( 0.8 )
         if item2.type=='Junctions':
             item2.object['type_end'].append(1)
             item2.object['node2tube'].append( item1_index )
@@ -770,6 +774,8 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             tube_number = self.objects['Tubes'].index(item_tube)
             tube_type = 'int2tube' if item_tube==item1 else 'exh2tube'
             item_tank.object[tube_type].remove(tube_number)
+            item_tank.object['state_ini'].pop(-1)
+            item_tank.object['Cd_ports'].pop(-1)
             item_tank.object['histo'] = []
         if item1.type=='Tubes' or item2.type=='Tubes':
             item_tube = item1 if item1.type=='Tubes' else item2
