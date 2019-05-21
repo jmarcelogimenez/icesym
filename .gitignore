@@ -40,3 +40,4 @@ ICESym-NEWGUI/scripts/*_rc.py
 ICESym-NEWGUI/runs
 ICESym-NEWGUI/simulator/exec
 ICESym-NEWGUI/simulator/*.so
+ICESym-NEWGUI/cases

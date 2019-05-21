@@ -13,7 +13,7 @@ from configurationWidget import configurationWidget
 from postProcessWidget import postProcessWidget
 from ValveDialog import ValveDialog
 from AtmosphereDialog import AtmosphereDialog
-from TubeDialog import TubeDialog
+from TubeDialog import TubeDialog, configure_default_tube
 from CylinderDialog import CylinderDialog
 from TankDialog import TankDialog
 from JunctionDialog import JunctionDialog
@@ -92,6 +92,9 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         self.objects['Junctions']        = []
         self.objects['Cylinders']        = []
         self.objects['Tanks']            = []
+        
+        self.configure_default = {}
+        self.configure_default['Tubes']  = configure_default_tube
 
         self.drawGrid(QtWidgets.QDesktopWidget().screenGeometry())
         self.old_size_view = self.view.size()
@@ -168,6 +171,8 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             iobject = copy.deepcopy(self.default_dict[itype])
             if 'label' in iobject.keys():
                 iobject['label'] = '%s_%s'%(iobject['label'],len(self.objects[itype]))
+            if itype in self.configure_default.keys():
+                self.configure_default[itype](iobject)
         item = SceneItem(itype, position, iobject)
         self.scene_items.append(item)
         self.scene.addItem(item.pixmap)

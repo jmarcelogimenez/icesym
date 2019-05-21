@@ -17,6 +17,22 @@ JSON_TUBE_KEYS = ['diameter', 'nnod', 'label', 'twall', 'ndof', 'state_ini', \
                    'histo', 'xnod', 'longitud', "tleft", "nleft", "tright", \
                    "nright", 'typeSave', 'numNorm', 'posNorm', 'histo']
 
+def configure_default_tube(object_tube):
+    """
+    input: a dictionary corresponding to a tube
+    Function to create the arrays of values depending on the number of nodes
+    (nnod) in the tube on default input
+    """
+    nnod = object_tube['nnod']
+    for inn in range(0,nnod-1):
+        object_tube['diameter'].append(object_tube['diameter'][0])
+        object_tube['twall'].append(object_tube['twall'][0])
+        object_tube['state_ini'].append(object_tube['state_ini'][0])
+    vals = np.linspace(0, object_tube['longitud'], nnod)
+    for iv in vals:
+        object_tube['xnod'].append(iv)
+    return object_tube
+
 class TubeDialog(QtWidgets.QDialog):
     """
     class to manage the valve atributes. If current_valve is None, we are creating

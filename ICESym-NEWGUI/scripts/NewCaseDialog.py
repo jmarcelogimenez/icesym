@@ -12,6 +12,7 @@ from newCaseDialog_ui import Ui_NewCaseDialog
 from utils import show_message, load_templates, save_data_aux, check_if_float, MM2M, DEFAULT_DVP
 from configurationWidget import configurationWidget
 from SceneItem import SceneItem
+from TubeDialog import configure_default_tube
 
 class NewCaseDialog(QtWidgets.QDialog):
     def __init__(self, current_dir):
@@ -91,6 +92,7 @@ class NewCaseDialog(QtWidgets.QDialog):
         iobject['nright']   = 0
         iobject['nleft']    = 0
         iobject['label']    = 'Tube_0'
+        configure_default_tube(iobject)
         position = QtCore.QPoint(X_SIZE*2,INITIAL_Y)
         item_tube = SceneItem('Tubes', position, iobject)
         objects['Tubes'].append(item_tube)
@@ -134,6 +136,7 @@ class NewCaseDialog(QtWidgets.QDialog):
             iobject['nright']   = icyl
             iobject['nleft']    = 0
             iobject['label']    = 'Tube_%s'%len(objects['Tubes'])
+            configure_default_tube(iobject)
             position = QtCore.QPoint(X_SIZE*6,Y_SIZE*icyl*2)
             item_tube = SceneItem('Tubes', position, iobject)
             objects['Tubes'].append(item_tube)
@@ -179,6 +182,7 @@ class NewCaseDialog(QtWidgets.QDialog):
             iobject['nright']   = 0
             iobject['nleft']    = icyl
             iobject['label']    = 'Tube_%s'%len(objects['Tubes'])
+            configure_default_tube(iobject)
             position = QtCore.QPoint(X_SIZE*14,Y_SIZE*icyl*2)
             item_tube = SceneItem('Tubes', position, iobject)
             objects['Junctions'][0].object['type_end'].append(1)
@@ -194,6 +198,7 @@ class NewCaseDialog(QtWidgets.QDialog):
         iobject['nright']   = 1
         iobject['nleft']    = 0
         iobject['label']    = 'Tube_%s'%len(objects['Tubes'])
+        configure_default_tube(iobject)
         position = QtCore.QPoint(X_SIZE*18,INITIAL_Y)
         item_tube = SceneItem('Tubes', position, iobject)
         objects['Tubes'].append(item_tube)
