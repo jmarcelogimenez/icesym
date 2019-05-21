@@ -164,42 +164,4 @@
         <file>newicons/valve_exhaust_thumb.svg</file>
         <file>newicons/valve_intake_thumb.svg</file>
     </qresource>
-    <qresource prefix="/originals">
-        <file>Tubes_3232.png</file>
-        <file>Valves_3232.png</file>
-        <file>Tanks_3232.png</file>
-        <file>junction_3232.png</file>
-        <file>Cylinders_3232.png</file>
-        <file>Atmospheres_3232.png</file>
-        <file>ValvesIntakeIconeSmall.bmp</file>
-        <file>ValvesIcone.bmp</file>
-        <file>ValvesExhaustIconeSmall.bmp</file>
-        <file>valve.bmp</file>
-        <file>TubesSmall.bmp</file>
-        <file>TubesIconeSmall.bmp</file>
-        <file>TubesIcone.bmp</file>
-        <file>TubesBig.bmp</file>
-        <file>TanksSmall.bmp</file>
-        <file>TanksIconeSmall.bmp</file>
-        <file>TanksIcone.bmp</file>
-        <file>TanksBig.bmp</file>
-        <file>simulator.bmp</file>
-        <file>pipe.bmp</file>
-        <file>JunctionsSmall.bmp</file>
-        <file>JunctionsIconeSmall.bmp</file>
-        <file>JunctionsIcone.bmp</file>
-        <file>JunctionsBig.bmp</file>
-        <file>junction.bmp</file>
-        <file>images.qrc</file>
-        <file>icesIcone.png</file>
-        <file>CylindersIconeSmall.bmp</file>
-        <file>CylindersIcone.bmp</file>
-        <file>CylindersBig.bmp</file>
-        <file>cylinder.bmp</file>
-        <file>connection2.png</file>
-        <file>connection1.png</file>
-        <file>AtmospheresIconeSmall.bmp</file>
-        <file>AtmospheresIcone.bmp</file>
-        <file>atmosphere.bmp</file>
-    </qresource>
 </RCC>

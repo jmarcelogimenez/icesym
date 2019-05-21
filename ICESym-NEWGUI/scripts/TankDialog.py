@@ -14,7 +14,7 @@ from utils import M2MM, SQM2SQCM, CM2CCM, CCM2CM, MM2M, SQCM2SQM, check_if_float
 import numpy as np
 
 JSON_TANK_KEYS = ['label','nnod','ndof','Volume','mass','h_film','Area_wall','T_wall','Cd_ports','state_ini',\
-                  'exh2tube','int2tube','histo', 'extras']
+                  'exh2tube','int2tube','histo', 'extras','state_ini_0']
 
 PARSED = {}
 PARSED['Volume']    = [['Volume',CM2CCM],[]]
@@ -157,8 +157,8 @@ class TankDialog(QtWidgets.QDialog):
         return
     
     def modify_nnodes(self, ncd):
-        self.match_list(ncd-1,self.current_dict['Cd_ports'],0.0)
-        self.match_list(ncd,self.current_dict['state_ini'],[0.0,0.0,0.0])
+        self.match_list(ncd-1,self.current_dict['Cd_ports'],0.8)
+        self.match_list(ncd-1,self.current_dict['state_ini'],[1.1769, 0.1, 101330.0])
         
         self.set_table('Cd_ports',self.ui_td.Cd_ports,self.current_dict)
         self.set_table('state_ini',self.ui_td.state_ini,self.current_dict)
@@ -221,12 +221,21 @@ class TankDialog(QtWidgets.QDialog):
         """
         if not self.current_dict:
             return
+        
+        # El state_ini tiene el inicial para el nodo 0 del tanque, luego el resto
+        # son de tubos. Deben separarse en dos tablas pero el diseño original contemplaba
+        # todo en una sola lista. Por ello las divido aca, creando este array "nuevo"
+        self.current_dict['state_ini_0'] = []
+        self.current_dict['state_ini_0'].append(self.current_dict['state_ini'][0])
+        self.current_dict['state_ini'].pop(0)
 
         for itab in range(3): # por cada tab del widget
 
             current_dict = self.current_dict
 
-            for ikey in JSON_TANK_KEYS and current_dict.keys():
+            for ikey in current_dict.keys():
+                if ikey not in JSON_TANK_KEYS:
+                    continue
                 item_le  = self.ui_td.tabWidget.widget(itab).findChild(QtWidgets.QLineEdit,ikey)
                 item_cob = self.ui_td.tabWidget.widget(itab).findChild(QtWidgets.QComboBox,ikey)
                 item_chb = self.ui_td.tabWidget.widget(itab).findChild(QtWidgets.QCheckBox,ikey)
@@ -273,7 +282,6 @@ class TankDialog(QtWidgets.QDialog):
             return
         ncols = table.columnCount()
         nrows = table.rowCount()
-        current_dict[ikey] = []
         for irow in range(0, nrows):
             dict_row = []
             for icol in range(0, ncols):
@@ -323,7 +331,10 @@ class TankDialog(QtWidgets.QDialog):
         success = False
         # tablas
         try:
+            self.current_dict['Cd_ports'] = []
             self.get_table('Cd_ports', self.ui_td.Cd_ports, self.current_dict, [1.0])
+            self.current_dict['state_ini'] = []
+            self.get_table('state_ini', self.ui_td.state_ini_0, self.current_dict, [1.0,1.0,1.0])
             self.get_table('state_ini', self.ui_td.state_ini, self.current_dict, [1.0,1.0,1.0])
             self.get_list('histo', self.ui_td.histo, self.current_dict)
             success = True
