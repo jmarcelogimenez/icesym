@@ -220,6 +220,11 @@ class NewCaseDialog(QtWidgets.QDialog):
         position = QtCore.QPoint(X_SIZE*20,INITIAL_Y)
         item_atmosphere = SceneItem('Atmospheres', position, iobject)
         objects['Atmospheres'].append(item_atmosphere)
+        
+        for ikey in objects.keys():
+            for iobject in objects[ikey]:
+                iobject.position = iobject.position+QtCore.QPoint(1.5,1.5)
+                iobject.pixmap.setPos(iobject.position)
             
 
         save_data_aux(cw, objects, self.case_dir, self.case_name, filename=None, wizard=True)
