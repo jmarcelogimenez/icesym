@@ -44,6 +44,7 @@ class LogTabWidget(QtWidgets.QWidget):
         self.timer.setInterval(50)
         self.timer.timeout.connect(self.file_changed)
         self.thread_runSimulation = None
+        self.process_killed = False
         return
     
     def set_palette(self):
@@ -112,11 +113,12 @@ class LogTabWidget(QtWidgets.QWidget):
         if self.thread_runSimulation:
             self.current_pid = self.thread_runSimulation.get_pid() + 2
             if self.current_pid != -1:
+                self.process_killed = True
                 command = "kill -KILL %s 2> %s/error.log"%(self.current_pid,self.simulator_dir)
                 p = subprocess.Popen([command],shell=True)
                 p.wait()
                 if not show_errors(self.simulator_dir):
-                    show_message('Process sucessfully killed', 1)
+                    show_message('Process Killed', 1)
                     QtWidgets.QApplication.processEvents()
                     self.reset_pid()
             else:
@@ -131,8 +133,9 @@ class LogTabWidget(QtWidgets.QWidget):
         return
     
     def success_simulation(self):
-        if not show_errors(self.simulator_dir):
-            show_message('Simulation Finished Successfully!', 1)
+        if not show_errors(self.simulator_dir) and not self.process_killed:
+            show_message('Simulation Finished', 1)
+        self.process_killed = False
         return
     
     def run_simulation(self):
@@ -145,29 +148,6 @@ class LogTabWidget(QtWidgets.QWidget):
         if not os.path.isfile(simulator):
             show_message('Cannot find exec file. Please, create this file to run the simulator')
             return
-
-#        with open(simulator, "w") as f:
-#        
-#            path_name = self.case_dir
-#            module_name = self.case_name
-#    
-#            lines = [
-#                '# from numpy import array\n',
-#                'import time\n',
-#                'import sys\n',
-#                'import os\n',
-#                'from simCythonCPP import Simulator\n\n',
-#                'sys.path.append("'+ path_name + '")\n',
-#                'data = __import__("' + module_name + '")\n',
-#                'now = time.time()\n',
-#                'Sim = Simulator(**data.kargs)\n',
-#                'print "termina de inicializar"\n',
-#                'Sim.printData()\n',
-#                'Sim.solver()\n',
-#                'now2 = time.time()\n',
-#                'print now2-now\n']
-#            
-#            f.writelines(lines)
 
         logfile = '%s/run.log'%(self.simulator_dir)
         command = "%s/exec %s %s 1> %s/run.log 2> %s/error.log"%(self.simulator_dir,self.case_dir,self.case_name,self.simulator_dir,self.simulator_dir)
