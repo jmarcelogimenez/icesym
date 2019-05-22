@@ -1,4 +1,4 @@
 {"crank_radius": 0.035, "type_ig": 0, "label": "default_cylinder", "full_implicit": 0.0, "ndof": 3, "model_ht": 1, "factor_ht": 0.7, "piston_area": 0.005674502, "ownState": 1, "mass_C": [0.0,0.0,0.0,0.0,0.0,0.0], "nnod": 3, "scavenge_type": 0, 
 "twall": [473.0], "state_ini": [[0.0,0.0,0.0]], "nve": 1, "head_chamber_area": 0.005674502, "type_temperature": 0, "rod_length": 0.125, "species_model": 0, "nvi": 1, "delta_ca": 0.0, "Vol_clearance": 4.3411488649e-05, "Bore": 0.085,
-"scavenge": 0.0, "intake_valves": [], "exhaust_valves": [], "histo": [0], "extras": 1, "fuel": {"y": 2.25, "hvap_fuel": 350000.0, "Q_fuel": 43000000.0}, "injection": { "ignition_delay_model": 0, "dtheta_inj": 0.0, "m_inj": 0.0, 
-"theta_inj_ini": 0.0, "T_fuel": 0.0, "pulse": 1, "theta_id": 0.0}, "combustion": {"a_wiebe": 5.25, "dtheta_comb": 1.0471975512, "combustion_model": 1, "m_wiebe": 1.1, "theta_ig_0": 6.1261056745, "phi": 0.9}}
+"scavenge": 0.0, "intake_valves": [], "exhaust_valves": [], "histo": [0], "extras": 1, "fuel": {"y": 2.25, "hvap_fuel": 350000.0, "Q_fuel": 43000000.0}, "injection": { "ignition_delay_model": 0, "dtheta_inj": 1.0, "m_inj": 1.0, 
+"theta_inj_ini": 1.0, "T_fuel": 1.0, "pulse": 1, "theta_id": 1.0}, "combustion": {"a_wiebe": 5.25, "dtheta_comb": 1.0471975512, "combustion_model": 1, "m_wiebe": 1.1, "theta_ig_0": 6.1261056745, "phi": 0.9}}

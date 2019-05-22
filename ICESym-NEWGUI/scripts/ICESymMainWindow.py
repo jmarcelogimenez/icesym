@@ -381,6 +381,9 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         if item1.type=='Junctions':
             item1.object['type_end'].append(-1)
             item1.object['node2tube'].append( item2_index )
+            if new_connection:
+                item1.object['state_ini'].append(DEFAULT_DVP)
+                item1.object['nnod'] = item1.object['nnod']+1
         if item1.type=='Cylinders':
             item1.object['exhaust_valves'].append(item2.object)
         
@@ -408,6 +411,9 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         if item2.type=='Junctions':
             item2.object['type_end'].append(1)
             item2.object['node2tube'].append( item1_index )
+            if new_connection:
+                item2.object['state_ini'].append(DEFAULT_DVP)
+                item2.object['nnod'] = item2.object['nnod']+1
         if item2.type=='Cylinders':
             item2.object['intake_valves'].append(item1.object)
         return
@@ -778,6 +784,8 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             tube_index = item_junction.object['node2tube'].index(tube_number)
             item_junction.object['node2tube'].remove(tube_number)
             item_junction.object['type_end'].pop(tube_index)
+            item_junction.object['state_ini'].pop(-1)
+            item_junction.object['nnod'] = item_junction.object['nnod']-1
             item_junction.object['histo'] = []
         if item1.type=='Tanks' or item2.type=='Tanks':
             item_tank = item1 if item1.type=='Tanks' else item2
