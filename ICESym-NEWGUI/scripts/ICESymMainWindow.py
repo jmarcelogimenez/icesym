@@ -20,7 +20,7 @@ from JunctionDialog import JunctionDialog
 from PyQt5.QtSvg import QGraphicsSvgItem
 from LogTabWidget import LogTabWidget
 from SceneItem import SceneItem
-from utils import show_message, load_templates, save_data_aux, ICON_PATHS, ICON_PATHS_NC
+from utils import show_message, load_templates, save_data_aux, ICON_PATHS, ICON_PATHS_NC, DEFAULT_DVP
 
 TREE_POSITION = {} 
 TREE_POSITION['Cylinders']      = 0
@@ -345,10 +345,10 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
                                                  pencil, QtGui.QBrush(QtCore.Qt.black))
         self.scene_connections.append( (item1,item2,l,c1,c2) )
         if new_connection:
-            self.modify_conections_items(item1,item2)
+            self.modify_conections_items(item1,item2,new_connection)
         return
     
-    def modify_conections_items(self, item1, item2):
+    def modify_conections_items(self, item1, item2, new_connection=False):
         """
         Setea los argumentos necesarios para cada item segun la conexion
         item1: item a la izquierda de la conexion
@@ -369,10 +369,15 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         if item1.type=='Valves':
             keydict = 'ncyl' if item2.type=='Cylinders' else 'tube'
             item1.object[keydict] = item2_index
+            if item2.type=='Cylinders' and new_connection:
+                item2.object['state_ini'].append(DEFAULT_DVP)
+                item2.object['nnod'] = item2.object['nnod']+1
         if item1.type=='Tanks':
             item1.object['exh2tube'].append( item2_index )
-            item1.object['state_ini'].append ( item2.object['state_ini'][-1] )
-            item1.object['Cd_ports'].append ( 0.8 )
+            if new_connection:
+                item1.object['state_ini'].append ( item2.object['state_ini'][-1] )
+                item1.object['Cd_ports'].append ( 0.8 )
+                item1.object['nnod'] = item1.object['nnod']+1
         if item1.type=='Junctions':
             item1.object['type_end'].append(-1)
             item1.object['node2tube'].append( item2_index )
@@ -391,10 +396,15 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         if item2.type=='Valves':
             keydict = 'ncyl' if item1.type=='Cylinders' else 'tube'
             item2.object[keydict] = item1_index
+            if item1.type=='Cylinders' and new_connection:
+                item1.object['state_ini'].append(DEFAULT_DVP)
+                item1.object['nnod'] = item1.object['nnod']+1
         if item2.type=='Tanks':
             item2.object['int2tube'].append( item1_index )
-            item2.object['state_ini'].append ( item1.object['state_ini'][-1] )
-            item2.object['Cd_ports'].append ( 0.8 )
+            if new_connection:
+                item2.object['state_ini'].append ( item1.object['state_ini'][-1] )
+                item2.object['Cd_ports'].append ( 0.8 )
+                item2.object['nnod'] = item2.object['nnod']+1
         if item2.type=='Junctions':
             item2.object['type_end'].append(1)
             item2.object['node2tube'].append( item1_index )
@@ -777,6 +787,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             item_tank.object[tube_type].remove(tube_number)
             item_tank.object['state_ini'].pop(-1)
             item_tank.object['Cd_ports'].pop(-1)
+            item_tank.object['nnod'] = item_tank.object['nnod']-1
             item_tank.object['histo'] = []
         if item1.type=='Tubes' or item2.type=='Tubes':
             item_tube = item1 if item1.type=='Tubes' else item2
@@ -794,6 +805,8 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
                     self.eraseConnection(connection_v)
         if item1.type=='Cylinders' or item2.type=='Cylinders':
             item_cylinder = item1 if item1.type=='Cylinders' else item2
+            item_cylinder.object['nnod'] = item_cylinder.object['nnod']-1
+            item_cylinder.object['state_ini'].pop(-1)
             item_valve = item1 if item1.type=='Valves' else item2
             type_valve = 'intake_valves' if item2==item_cylinder else 'exhaust_valves'
             item_cylinder.object[type_valve].remove(item_valve.object)
