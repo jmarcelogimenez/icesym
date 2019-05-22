@@ -1,0 +1,4 @@
+{"crank_radius": 0.06, "type_ig": 1, "label": "default_cylinder", "full_implicit": 0.0, "ndof": 3, "model_ht": 1, "factor_ht": 0.36, "piston_area": 0.011309734, "ownState": 1, "mass_C": [0.0,0.0,0.0,0.0,0.0,0.0], "nnod": 3, "scavenge_type": 0, 
+"twall": [459.0], "state_ini": [[0.0,0.0,0.0]], "nve": 1, "head_chamber_area": 0.012817698, "type_temperature": 0, "rod_length": 0.225, "species_model": 0, "nvi": 1, "delta_ca": 0.0, "Vol_clearance": 9.04778684234e-05, "Bore": 0.12,
+"scavenge": 0.0, "intake_valves": [], "exhaust_valves": [], "histo": [0], "extras": 1, "fuel": {"y": 2.16667, "hvap_fuel": 350000.0, "Q_fuel": 42500000.0}, "injection": { "ignition_delay_model": 1, "dtheta_inj": 0.130009575981, "m_inj": 0.0001218, 
+"theta_inj_ini": 6.0388392119, "T_fuel": 300.0, "pulse": 1, "theta_id": 1.0}, "combustion": {"a_wiebe": 6.0, "dtheta_comb": 1.20427718388, "combustion_model": 1, "m_wiebe": 1.64, "theta_ig_0": 6.1261056745, "phi": 1.0}}

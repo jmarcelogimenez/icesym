@@ -12,7 +12,7 @@ import pyqtgraph as pg
 from PyQt5 import QtWidgets, QtCore, QtGui
 from cylinderDialog_ui import Ui_CylinderDialog
 from utils import M2MM, SQM2SQCM, RAD2DEG, MM2M, CCM2CM, SQCM2SQM, DEG2RAD, CM2CCM,\
-                  convert_string, set_plot, check_if_float, show_message
+                  DEFAULT_DVP, convert_string, set_plot, check_if_float, show_message
 
 JSON_CYLINDER_KEYS = ["crank_radius", "type_ig", "label", "full_implicit", "ndof", "model_ht",\
                       "factor_ht", "piston_area", "ownState", "mass_C", "nnod", "scavenge_type",\
@@ -21,7 +21,7 @@ JSON_CYLINDER_KEYS = ["crank_radius", "type_ig", "label", "full_implicit", "ndof
                       "Vol_clearance", "Bore", "scavenge", "y", "hvap_fuel", "Q_fuel",
                       "combustion", "a_wiebe", "dtheta_comb", "combustion_model", "m_wiebe",\
                       "theta_ig_0", "pulse", "m_inj", "dtheta_inj", "theta_inj_ini", "theta_id",\
-                      "ignition_delay_model","T_fuel", "phi", "intake_valves", "exhaust_valves"]
+                      "ignition_delay_model","T_fuel", "phi", "intake_valves", "exhaust_valves",'state_ini_0']
 
 PARSED = {}
 PARSED['crank_radius']          = [['crank_radius',M2MM*2],[]]
@@ -370,7 +370,7 @@ class CylinderDialog(QtWidgets.QDialog):
         return
     
     def modify_nnodes(self, ncd):
-        self.match_list(ncd,self.current_dict['state_ini'],[0.0,0.0,0.0])
+        self.match_list(ncd-1,self.current_dict['state_ini'],DEFAULT_DVP)
         self.set_table('state_ini',self.ui_cd.state_ini,self.current_dict)
         return
 
@@ -380,7 +380,14 @@ class CylinderDialog(QtWidgets.QDialog):
         """
         if not self.current_dict:
             return
-        
+
+        # El state_ini tiene el inicial para el nodo 0 del tanque, luego el resto
+        # son de tubos. Deben separarse en dos tablas pero el diseño original contemplaba
+        # todo en una sola lista. Por ello las divido aca, creando este array "nuevo"
+        self.current_dict['state_ini_0'] = []
+        self.current_dict['state_ini_0'].append(self.current_dict['state_ini'][0])
+        self.current_dict['state_ini'].pop(0)
+
         tabs = (0,4,5)
 
         for itab in range(6): # por cada tab del widget
@@ -437,7 +444,7 @@ class CylinderDialog(QtWidgets.QDialog):
             return True
         ncols = table.columnCount()
         nrows = table.rowCount()
-        current_dict[ikey] = []
+        current_dict[ikey] = [] if ikey!='state_ini' else current_dict[ikey]
         for irow in range(0, nrows):
             dict_row = []
             for icol in range(0, ncols):
@@ -506,6 +513,11 @@ class CylinderDialog(QtWidgets.QDialog):
 
         self.current_dict['histo'] = []
         tabs = (0,4,5)
+        
+        self.current_dict['state_ini'] = []
+        ret = self.get_table('state_ini_0', self.ui_cd.state_ini_0, self.current_dict)
+        self.current_dict['state_ini'].append(self.current_dict['state_ini_0'][0])
+        del self.current_dict['state_ini_0']
 
         for itab in range(6): # por cada tab del widget
 
@@ -557,5 +569,11 @@ class CylinderDialog(QtWidgets.QDialog):
         return
     
     def cancel(self):
+        self.close()
+        return
+    
+    def closeEvent(self, event):
+        if not self.sender() or self.sender().objectName()=='cancel_pushButton':
+            self.current_dict['state_ini'].insert(0,self.current_dict['state_ini_0'][0])
         self.close()
         return

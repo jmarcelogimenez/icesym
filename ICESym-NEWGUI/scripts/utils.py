@@ -215,10 +215,29 @@ def load_templates(inst_dir):
             try:
                 default_dict[parsed_name] = json.load(openedfile)
             except ValueError, error:
-                print 'JSON object issue: %s'%error
+                show_message('JSON object issue: %s'%error)
+                return {}
         if default_dict[parsed_name] is None:
             show_message("An error ocurred with the %s json template archive"%item)
             return {}
+    return default_dict
+
+def load_cylinder_template(inst_dir, nstroke, type_ig):
+    type_ig_s = 'SI' if type_ig==0 else 'CI'
+    
+    filename = inst_dir + "/templates/cylinder_default_%sstroke_%s.json"%(nstroke,type_ig_s)
+    if not os.path.isfile(filename):
+        show_message("Cannot find %s"%filename)
+        return {}
+    with open(filename) as openedfile:
+        try:
+            default_dict = json.load(openedfile)
+        except ValueError, error:
+            show_message('JSON object issue: %s'%error)
+            return {}
+    if default_dict is None:
+        show_message("An error ocurred with the %s json template archive"%filename)
+        return {}
     return default_dict
 
 def explode_atribute(atribute):

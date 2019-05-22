@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>456</height>
+    <height>496</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -118,19 +118,22 @@
         </item>
        </widget>
       </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label">
+      <item row="4" column="2">
+       <widget class="QLineEdit" name="Bore">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="font">
          <font>
           <underline>false</underline>
          </font>
         </property>
         <property name="text">
-         <string>Type of Ignition:</string>
+         <string>80.0</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
+      <item row="2" column="2">
        <widget class="QSpinBox" name="ncyls">
         <property name="font">
          <font>
@@ -145,55 +148,24 @@
         </property>
        </widget>
       </item>
+      <item row="1" column="2">
+       <widget class="QComboBox" name="nstroke">
+        <property name="currentIndex">
+         <number>1</number>
+        </property>
+        <item>
+         <property name="text">
+          <string>2</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>4</string>
+         </property>
+        </item>
+       </widget>
+      </item>
       <item row="5" column="0">
-       <widget class="QLabel" name="label_7">
-        <property name="font">
-         <font>
-          <underline>false</underline>
-         </font>
-        </property>
-        <property name="text">
-         <string>Compression Ratio:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_3">
-        <property name="font">
-         <font>
-          <underline>false</underline>
-         </font>
-        </property>
-        <property name="text">
-         <string>Number of Cylinders:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_4">
-        <property name="font">
-         <font>
-          <underline>false</underline>
-         </font>
-        </property>
-        <property name="text">
-         <string>Bore [mm]:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="label_6">
-        <property name="font">
-         <font>
-          <underline>false</underline>
-         </font>
-        </property>
-        <property name="text">
-         <string>Con-rod Lenght [mm]:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
        <widget class="QLabel" name="label_5">
         <property name="font">
          <font>
@@ -205,20 +177,11 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="2">
-       <widget class="QLineEdit" name="Bore">
-        <property name="font">
-         <font>
-          <underline>false</underline>
-         </font>
-        </property>
-        <property name="text">
-         <string>80.0</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="2">
+      <item row="5" column="2">
        <widget class="QLineEdit" name="crank_radius">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="font">
          <font>
           <underline>false</underline>
@@ -229,8 +192,11 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="2">
+      <item row="6" column="2">
        <widget class="QLineEdit" name="rod_length">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="font">
          <font>
           <underline>false</underline>
@@ -241,8 +207,85 @@
         </property>
        </widget>
       </item>
-      <item row="5" column="2">
+      <item row="8" column="0">
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>Constant Tank Volume:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="2">
+       <widget class="QLineEdit" name="vol_constant">
+        <property name="text">
+         <string>1.0</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <widget class="QLabel" name="label_6">
+        <property name="font">
+         <font>
+          <underline>false</underline>
+         </font>
+        </property>
+        <property name="text">
+         <string>Con-rod Lenght [mm]:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="font">
+         <font>
+          <underline>false</underline>
+         </font>
+        </property>
+        <property name="text">
+         <string>Bore [mm]:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="font">
+         <font>
+          <underline>false</underline>
+         </font>
+        </property>
+        <property name="text">
+         <string>Type of Ignition:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="label_7">
+        <property name="font">
+         <font>
+          <underline>false</underline>
+         </font>
+        </property>
+        <property name="text">
+         <string>Compression Ratio:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="font">
+         <font>
+          <underline>false</underline>
+         </font>
+        </property>
+        <property name="text">
+         <string>Number of Cylinders:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="2">
        <widget class="QLineEdit" name="Vol_clearance">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="font">
          <font>
           <underline>false</underline>
@@ -269,17 +312,27 @@
         </property>
        </spacer>
       </item>
-      <item row="6" column="0">
-       <widget class="QLabel" name="label_8">
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_9">
         <property name="text">
-         <string>Constant Tank Volume:</string>
+         <string>Strokes per Cycle:</string>
         </property>
        </widget>
       </item>
-      <item row="6" column="2">
-       <widget class="QLineEdit" name="vol_constant">
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_10">
         <property name="text">
-         <string>1.0</string>
+         <string>Type of Cylinder:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QCheckBox" name="default_cylinder">
+        <property name="text">
+         <string>Use default</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -481,8 +534,8 @@
    <slot>accept_d()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>242</x>
-     <y>433</y>
+     <x>289</x>
+     <y>485</y>
     </hint>
     <hint type="destinationlabel">
      <x>199</x>
@@ -497,12 +550,28 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>342</x>
-     <y>433</y>
+     <x>389</x>
+     <y>485</y>
     </hint>
     <hint type="destinationlabel">
      <x>199</x>
      <y>227</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>default_cylinder</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>NewCaseDialog</receiver>
+   <slot>use_default_cylinder()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>298</x>
+     <y>281</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>247</y>
     </hint>
    </hints>
   </connection>
@@ -512,5 +581,6 @@
   <slot>enable_wizard()</slot>
   <slot>open_case()</slot>
   <slot>accept_d()</slot>
+  <slot>use_default_cylinder()</slot>
  </slots>
 </ui>

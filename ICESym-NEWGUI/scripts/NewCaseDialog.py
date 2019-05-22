@@ -9,7 +9,7 @@ Created on Mon Apr  8 03:50:15 2019
 import os, copy, math
 from PyQt5 import QtWidgets, QtCore, QtGui
 from newCaseDialog_ui import Ui_NewCaseDialog
-from utils import show_message, load_templates, save_data_aux, check_if_float, MM2M, DEFAULT_DVP
+from utils import show_message, load_templates, save_data_aux, check_if_float, load_cylinder_template, MM2M, DEFAULT_DVP
 from configurationWidget import configurationWidget
 from SceneItem import SceneItem
 from TubeDialog import configure_default_tube
@@ -20,11 +20,11 @@ class NewCaseDialog(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self)
         self.ui_ncd = Ui_NewCaseDialog()
         self.ui_ncd.setupUi(self)
-        self.setBaseSize(400, 450)
+        self.setBaseSize(400, 490)
         self.current_dir = current_dir
         self.case_name  = None
         self.case_dir   = None
-        self.case_type  = None # 1 abierto, 2 nuevo blanco, 3 nuevo wizardn
+        self.case_type  = None # 1 abierto, 2 nuevo blanco, 3 nuevo wizard
         self.set_wizard_restrictions()
         return
     
@@ -74,6 +74,7 @@ class NewCaseDialog(QtWidgets.QDialog):
         default_dict['Configurations']['folder_name']    = '%s_folder'%self.case_name
         default_dict['Configurations']['filesave_state'] = '%s_state'%self.case_name
         default_dict['Configurations']['filesave_spd']   = '%s_species'%self.case_name
+        default_dict['Configurations']['nstroke']        = int(self.ui_ncd.nstroke.currentText())
         cw = configurationWidget(self.current_dir, default_dict['Configurations'], self.case_name)
 
         INITIAL_Y = Y_SIZE*(ncyls-1)
@@ -102,6 +103,7 @@ class NewCaseDialog(QtWidgets.QDialog):
         # un state_ini ya viene en el template, nnod: 1 + 1 tube + ncyls
         for isi in range(ncyls+1):
             iobject['state_ini'].append(DEFAULT_DVP)
+            iobject['Cd_ports'].append(0.8)
         position = QtCore.QPoint(X_SIZE*4,INITIAL_Y)
         item_tank = SceneItem('Tanks', position, iobject)
         objects['Tanks'].append(item_tank)
@@ -142,23 +144,31 @@ class NewCaseDialog(QtWidgets.QDialog):
             index_tube = objects['Tubes'].index(item_tube)
             objects['Tanks'][0].object['exh2tube'].append(index_tube)
             objects['Valves'][icyl].object['tube'] = index_tube
+            
+            if self.ui_ncd.default_cylinder.isChecked():
+                lct = load_cylinder_template(self.current_dir,default_dict['Configurations']['nstroke'],\
+                                                    int(self.ui_ncd.type_ig.currentIndex()))
+                if lct != {}:
+                    iobject = lct
+                else:
+                    return False
+            else:
+                iobject = copy.deepcopy(default_dict['Cylinders'])
+                # atributos de los objetos (todos iguales)
+                iobject['type_ig']          = int(self.ui_ncd.type_ig.currentIndex())
+                iobject['Bore']             = float(self.ui_ncd.Bore.text())*MM2M
+                iobject['crank_radius']     = float(self.ui_ncd.crank_radius.text())*MM2M/2.0
+                iobject['rod_length']       = float(self.ui_ncd.rod_length.text())*MM2M
+                val = (0.5*math.pi*(float(self.ui_ncd.Bore.text())*MM2M)**2*float(self.ui_ncd.crank_radius.text())/2.0*MM2M)
+                val = val/(float(self.ui_ncd.Vol_clearance.text())-1.0)
+                iobject['Vol_clearance']    = val
+                iobject['head_chamber_area'] = (math.pi*iobject['Bore']**2/4.0)*1.2
+                iobject['piston_area']      = (math.pi*iobject['Bore']**2/4.0)*1.1
 
-            iobject = copy.deepcopy(default_dict['Cylinders'])
-
-            # atributos de los objetos (todos iguales)
-            iobject['type_ig']          = int(self.ui_ncd.type_ig.currentIndex())
-            iobject['Bore']             = float(self.ui_ncd.Bore.text())*MM2M
-            iobject['crank_radius']     = float(self.ui_ncd.crank_radius.text())*MM2M/2.0
-            iobject['rod_length']       = float(self.ui_ncd.rod_length.text())*MM2M
-            val = (0.5*math.pi*(float(self.ui_ncd.Bore.text())*MM2M)**2*float(self.ui_ncd.crank_radius.text())/2.0*MM2M)
-            val = val/(float(self.ui_ncd.Vol_clearance.text())-1.0)
-            iobject['Vol_clearance']    = val
-            iobject['head_chamber_area'] = (math.pi*iobject['Bore']**2/4.0)*1.2
-            iobject['piston_area']      = (math.pi*iobject['Bore']**2/4.0)*1.1
-            # state ini hardcodeado, porque son 3 siempre (valvula int, cilindro, valvula ext)
+            iobject['label']            = 'Cylinder_%s'%icyl
+            # state ini son 3 siempre (valvula int, cilindro, valvula ext)
             iobject['state_ini']        = [[1.1769, 101330.0, 300.0], [1.1769, 0.1, 101330.0], [1.1769, 0.1, 101330.0]]
             iobject['nnod']             = 3
-            iobject['label']            = 'Cylinder_%s'%icyl
             
             vol_constant = float(self.ui_ncd.vol_constant.text())
             objects['Tanks'][0].object['Volume'] = (vol_constant*math.pi*iobject['Bore']**2/4.0)*iobject['crank_radius']
@@ -213,7 +223,7 @@ class NewCaseDialog(QtWidgets.QDialog):
             
 
         save_data_aux(cw, objects, self.case_dir, self.case_name, filename=None, wizard=True)
-        return
+        return True
     
     def check_wizard_attributes(self):
         to_verify = []
@@ -242,7 +252,9 @@ class NewCaseDialog(QtWidgets.QDialog):
             else:
                 if not self.check_wizard_attributes():
                     return
-                self.create_case_from_wizard()
+                if not self.create_case_from_wizard():
+                    show_message('An error has ocurred creating the case. Please contact the developer.')
+                    return
                 self.case_type  = 3
         
         if not self.case_name or not self.case_dir or not self.case_type:
@@ -273,4 +285,11 @@ class NewCaseDialog(QtWidgets.QDialog):
                     self.ui_ncd.case_name.setText(self.case_name)
                 else:
                     show_message('Select a valid case to open')
+        return
+    
+    def use_default_cylinder(self,state):
+        self.ui_ncd.Bore.setEnabled(not state)
+        self.ui_ncd.crank_radius.setEnabled(not state)
+        self.ui_ncd.rod_length.setEnabled(not state)
+        self.ui_ncd.Vol_clearance.setEnabled(not state)
         return

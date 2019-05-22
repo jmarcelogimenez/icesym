@@ -1,2 +1,2 @@
-{"dtheta_rpm": 1.0, "filein_state": "None", "Courant": 0.8, "heat_flow": 1.0, "R_gas": 287.0, "rpms": [], "calc_engine_data": 1, "filesave_state": "default_state", "viscous_flow": 1.0, "ncycles": 5, "folder_name": "default_folder",
+{"dtheta_rpm": 1.0, "filein_state": "None", "Courant": 0.8, "heat_flow": 1.0, "R_gas": 287.0, "rpms": [1000,2000,3000], "calc_engine_data": 1, "filesave_state": "default_state", "viscous_flow": 1.0, "ncycles": 5, "folder_name": "default_folder",
 "ga": 1.3, "filesave_spd": "default_species", "nsave": 5, "ig_order": [], "get_state": 2, "nappend": 5.0, "engine_type": 0, "nstroke": 4}
