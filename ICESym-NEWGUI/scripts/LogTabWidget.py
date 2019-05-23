@@ -27,7 +27,7 @@ except AttributeError:
         return QtGui.QApplication.translate(context, text, disambig)
     
 class LogTabWidget(QtWidgets.QWidget):
-    def __init__(self, simulator_dir, case_name, case_dir, current_dir, enable_ppw):
+    def __init__(self, simulator_dir, case_name, case_dir, current_dir):
         QtWidgets.QWidget.__init__(self)
         self.ui_tab_widget = Ui_LogTabWidget()
         self.ui_tab_widget.setupUi(self)
@@ -36,7 +36,6 @@ class LogTabWidget(QtWidgets.QWidget):
         self.case_name = case_name
         self.case_dir = case_dir
         self.current_dir = current_dir
-        self.enable_ppw = enable_ppw
         self.current_log = ''
         self.lastPos = 0
         self.lastlastPos = -1
@@ -157,7 +156,7 @@ class LogTabWidget(QtWidgets.QWidget):
         self.thread_runSimulation.started.connect(lambda: self.init_log(logfile))
         self.thread_runSimulation.finished.connect(self.reset_log)
         self.thread_runSimulation.finished.connect(self.reset_pid)
-        self.thread_runSimulation.finished.connect(self.enable_ppw)
+#        self.thread_runSimulation.finished.connect(self.enable_ppw)
         self.thread_runSimulation.finished.connect(self.success_simulation)
         # inicio el thread
         self.thread_runSimulation.start()

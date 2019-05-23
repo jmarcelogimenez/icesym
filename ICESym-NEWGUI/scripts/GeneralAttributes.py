@@ -15,14 +15,14 @@ GROUP_A = ['IMEP per Cylinder','FMEP per Cylinder','BMEP per Cylinder']
 GROUP_B = ['Power Indicated','Power Effective','Torque Indicated','Torque Effective','Mechanical Efficiency']
 
 class GeneralAttributes():
-    def __init__(self, current_configuration, read_normal_txt, read_extras_txt, cylinders, rho, current_test_dir):
+    def __init__(self, run_attributes, read_normal_txt, read_extras_txt, cylinders, rho, current_test_dir):
         self.general_atributes = {}
-        self.current_configuration = current_configuration
+        self.run_attributes = run_attributes
         self.read_extras_txt = read_extras_txt
         self.read_normal_txt = read_normal_txt
 
-        self.rpms = [int(irpm) for irpm in self.current_configuration['rpms']]
-        self.ncycles = self.current_configuration['ncycles']
+        self.rpms = [int(irpm) for irpm in self.run_attributes['rpms']]
+        self.ncycles = self.run_attributes['ncycles']
         self.ncyls = len(cylinders)
         self.cylinders = cylinders
         self.rho = rho
@@ -171,7 +171,7 @@ class GeneralAttributes():
         power_effective         = {}
         torque_effective        = {}
         mechanical_efficiency   = {}
-        nstroke = self.current_configuration['nstroke']
+        nstroke = self.run_attributes['nstroke']
         nr = nstroke/2
 
         for icycle in range(1,self.ncycles+1):
@@ -215,7 +215,7 @@ class GeneralAttributes():
         
         (mfc,mair)  = self.getMasses() if 'mfc' not in self.general_atributes.keys() else \
                     (self.general_atributes['mfc'] ,self.general_atributes['mair'])
-        nstroke = self.current_configuration['nstroke']
+        nstroke = self.run_attributes['nstroke']
         nr = nstroke/2
         Q_fuel = self.cylinders[0].object['Q_fuel']
 

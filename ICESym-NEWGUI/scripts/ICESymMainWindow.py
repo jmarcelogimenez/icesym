@@ -117,8 +117,8 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             self.current_configuration['folder_name']    = '%s_folder'%case_name
             self.current_configuration['filesave_state'] = '%s_state'%case_name
             self.current_configuration['filesave_spd']   = '%s_species'%case_name
-
-        self.set_configuration_run_and_postProcess_widgets()
+            self.set_configuration_run_and_postProcess_widgets()
+            show_message('New case successfully created!',1)
         return
     
     def set_configuration_run_and_postProcess_widgets(self):
@@ -134,8 +134,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         self.ppw = postProcessWidget(self.current_dir,self.current_configuration,self.objects)
         self.ui.tab_postProcess.layout().addWidget(self.ppw)
         self.ppw.setAutoFillBackground(True)
-        self.ltw = LogTabWidget(self.simulator_dir, self.case_name, self.case_dir,\
-                                self.current_dir, self.ppw.enable_ppw)
+        self.ltw = LogTabWidget(self.simulator_dir, self.case_name, self.case_dir,self.current_dir)
         self.ui.tab_run.layout().addWidget(self.ltw)
         self.ltw.setAutoFillBackground(True)
         return
@@ -968,4 +967,9 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
 
     def load_postpro(self):
         self.ppw.load_postpro()
-        return        
+        return
+    
+    def enable_postpro(self, tab_index):
+        if tab_index==3:
+            self.ppw.enable_ppw()
+        return

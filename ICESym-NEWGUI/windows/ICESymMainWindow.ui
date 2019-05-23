@@ -932,8 +932,8 @@
    <slot>updateCaseSetup()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>123</x>
-     <y>154</y>
+     <x>139</x>
+     <y>148</y>
     </hint>
     <hint type="destinationlabel">
      <x>427</x>
@@ -973,6 +973,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>tabWidget</sender>
+   <signal>currentChanged(int)</signal>
+   <receiver>ICESymMainWindow</receiver>
+   <slot>enable_postpro()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>517</x>
+     <y>353</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>517</x>
+     <y>320</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>updateCaseSetup()</slot>
@@ -991,5 +1007,6 @@
   <slot>redraw_grid()</slot>
   <slot>save_postpro()</slot>
   <slot>load_postpro()</slot>
+  <slot>enable_postpro()</slot>
  </slots>
 </ui>

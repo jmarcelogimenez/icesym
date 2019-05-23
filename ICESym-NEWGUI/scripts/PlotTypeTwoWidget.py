@@ -30,11 +30,11 @@ except AttributeError:
 LISTNDOFA = ['Density', 'Velocity', 'Pressure']
     
 class PlotTypeTwoWidget(QtWidgets.QWidget):
-    def __init__(self, plot_function, current_test_dir, current_configuration, current_objects, plot_type, get_oa, set_oa):
+    def __init__(self, plot_function, current_test_dir, run_attributes, current_objects, plot_type, get_oa, set_oa):
         QtWidgets.QWidget.__init__(self)
         self.ui = Ui_PlotTypeTwoWidget()
         self.ui.setupUi(self)
-        self.current_configuration = current_configuration
+        self.run_attributes = run_attributes
         self.current_objects = current_objects
         self.current_test_dir = current_test_dir
         self.plot_function = plot_function
@@ -52,17 +52,17 @@ class PlotTypeTwoWidget(QtWidgets.QWidget):
     
     def set_time_restrictions(self, index_rpm):
         # Asumimos que al menos hay una rpm calculada
-        time = self.current_configuration['final_times'][index_rpm]
+        time = self.run_attributes['final_times'][index_rpm]
         self.ui.time.setText(str(time))
         self.ui.time.setValidator(QtGui.QDoubleValidator(0.0, float(time), 3))
         return
 
     def set_rpms(self):
-        for irpm in self.current_configuration['rpms']:
-            rpm_folder = self.current_test_dir + "/RPM_%s"%irpm
-            if not os.path.isdir(rpm_folder):
-                show_message("There is no folder for RPM %s. Maybe the simulation is incomplete"%irpm, 2)
-                continue
+        for irpm in self.run_attributes['rpms']:
+#            rpm_folder = self.current_test_dir + "/RPM_%s"%irpm
+#            if not os.path.isdir(rpm_folder):
+#                show_message("There is no folder for RPM %s. Maybe the simulation is incomplete"%irpm, 2)
+#                continue
             self.ui.rpms.addItem(str(irpm))
         return
     

@@ -76,11 +76,11 @@ TANKEXTRA_LINES['Mass']                             = -2
 TANKEXTRA_LINES['Convective Heat-Transfer Rate']    = -1
 
 class PlotTypeThreeWidget(QtWidgets.QWidget):
-    def __init__(self, plot_function, current_test_dir, current_configuration, current_objects, plot_type, get_oa, set_oa):
+    def __init__(self, plot_function, current_test_dir, run_attributes, current_objects, plot_type, get_oa, set_oa):
         QtWidgets.QWidget.__init__(self)
         self.ui = Ui_PlotTypeThreeWidget()
         self.ui.setupUi(self)
-        self.current_configuration = current_configuration
+        self.run_attributes = run_attributes
         self.current_objects = current_objects
         self.current_test_dir = current_test_dir
         self.plot_function = plot_function
@@ -104,11 +104,11 @@ class PlotTypeThreeWidget(QtWidgets.QWidget):
     def set_rpms_and_cycles(self):
         self.ui.rpms.setSpacing(3)
         self.ui.cycles.setSpacing(3)
-        for irpm in self.current_configuration['rpms']:
-            rpm_folder = self.current_test_dir + "/RPM_%s"%irpm
-            if not os.path.isdir(rpm_folder):
-                show_message("There is no folder for RPM %s. Maybe the simulation is incomplete"%irpm, 2)
-                continue
+        for irpm in self.run_attributes['rpms']:
+#            rpm_folder = self.current_test_dir + "/RPM_%s"%irpm
+#            if not os.path.isdir(rpm_folder):
+#                show_message("There is no folder for RPM %s. Maybe the simulation is incomplete"%irpm, 2)
+#                continue
             it = QtWidgets.QListWidgetItem(str(irpm))
             it.setFlags(QtCore.Qt.ItemIsEnabled|QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsUserCheckable)
             it.setCheckState(0)
@@ -117,7 +117,7 @@ class PlotTypeThreeWidget(QtWidgets.QWidget):
         last_rpm = self.ui.rpms.item(self.ui.rpms.count()-1)
         if last_rpm:
             last_rpm.setCheckState(2)
-        for icycle in range(0,self.current_configuration['ncycles']):
+        for icycle in range(0,self.run_attributes['ncycles']):
             it = QtWidgets.QListWidgetItem(str(icycle+1))
             it.setFlags(QtCore.Qt.ItemIsEnabled|QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsUserCheckable)
             it.setCheckState(0)
@@ -308,10 +308,10 @@ class PlotTypeThreeWidget(QtWidgets.QWidget):
         plot_attributes['component'] = str(self.ui.component.currentText())
         plot_attributes['variable'] = [str(self.ui.x_variable.currentText()),str(self.ui.y_variable.currentText())]
         plot_attributes['selected_cycles'] = self.get_list_items(self.ui.cycles) if self.plot_type!=3\
-                        else [int(icycle) for icycle in range(1,int(self.current_configuration['ncycles'])+1)]
+                        else [int(icycle) for icycle in range(1,int(self.run_attributes['ncycles'])+1)]
         plot_attributes['label'] = str(self.ui.legend.text())
         plot_attributes['selected_rpms'] = self.get_list_items(self.ui.rpms) if self.plot_type!=2\
-                        else [int(irpm) for irpm in self.current_configuration['rpms']]
+                        else [int(irpm) for irpm in self.run_attributes['rpms']]
         plot_attributes['variable_index'] = [int(self.ui.x_variable.currentIndex()),int(self.ui.y_variable.currentIndex())]
         plot_attributes['title'] = str(self.ui.title.text())
         plot_attributes['figure_number'] = self.ui.figure_number.currentIndex()-1

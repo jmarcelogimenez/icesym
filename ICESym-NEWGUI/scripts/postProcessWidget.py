@@ -47,75 +47,105 @@ class postProcessWidget(QtWidgets.QWidget):
         self.cpw = None
         self.spw = None
         self.fpw = None
+        self.plot_widgets   = []
         self.colours        = ['r', 'b', 'k', 'g', 'y', 'c']
         self.plots          = {}
         self.legends        = {}
         self.colour_plots   = {}
         self.open_archives  = {}
-        self.enable_ppw()
+        self.run_attributes = {}
+        self.run_attributes['rpms']         = []
+        self.run_attributes['final_times']  = []
+        self.ui_ppw.tabWidget_plots.setEnabled(False)
+#        self.enable_ppw()
         return
 
     def enable_ppw(self):
-        if not os.path.isdir(self.current_test_dir):
-            self.ui_ppw.tabWidget_plots.setEnabled(False)
+        # Primera vez, se verifica que todos los plots sean None
+        if not self.plot_widgets:
+            if os.path.isdir(self.current_test_dir):
+                try:
+                    irpm_missing = self.load_current_attributes()
+                    # Si no hay ninguna RPM calculada, no vale la pena activar
+                    if self.run_attributes['rpms']!=[]:
+                        if irpm_missing:
+                            msg = 'Cannot find the folders of the RPM(s) '
+                            for irpm in irpm_missing:
+                                msg = msg + str(irpm) + ' - '
+                            msg = msg[0:-2]
+                            show_message(msg,1)
+                        self.set_plot_widgets()
+                        self.ui_ppw.tabWidget_plots.setEnabled(True)
+                except:
+                    show_message('Error in setting the PostProcess Tab')
         else:
-            if self.load_header_file() and self.set_plot_widgets():
-                self.ui_ppw.tabWidget_plots.setEnabled(True)
+            None
         return
 
-    def load_header_file(self):
-        filename = self.current_test_dir+'/header.py'
-        if not os.path.isfile(filename):
-            show_message('There is an error with the header.py file needed to configure the postprocess')
-            return False
-        pathName =  os.path.dirname(filename)
-        moduleName =  os.path.basename(filename).replace('.py','')
-        sys.path.append(str(pathName))
-        self.configData = __import__(str(moduleName))
-        
-        # TODO: final_times = rpm/60.0 * ciclos * strokespc/2.0
-        
-        # Atributo que solo existe en header.py (?) se lo paso para que pueda
-        # usarlo la funcion getMasses de GeneralAttributes
-        for index,icylinder in enumerate(self.configData.Cylinders):
-            self.current_objects['Cylinders'][index].object['angleClose'] = icylinder['angleClose']
-            self.current_objects['Cylinders'][index].object['Q_fuel'] = icylinder['Q_fuel']
+    def load_current_attributes(self):
+        # Atributos para la funcion getMasses de GeneralAttributes
+        for icylinder in self.current_objects['Cylinders']:
+            try:
+                angleClose  = np.rad2deg(icylinder.object['intake_valves'][0]['angle_VC'])
+                Q_fuel      = icylinder.object['fuel']['Q_fuel']
+            except:
+                angleClose  = 220.0
+                Q_fuel      = 44300000.0
+            icylinder.object['angleClose']  = angleClose
+            icylinder.object['Q_fuel']      = Q_fuel
+
+        # Atributos varios para los PlotWidgets
+        irpm_missing = []
+        for irpm in self.current_configuration['rpms']:
+            rpm_folder = self.current_test_dir + "/RPM_%s"%irpm
+            if not os.path.isdir(rpm_folder):
+                irpm_missing.append(irpm)
+                continue
+            self.run_attributes['rpms'].append(irpm)
+            final_time = (60.0/irpm)*self.current_configuration['ncycles']*(self.current_configuration['nstroke'])/2.0
+            self.run_attributes['final_times'].append(final_time)
             
-        self.current_configuration['rpms'] = self.configData.rpms
-        self.current_configuration['final_times'] = self.configData.final_times
-        return True
+        self.run_attributes['nstroke'] = self.current_configuration['nstroke']
+        self.run_attributes['ncycles'] = self.current_configuration['ncycles']
+        return irpm_missing
 
     def set_plot_widgets(self):
         if not self.apw:
-            self.apw = PlotTypeOneWidget(self.plot, self.current_test_dir, self.current_configuration, \
+            self.apw = PlotTypeOneWidget(self.plot, self.current_test_dir, self.run_attributes, \
                                          self.current_objects, 0, self.get_open_archives, self.set_open_archives)
             self.ui_ppw.widget_angle_layout.addWidget(self.apw)
             self.apw.setAutoFillBackground(True)
+            self.plot_widgets.append(self.apw)
         if not self.tpw:
-            self.tpw = PlotTypeOneWidget(self.plot, self.current_test_dir, self.current_configuration, \
+            self.tpw = PlotTypeOneWidget(self.plot, self.current_test_dir, self.run_attributes, \
                                          self.current_objects, 1, self.get_open_archives, self.set_open_archives)
             self.ui_ppw.widget_time_layout.addWidget(self.tpw)
             self.tpw.setAutoFillBackground(True)
+            self.plot_widgets.append(self.tpw)
         if not self.rpw:
-            self.rpw = PlotTypeOneWidget(self.plot, self.current_test_dir, self.current_configuration, \
+            self.rpw = PlotTypeOneWidget(self.plot, self.current_test_dir, self.run_attributes, \
                                          self.current_objects, 2, self.get_open_archives, self.set_open_archives)
             self.ui_ppw.widget_rpms_layout.addWidget(self.rpw)
             self.rpw.setAutoFillBackground(True)
+            self.plot_widgets.append(self.rpw)
         if not self.cpw:
-            self.cpw = PlotTypeOneWidget(self.plot, self.current_test_dir, self.current_configuration, \
+            self.cpw = PlotTypeOneWidget(self.plot, self.current_test_dir, self.run_attributes, \
                                          self.current_objects, 3, self.get_open_archives, self.set_open_archives)
             self.ui_ppw.widget_cycles_layout.addWidget(self.cpw)
             self.cpw.setAutoFillBackground(True)
+            self.plot_widgets.append(self.cpw)
         if not self.spw:
-            self.spw = PlotTypeTwoWidget(self.plot, self.current_test_dir, self.current_configuration, \
+            self.spw = PlotTypeTwoWidget(self.plot, self.current_test_dir, self.run_attributes, \
                                          self.current_objects, 4, self.get_open_archives, self.set_open_archives)
             self.ui_ppw.widget_space_layout.addWidget(self.spw)
             self.spw.setAutoFillBackground(True)
+            self.plot_widgets.append(self.spw)
         if not self.fpw:
-            self.fpw = PlotTypeThreeWidget(self.plot, self.current_test_dir, self.current_configuration, \
+            self.fpw = PlotTypeThreeWidget(self.plot, self.current_test_dir, self.run_attributes, \
                                          self.current_objects, 5, self.get_open_archives, self.set_open_archives)
             self.ui_ppw.widget_free_layout.addWidget(self.fpw)
             self.fpw.setAutoFillBackground(True)
+            self.plot_widgets.append(self.fpw)
 
         for ip in range(0,NTYPE_PLOTS):
             self.plots[ip]           = []
