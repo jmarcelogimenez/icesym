@@ -35,6 +35,12 @@ TANK_PATH_NC       = os.environ["ICESYM_INST_DIR"]+'/images/newicons/tank_thumb.
 JUNCTION_PATH_NC   = os.environ["ICESYM_INST_DIR"]+'/images/newicons/Junction_thumb.svg'
 CYLINDER_PATH_NC   = os.environ["ICESYM_INST_DIR"]+'/images/newicons/cylinder_thumb.svg'
 
+# paths, for all the cases the same
+SIMULATOR_PATH = os.environ["ICESYM_INST_DIR"]+'/simulator'
+RUNS_PATH      = os.environ["ICESYM_INST_DIR"]+'/runs'
+CASES_PATH     = os.environ["ICESYM_INST_DIR"]+'/cases'
+INSTALL_PATH   = os.environ["ICESYM_INST_DIR"]
+
 ICON_PATHS = {}
 ICON_PATHS['Valves']         = VALVE_INT_PATH
 ICON_PATHS['Atmospheres']    = ATMOS_PATH
@@ -192,7 +198,7 @@ def show_message(content, message_type = 3, buttons = QtWidgets.QMessageBox.Ok):
     reply = w.exec_()
     return reply
 
-def load_templates(inst_dir):
+def load_templates():
     """
     load the default templates
     """
@@ -206,7 +212,7 @@ def load_templates(inst_dir):
     default_dict['Configurations'] = None
     items = ['valve','atmosphere','cylinder','junction','tube','tank','configuration']
     for item in items:
-        filename = inst_dir + "/templates/%s_default.json"%item
+        filename = INSTALL_PATH + "/templates/%s_default.json"%item
         if not os.path.isfile(filename):
             show_message("Cannot find default %s template file"%item)
             return {}
@@ -222,10 +228,10 @@ def load_templates(inst_dir):
             return {}
     return default_dict
 
-def load_cylinder_template(inst_dir, nstroke, type_ig):
+def load_cylinder_template(nstroke, type_ig):
     type_ig_s = 'SI' if type_ig==0 else 'CI'
     
-    filename = inst_dir + "/templates/cylinder_default_%sstroke_%s.json"%(nstroke,type_ig_s)
+    filename = INSTALL_PATH + "/templates/cylinder_default_%sstroke_%s.json"%(nstroke,type_ig_s)
     if not os.path.isfile(filename):
         show_message("Cannot find %s"%filename)
         return {}

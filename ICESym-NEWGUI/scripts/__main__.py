@@ -30,7 +30,7 @@ def main():
 
     install_dir = os.environ["ICESYM_INST_DIR"]
     from NewCaseDialog import NewCaseDialog
-    open_dialog = NewCaseDialog(install_dir)
+    open_dialog = NewCaseDialog()
     ret = open_dialog.exec_()
     if ret:
         from ICESymMainWindow import ICESymMainWindow

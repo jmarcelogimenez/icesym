@@ -9,19 +9,19 @@ Created on Mon Apr  8 03:50:15 2019
 import os, copy, math
 from PyQt5 import QtWidgets, QtCore, QtGui
 from newCaseDialog_ui import Ui_NewCaseDialog
-from utils import show_message, load_templates, save_data_aux, check_if_float, load_cylinder_template, MM2M, DEFAULT_DVP
+from utils import show_message, load_templates, save_data_aux, check_if_float,\
+                  load_cylinder_template, MM2M, DEFAULT_DVP, INSTALL_PATH, CASES_PATH
 from configurationWidget import configurationWidget
 from SceneItem import SceneItem
 from TubeDialog import configure_default_tube
 from ValveDialog import configure_default_valve
 
 class NewCaseDialog(QtWidgets.QDialog):
-    def __init__(self, current_dir):
+    def __init__(self):
         QtWidgets.QDialog.__init__(self)
         self.ui_ncd = Ui_NewCaseDialog()
         self.ui_ncd.setupUi(self)
         self.setBaseSize(400, 490)
-        self.current_dir = current_dir
         self.case_name  = None
         self.case_dir   = None
         self.case_type  = None # 1 abierto, 2 nuevo blanco, 3 nuevo wizard
@@ -55,8 +55,7 @@ class NewCaseDialog(QtWidgets.QDialog):
         return
     
     def create_case_from_wizard(self):
-
-        default_dict = load_templates(self.current_dir)
+        default_dict = load_templates()
         objects = {}
         objects['Valves']       = []
         objects['Tubes']        = []
@@ -75,7 +74,7 @@ class NewCaseDialog(QtWidgets.QDialog):
         default_dict['Configurations']['filesave_state'] = '%s_state'%self.case_name
         default_dict['Configurations']['filesave_spd']   = '%s_species'%self.case_name
         default_dict['Configurations']['nstroke']        = int(self.ui_ncd.nstroke.currentText())
-        cw = configurationWidget(self.current_dir, default_dict['Configurations'], self.case_name)
+        cw = configurationWidget(default_dict['Configurations'], self.case_name)
 
         INITIAL_Y = Y_SIZE*(ncyls-1)
 
@@ -146,7 +145,7 @@ class NewCaseDialog(QtWidgets.QDialog):
             objects['Valves'][icyl].object['tube'] = index_tube
             
             if self.ui_ncd.default_cylinder.isChecked():
-                lct = load_cylinder_template(self.current_dir,default_dict['Configurations']['nstroke'],\
+                lct = load_cylinder_template(default_dict['Configurations']['nstroke'],\
                                                     int(self.ui_ncd.type_ig.currentIndex()))
                 if lct != {}:
                     iobject = lct
@@ -251,7 +250,7 @@ class NewCaseDialog(QtWidgets.QDialog):
         
         if self.ui_ncd.new_case_checkBox.isChecked():
             self.case_name  = str(self.ui_ncd.case_name.text())
-            self.case_dir   = self.current_dir+'/cases'
+            self.case_dir   = CASES_PATH
             if self.ui_ncd.blank_case_radioButton.isChecked():
                 self.case_type  = 2
             else:
@@ -276,7 +275,7 @@ class NewCaseDialog(QtWidgets.QDialog):
         dialog = QtWidgets.QFileDialog(self)
         dialog.setNameFilter("Python Files (*.py)")
         dialog.setWindowTitle('Open an ICESym-GUI Case')
-        dialog.setDirectory(self.current_dir+'/cases')
+        dialog.setDirectory(CASES_PATH)
         if dialog.exec_():
             filename = dialog.selectedFiles()[0]
             with open(filename, "r") as f:

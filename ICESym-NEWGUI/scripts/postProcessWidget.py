@@ -57,7 +57,6 @@ class postProcessWidget(QtWidgets.QWidget):
         self.run_attributes['rpms']         = []
         self.run_attributes['final_times']  = []
         self.ui_ppw.tabWidget_plots.setEnabled(False)
-#        self.enable_ppw()
         return
 
     def enable_ppw(self):

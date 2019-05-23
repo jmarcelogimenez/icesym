@@ -101,7 +101,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         self.old_size_view = self.view.size()
         
         # templates para cada objeto
-        self.default_dict = load_templates(self.current_dir)
+        self.default_dict = load_templates()
         
         # widgets de cada tab
         self.cw     = None
@@ -128,13 +128,15 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             self.ui.tab_postProcess.layout().removeWidget(self.ppw)
         if self.ltw:
             self.ui.tab_run.layout().removeWidget(self.ltw)
-        self.cw = configurationWidget(self.current_dir, self.current_configuration, self.case_name)
+        self.cw = configurationWidget(self.current_configuration, self.case_name)
         self.ui.tab_configuration.layout().addWidget(self.cw)
         self.cw.setAutoFillBackground(True)            
         self.ppw = postProcessWidget(self.current_dir,self.current_configuration,self.objects)
         self.ui.tab_postProcess.layout().addWidget(self.ppw)
         self.ppw.setAutoFillBackground(True)
-        self.ltw = LogTabWidget(self.simulator_dir, self.case_name, self.case_dir,self.current_dir)
+        self.ltw = LogTabWidget(self.case_name, self.case_dir, self.current_dir, \
+                                self.current_configuration['folder_name'], self.current_configuration['rpms'],\
+                                self.save_data)
         self.ui.tab_run.layout().addWidget(self.ltw)
         self.ltw.setAutoFillBackground(True)
         return
@@ -954,9 +956,10 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         self.scene.addItem(scene_item.pixmap)
         return
 
-    def save_data(self, filename = None):
+    def save_data(self, filename = None, wizard = None):
         try:
-            save_data_aux(self.cw, self.objects, self.case_dir, self.case_name, filename)
+            save_data_aux(self.cw, self.objects, self.case_dir, self.case_name, filename, wizard)
+            self.ltw.change_attributes(self.current_configuration['folder_name'],self.current_configuration['rpms'])
         except:
             show_message('An error has occurred trying to save the file')
         return

@@ -9,7 +9,7 @@ Created on Mon Mar 12 20:37:19 2018
 import os
 from PyQt5 import QtCore, QtGui, QtWidgets
 from configurationWidget_ui import Ui_ConfigureWidget
-from utils import convert_string
+from utils import convert_string, INSTALL_PATH
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -35,16 +35,13 @@ CB_GET_VALUE = ["nstroke"]
 PARSED = {}
 EXTRAS = {}
 
-# TODO: como nombre de las carpetas para guardar los datos, especies, etc, usar el nombre del caso
-
 class configurationWidget(QtWidgets.QWidget):
-    def __init__(self, current_dir, current_configuration = None, case_name = 'default_case'):
+    def __init__(self, current_configuration = None, case_name = 'default_case'):
         QtWidgets.QWidget.__init__(self)
         self.ui_cw = Ui_ConfigureWidget()
         self.ui_cw.setupUi(self)
         self.set_restrictions()
         self.current_configuration = current_configuration
-        self.current_dir = current_dir
         self.set_parameters()
         self.ui_cw.case_name.setText(case_name)
         return
@@ -167,7 +164,7 @@ class configurationWidget(QtWidgets.QWidget):
     def load_state_file(self):
         dialog = QtGui.QFileDialog(self)
         dialog.setWindowTitle('Select a File')
-        dialog.setDirectory(self.current_dir)
+        dialog.setDirectory(INSTALL_PATH)
         if dialog.exec_():
             # TODO: ver como validar esto...
             filename = dialog.selectedFiles()[0]
