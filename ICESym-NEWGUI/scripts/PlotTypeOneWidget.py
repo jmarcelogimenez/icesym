@@ -90,19 +90,23 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
         QtWidgets.QWidget.__init__(self)
         self.ui = Ui_PlotTypeOneWidget()
         self.ui.setupUi(self)
-        self.run_attributes = run_attributes
-        self.current_objects = current_objects
         self.current_test_dir = current_test_dir
         self.plot_function = plot_function
         self.plot_type = plot_type
+        self.change_attributes(run_attributes, current_objects)
         # Funciones para obtener y setear los archivos abiertos, existe una 
         # unica instancia compartida por todos los PlotTypeOneWidget y la tiene
         # el padre postProcessWidget
         self.get_open_archives = get_oa
         self.set_open_archives = set_oa
         self.set_restrictions()
+        return
+    
+    def change_attributes(self, run_attributes, current_objects):
+        self.run_attributes = run_attributes
+        self.current_objects = current_objects
         self.set_rpms_and_cycles()
-        self.choose_component('Cylinders')        
+        self.choose_component('Cylinders')
         return
     
     def set_restrictions(self):
@@ -130,11 +134,9 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
     def set_rpms_and_cycles(self):
         self.ui.rpms.setSpacing(3)
         self.ui.cycles.setSpacing(3)
+        self.ui.rpms.clear()
+        self.ui.cycles.clear()
         for irpm in self.run_attributes['rpms']:
-#            rpm_folder = self.current_test_dir + "/RPM_%s"%irpm
-#            if not os.path.isdir(rpm_folder):
-#                show_message("There is no folder for RPM %s. Maybe the simulation is incomplete"%irpm, 2)
-#                continue
             it = QtWidgets.QListWidgetItem(str(irpm))
             it.setFlags(QtCore.Qt.ItemIsEnabled|QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsUserCheckable)
             it.setCheckState(0)

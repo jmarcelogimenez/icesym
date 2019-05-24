@@ -38,8 +38,7 @@ class postProcessWidget(QtWidgets.QWidget):
         self.ui_ppw = Ui_PostProcessWidget()
         self.ui_ppw.setupUi(self)
         self.current_dir = current_dir
-        self.current_configuration = current_configuration
-        self.current_objects = current_objects
+        self.change_attributes(current_configuration, current_objects)
         self.current_test_dir = 'runs/' + self.current_configuration['folder_name']
         self.apw = None
         self.tpw = None
@@ -54,9 +53,12 @@ class postProcessWidget(QtWidgets.QWidget):
         self.colour_plots   = {}
         self.open_archives  = {}
         self.run_attributes = {}
-        self.run_attributes['rpms']         = []
-        self.run_attributes['final_times']  = []
         self.ui_ppw.tabWidget_plots.setEnabled(False)
+        return
+
+    def change_attributes(self, current_configuration, current_objects):
+        self.current_configuration = current_configuration
+        self.current_objects = current_objects
         return
 
     def enable_ppw(self):
@@ -64,7 +66,8 @@ class postProcessWidget(QtWidgets.QWidget):
         if not self.plot_widgets:
             if os.path.isdir(self.current_test_dir):
                 try:
-                    irpm_missing = self.load_current_attributes()
+                    (run_attributes,irpm_missing) = self.load_current_attributes()
+                    self.run_attributes = run_attributes
                     # Si no hay ninguna RPM calculada, no vale la pena activar
                     if self.run_attributes['rpms']!=[]:
                         if irpm_missing:
@@ -78,7 +81,11 @@ class postProcessWidget(QtWidgets.QWidget):
                 except:
                     show_message('Error in setting the PostProcess Tab')
         else:
-            None
+            (run_attributes,irpm_missing) = self.load_current_attributes()
+            if self.run_attributes!=run_attributes:
+                self.run_attributes = run_attributes
+                for ipw in self.plot_widgets:
+                    ipw.change_attributes(run_attributes, self.current_objects)
         return
 
     def load_current_attributes(self):
@@ -95,18 +102,29 @@ class postProcessWidget(QtWidgets.QWidget):
 
         # Atributos varios para los PlotWidgets
         irpm_missing = []
+        run_attributes = {}
+        run_attributes['rpms']         = []
+        run_attributes['final_times']  = []
+
+        calculated_rpms = [int(f.replace('RPM_','')) for f in os.listdir(self.current_test_dir) if 'RPM_' in f]
+        
+        # Las calculadas se incluyen
+        for irpm in calculated_rpms:
+            if irpm not in self.current_configuration['rpms']:
+                self.current_configuration['rpms'].append(irpm)
+        # Ahora veo de las seteadas, cuales no existen
         for irpm in self.current_configuration['rpms']:
             rpm_folder = self.current_test_dir + "/RPM_%s"%irpm
             if not os.path.isdir(rpm_folder):
                 irpm_missing.append(irpm)
                 continue
-            self.run_attributes['rpms'].append(irpm)
+            run_attributes['rpms'].append(irpm)
             final_time = (60.0/irpm)*self.current_configuration['ncycles']*(self.current_configuration['nstroke'])/2.0
-            self.run_attributes['final_times'].append(final_time)
-            
-        self.run_attributes['nstroke'] = self.current_configuration['nstroke']
-        self.run_attributes['ncycles'] = self.current_configuration['ncycles']
-        return irpm_missing
+            run_attributes['final_times'].append(final_time)
+
+        run_attributes['nstroke'] = self.current_configuration['nstroke']
+        run_attributes['ncycles'] = self.current_configuration['ncycles']
+        return (run_attributes,irpm_missing)
 
     def set_plot_widgets(self):
         if not self.apw:

@@ -960,6 +960,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         try:
             save_data_aux(self.cw, self.objects, self.case_dir, self.case_name, filename, wizard)
             self.ltw.change_attributes(self.current_configuration['folder_name'],self.current_configuration['rpms'])
+            self.ppw.change_attributes(self.current_configuration,self.objects)
         except:
             show_message('An error has occurred trying to save the file')
         return
