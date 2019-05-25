@@ -228,8 +228,7 @@ class PlotTypeThreeWidget(QtWidgets.QWidget):
         A_node_and_cycle_filtered = A_node_filtered if self.not_check_cycle \
         else A_node_filtered[A_node_filtered[:,1] == int(icycle)]
         data = take(A_node_and_cycle_filtered, 4+variable_index, axis=1)
-        for idata in data:
-            idata = idata*scale
+        data = [i*scale for i in data]
         return data
 
     def loadextratxt(self, archive, offset):
