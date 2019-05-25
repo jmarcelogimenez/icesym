@@ -50,8 +50,9 @@ class JunctionDialog(QtWidgets.QDialog):
         with open(filename) as openedfile:
             try:
                 self.current_dict = json.load(openedfile)
-            except ValueError, error:
-                print 'JSON object issue: %s'%error
+            except ValueError as error:
+                show_message('JSON object issue: %s'%error)
+                return
         if self.current_dict is None:
             show_message("An error ocurred with the json default junction archive")
             return

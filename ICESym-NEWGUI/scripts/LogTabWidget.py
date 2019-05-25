@@ -7,6 +7,7 @@ Created on Wed Nov 28 18:38:26 2018
 """
 
 import subprocess, os
+from sys import platform
 from PyQt5 import QtCore, QtGui, QtWidgets
 from logTabWidget_ui import Ui_LogTabWidget
 from utils import remove_values_from_list, show_message, show_errors, SIMULATOR_PATH, RUNS_PATH
@@ -124,7 +125,14 @@ class LogTabWidget(QtWidgets.QWidget):
             if self.current_pid != -1:
                 self.process_killed = True
                 errorlog_path = os.path.join(SIMULATOR_PATH,"error.log")
-                command = "kill -KILL %s 2> %s"%(self.current_pid,errorlog_path)
+                if 'linux' in platform:
+                    command = "kill -KILL %s 2> %s"%(self.current_pid,errorlog_path)
+                elif 'win' in platform:
+                    command_kill = "taskkill /F /IM exec.exe"
+                    execwfile = os.path.join(SIMULATOR_PATH,"execw_k.bat")
+                    command = "echo %s > %s"%(command_kill,execwfile)
+                    os.system(command)
+                    command = os.path.join(SIMULATOR_PATH,"execw_k.bat")
                 p = subprocess.Popen([command],shell=True)
                 p.wait()
                 if not show_errors(SIMULATOR_PATH):
@@ -172,8 +180,13 @@ class LogTabWidget(QtWidgets.QWidget):
         """
 
         # TODO: Verificar si hay componentes desconectados
-        simulator = os.path.join(SIMULATOR_PATH,"exec")
-        if not os.path.isfile(simulator):
+        
+        simulator = None
+        if 'linux' in platform:
+            simulator = os.path.join(SIMULATOR_PATH,"exec")
+        elif 'win' in platform:
+            simulator = os.path.join(SIMULATOR_PATH,"exec.exe")
+        if not simulator or not os.path.isfile(simulator):
             show_message('Cannot find exec file. Please, create this file to run the simulator')
             return
 
@@ -182,7 +195,17 @@ class LogTabWidget(QtWidgets.QWidget):
 
         logfile = os.path.join(SIMULATOR_PATH,'run.log')
         errorlogfile = os.path.join(SIMULATOR_PATH,'error.log')
-        command = "%s %s %s 1> %s 2> %s"%(simulator,self.case_dir,self.case_name,logfile,errorlogfile)
+        if 'linux' in platform:
+            command = "%s %s %s 1> %s 2> %s"%(simulator,self.case_dir,self.case_name,logfile,errorlogfile)
+        elif 'win' in platform:            
+            command = "echo.> %s"%logfile
+            os.system(command)
+            command_ex = "%s %s %s 1^> %s 2^> %s"%(simulator,self.case_dir,self.case_name,logfile,errorlogfile)
+            execwfile = os.path.join(SIMULATOR_PATH,'execw.bat')
+            command = "echo %s > %s"%(command_ex,execwfile)
+            os.system(command)
+            command = os.path.join(SIMULATOR_PATH,'execw.bat')
+
         self.thread_runSimulation = Thread(command)
         # limpio el log y agrego el archivo al watcher
         self.ui_tab_widget.logPlainTextEdit.clear()

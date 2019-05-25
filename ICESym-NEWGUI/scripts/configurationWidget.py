@@ -70,7 +70,6 @@ class configurationWidget(QtWidgets.QWidget):
         # aquellos que se multiplican
         for ii in PARSED[ikey][0]:
             if (type(ii)==str):
-                print dict_t[ii]
                 newvalue = newvalue*dict_t[ii]
             else:
                 newvalue = newvalue*ii

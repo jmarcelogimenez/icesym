@@ -7,6 +7,7 @@ Created on Fri May 11 19:54:58 2018
 """
 
 import math, os, json
+from sys import platform
 from PyQt5 import QtGui, QtWidgets, QtCore
 
 # constantes de conversion
@@ -171,7 +172,10 @@ def show_errors(currentFolder):
             log.close()
             return True
     elif os.path.isfile(filename): #Si fue creado pero esta vacio lo borro
-        command = 'rm %s '%filename
+        if 'linux' in platform:
+            command = 'rm %s '%filename
+        elif 'win' in platform:
+            command = 'del /f %s '%filename
         os.system(command)
     return False
 
@@ -195,6 +199,7 @@ def show_message(content, message_type = 3, buttons = QtWidgets.QMessageBox.Ok):
     mtitle = 'Information' if message_type==1 else 'Warning' if message_type==2 else 'Error' if message_type==3 else 'Question'
     w = QtWidgets.QMessageBox(message_type,mtitle,content,buttons)
     w.setFont(font)
+    w.setWindowIcon(QtGui.QIcon(os.path.join(os.environ["ICESYM_INST_DIR"],'images','newicons','icon.png')))
     QtWidgets.QApplication.processEvents()
     reply = w.exec_()
     return reply
@@ -249,7 +254,7 @@ def load_cylinder_template(nstroke, type_ig):
 def explode_atribute(atribute):
 	line = ''
 	if not(isinstance(atribute,list)):
-		if isinstance(atribute,str) or isinstance(atribute,unicode):
+		if isinstance(atribute,str):
 			line = line + "'" + atribute + "'"		
 		else:
 			line = line + str(atribute)

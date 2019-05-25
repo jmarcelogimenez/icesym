@@ -96,7 +96,7 @@ class ValveDialog(QtWidgets.QDialog):
         with open(filename) as openedfile:
             try:
                 default_dict = json.load(openedfile)
-            except ValueError, error:
+            except ValueError as error:
                 show_message('JSON object issue: %s'%error)
                 return []
         if default_dict is None:

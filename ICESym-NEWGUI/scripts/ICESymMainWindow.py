@@ -222,8 +222,8 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         self.centroids = []
         self.grid_lines = []
 #        self.grid_centroids = []
-        self.cells = {}
-        self.cells_inv = {}
+        #self.cells = {}
+        #self.cells_inv = {}
         centroids_x = []
         centroids_y = []
         pencil = QtGui.QPen(QtCore.Qt.gray, 1)
@@ -231,13 +231,13 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             p1 = self.view.mapToScene( QtCore.QPoint( float(xi) , 0) )
             p2 = self.view.mapToScene( QtCore.QPoint( float(xi) , windowsize.height()) )
             self.grid_lines.append( self.scene.addLine( QtCore.QLineF(p1, p2), pencil ) )
-        for xi in range(X_SIZE/2, int(windowsize.width()), X_SIZE):
+        for xi in range(int(X_SIZE/2), int(windowsize.width()), X_SIZE):
             centroids_x.append(xi)
         for yi in range(Y_SIZE, int(windowsize.height()), Y_SIZE):
             p1 = self.view.mapToScene( QtCore.QPoint( 0, float(yi) ) )
             p2 = self.view.mapToScene( QtCore.QPoint( windowsize.width(), float(yi)) )
             self.grid_lines.append( self.scene.addLine( QtCore.QLineF(p1, p2), pencil ) )
-        for yi in range(Y_SIZE/2, int(windowsize.height()), Y_SIZE):
+        for yi in range(int(Y_SIZE/2), int(windowsize.height()), Y_SIZE):
             centroids_y.append(yi)
 
         pencil = self.getLinePen(QtCore.Qt.black)
@@ -245,8 +245,8 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             for index_y,icentroid_y in enumerate(centroids_y):
                 pc = self.view.mapToScene( QtCore.QPoint( float(icentroid_x) , float(icentroid_y)) )
                 self.centroids.append( pc )
-                self.cells[pc] = [index_x,index_y]
-                self.cells_inv[index_x,index_y] = pc
+                #self.cells[pc] = [index_x,index_y]
+                #self.cells_inv[index_x,index_y] = pc
 #                self.grid_centroids.append( self.scene.addEllipse( QtCore.QRectF(pc.x(),\
 #                            pc.y(),1.0,1.0), pencil, QtGui.QBrush(QtCore.Qt.black)) )
         return
@@ -305,7 +305,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
                     if dist<min_dist:
                         min_dist = dist
                         min_centroid = icentroid
-                item.current_celd = self.cells[min_centroid]
+                #item.current_celd = self.cells[min_centroid]
                 position = min_centroid+QtCore.QPointF(-32.0,-32.0)
 
                 item.pixmap.setPos(position)
@@ -638,8 +638,9 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             with open(filename) as openedfile:
                 try:
                     self.default_dict[parsed_name] = json.load(openedfile)
-                except ValueError, error:
-                    print 'JSON object issue: %s'%error
+                except ValueError as error:
+                    show_message('JSON object issue: %s'%error)
+                    return
             if self.default_dict[parsed_name] is None:
                 show_message("An error ocurred with the %s json template archive"%item)
                 return False
