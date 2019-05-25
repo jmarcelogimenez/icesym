@@ -3,8 +3,8 @@ Authors: Juan Marcelo Gimenez, Ezequiel Jose Lopez, Santiago Chialvo & Norberto 
 
 This project consist in two main parts:
 
-1) The simulator itself, located in the folder ICESym-1D
-2) The GUI, located in the folder ICESym-NEWGUI
+1) The simulator itself, located in the folder ICESym-1D.
+2) The GUI, located in the folder ICESym-NEWGUI.
 
 ## Installation
 
@@ -20,18 +20,18 @@ Please, if you use ICESym in another distro please contact us to add it to the l
 
 2) Create a virtual enviroment and download all the needed packages. To start, you will need the following packages:
 
-- python 2.7
+- Python 2.7
 - virtualenv (tested in version 15.1.0)
 
 2.1) The first step is to create the python virtual enviroment, let us call it DIR_VIRTUALENV. The --python flag indicates the path where our python 2.7 is:
 
-~~bash~~
+```bash
 virtualenv --python=/usr/bin/python2.7 DIR_VIRTUALENV
-~~~~
+```
 
 2.2) The simulator requires, besides basic python 2.7 packages, numpy, Cython and gfortran compilators. To compile and install, follow the next steps:
 
-~~bash~~
+```bash
 cd DIR_VIRTUALENV
 source bin/activate
 git clone https://github.com/jmarcelogimenez/icesym.git
@@ -41,15 +41,15 @@ sudo apt-get install gfortran-4.9-multilib
 cd icesym/ICESym-1D/src
 make
 python setup.py install
-~~~~
+```
 
 2.3) The GUI requires Qt5 (tested with 5.2.1, default in Ubuntu 14.04), PyQt5 (tested with 5.10.1), sip (tested with 4.19.8), pyinstaller (tested with 3.4) and pyqtgraph. To compile and install all the packages, 
 follow the next steps (assuming you have already done step 2.2 and have the virtual enviroment already activated):
 
-Notes: The NPROC variable depends on the cores in your system that you want to use to compile. The qmake path in the configuration of PyQt5 can vary depending on the distro.
-You might need sudo privileges depending where the python libraries are placed.
+*Notes: The NPROC variable depends on the cores in your system that you want to use to compile. The qmake path in the configuration of PyQt5 can vary depending on the distro.
+You might need sudo privileges depending where the python libraries are placed.*
 
-~~bash~~
+```bash
 sudo apt-get install qt5-default
 cd DIR_VIRTUALENV
 wget -c https://sourceforge.net/projects/pyqt/files/sip/sip-4.19.8/sip-4.19.8.tar.gz
@@ -68,26 +68,26 @@ make install
 
 pip install pyqtgraph
 pip install pyinstaller==3.4
-~~~~
+```
 
-There is a final step to use the simulator with the GUI, you must copy the simCythonCPP.so library builded in ICESym-1D to the simulator folder located in ICESym-NEWGUI. Then:
+There is a final step to use the simulator with the GUI, you must copy the **simCythonCPP.so** library builded in ICESym-1D to the simulator folder located in ICESym-NEWGUI. Then:
 
-~~bash~~
+```bash
 cd ICESym-NEWGUI/simulator
 ./createdist
-~~~~
+```
 
-## Use of ICESym
+## Usage
 
 1) For packaged version, just run:
 
-~~bash~~
+```bash
 ./icesym
-~~~~
+```
 
 2) For the compiled version:
 
-~~bash~~
+```bash
 cd ICESym-NEWGUI
 python scripts/__main__.py
-~~~~
+```
