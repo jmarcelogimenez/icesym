@@ -10,7 +10,7 @@ This project consist in two main parts:
 
 There are two ways to install ICESym:
 
-1) Download the packaged version from: TODO. It includes the simulator and GUI and it was tested in the following distros:
+1) Download the packaged version from: [ICESym](https://sourceforge.net/projects/icesym/). It includes the simulator and GUI and it was tested in the following distros:
 
 - Ubuntu 14.04 
 - Ubuntu 16.04
