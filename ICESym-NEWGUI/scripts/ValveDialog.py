@@ -9,7 +9,7 @@ import numpy as np
 import pyqtgraph as pg
 from PyQt5 import QtGui, QtWidgets, QtCore
 from valveDialog_ui import Ui_ValveDialog
-from utils import set_plot, check_if_float, show_message, convert_string
+from utils import set_plot, check_if_float, show_message, convert_string, INSTALL_PATH, LOADS_PATH
 
 JSON_VALVE_KEYS = ['Lvmax', 'angle_VC', 'label', 'Nval', 'Dv', \
                    'type_dat', 'typeVal', 'angle_V0', 'valve_model', 'Cd', 'Lv', \
@@ -35,14 +35,13 @@ class ValveDialog(QtWidgets.QDialog):
     class to manage the valve atributes. If current_valve is None, we are creating
     a new one. On the other hand, we are modifying an old one.
     """
-    def __init__(self, current_dir, current_valve_scene_item = None, item_index = 0, parent = None):
+    def __init__(self, current_valve_scene_item = None, item_index = 0, parent = None):
         QtWidgets.QDialog.__init__(self)
         self.ui_vd = Ui_ValveDialog()
         self.ui_vd.setupUi(self)
         self.setFixedSize(403, 460)
         self.set_restrictions()
         self.current_dict = None # default valve dictionary
-        self.current_dir = current_dir
         self.setWindowTitle( self.windowTitle() + " " + str(item_index) )
         if not current_valve_scene_item:
             self.current_dict = self.load_default()
@@ -90,7 +89,7 @@ class ValveDialog(QtWidgets.QDialog):
         """
         load the default valve template
         """
-        filename = self.current_dir + "/templates/valve_default.json"
+        filename = os.path.join(INSTALL_PATH,"templates","valve_default.json")
         if not os.path.isfile(filename):
             show_message("Cannot find default valve configuration file")
             return
@@ -181,7 +180,7 @@ class ValveDialog(QtWidgets.QDialog):
         dialog = QtWidgets.QFileDialog(self)
         dialog.setNameFilter(" (*.txt)")
         dialog.setWindowTitle('Select a File to Open')
-        dialog.setDirectory("./loads")
+        dialog.setDirectory(LOADS_PATH)
         if dialog.exec_():
             filename = dialog.selectedFiles()[0]
         else:
@@ -255,7 +254,7 @@ class ValveDialog(QtWidgets.QDialog):
         """
         file_dialog = QtGui.QFileDialog()
         file_dialog.setWindowTitle('Save valve template')
-        file_dialog.setDirectory(self.current_dir)
+        file_dialog.setDirectory(INSTALL_PATH)
         file_dialog.setNameFilter('json files (*.json)')
         file_dialog.setDefaultSuffix('json')
         filename = ''

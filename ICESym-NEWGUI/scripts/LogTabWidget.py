@@ -27,14 +27,14 @@ except AttributeError:
         return QtGui.QApplication.translate(context, text, disambig)
     
 class LogTabWidget(QtWidgets.QWidget):
-    def __init__(self, case_name, case_dir, current_dir, folder_name, rpms, save_data):
+    def __init__(self, case_name, case_dir, folder_name, rpms, save_data):
         QtWidgets.QWidget.__init__(self)
         self.ui_tab_widget = Ui_LogTabWidget()
         self.ui_tab_widget.setupUi(self)
         self.set_palette()
         self.case_name          = case_name   # Nombre del caso (permanente)
         self.case_dir           = case_dir    # Directorio donde se ubica el .py del caso (variable)
-        self.current_run_dir    = RUNS_PATH+'/'+folder_name # Directorio donde se guarda la corrida (variable)
+        self.current_run_dir    = os.path.join(RUNS_PATH,folder_name) # Directorio donde se guarda la corrida (variable)
         self.rpms               = rpms # RPMS a correr (variable)
         self.save_data_f = save_data
         self.current_log = ''
@@ -53,7 +53,7 @@ class LogTabWidget(QtWidgets.QWidget):
         if any of them has changed)
         """
         self.rpms = rpms
-        self.current_run_dir = RUNS_PATH+'/'+folder_name
+        self.current_run_dir = os.path.join(RUNS_PATH,folder_name)
         return
 
     def set_palette(self):
@@ -123,7 +123,8 @@ class LogTabWidget(QtWidgets.QWidget):
             self.current_pid = self.thread_runSimulation.get_pid() + 2
             if self.current_pid != -1:
                 self.process_killed = True
-                command = "kill -KILL %s 2> %s/error.log"%(self.current_pid,SIMULATOR_PATH)
+                errorlog_path = os.path.join(SIMULATOR_PATH,"error.log")
+                command = "kill -KILL %s 2> %s"%(self.current_pid,errorlog_path)
                 p = subprocess.Popen([command],shell=True)
                 p.wait()
                 if not show_errors(SIMULATOR_PATH):
@@ -171,16 +172,17 @@ class LogTabWidget(QtWidgets.QWidget):
         """
 
         # TODO: Verificar si hay componentes desconectados
-        simulator = SIMULATOR_PATH+"/exec"
+        simulator = os.path.join(SIMULATOR_PATH,"exec")
         if not os.path.isfile(simulator):
             show_message('Cannot find exec file. Please, create this file to run the simulator')
             return
-        
+
         # Salvar el caso
         self.save_data_f(None,True)
 
-        logfile = '%s/run.log'%(SIMULATOR_PATH)
-        command = "%s/exec %s %s 1> %s/run.log 2> %s/error.log"%(SIMULATOR_PATH,self.case_dir,self.case_name,SIMULATOR_PATH,SIMULATOR_PATH)
+        logfile = os.path.join(SIMULATOR_PATH,'run.log')
+        errorlogfile = os.path.join(SIMULATOR_PATH,'error.log')
+        command = "%s %s %s 1> %s 2> %s"%(simulator,self.case_dir,self.case_name,logfile,errorlogfile)
         self.thread_runSimulation = Thread(command)
         # limpio el log y agrego el archivo al watcher
         self.ui_tab_widget.logPlainTextEdit.clear()
@@ -188,7 +190,6 @@ class LogTabWidget(QtWidgets.QWidget):
         self.thread_runSimulation.started.connect(self.show_info)
         self.thread_runSimulation.finished.connect(self.reset_log)
         self.thread_runSimulation.finished.connect(self.reset_pid)
-#        self.thread_runSimulation.finished.connect(self.enable_ppw)
         self.thread_runSimulation.finished.connect(self.success_simulation)
         # inicio el thread
         self.thread_runSimulation.start()

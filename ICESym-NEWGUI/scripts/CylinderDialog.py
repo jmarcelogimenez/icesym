@@ -12,7 +12,8 @@ import pyqtgraph as pg
 from PyQt5 import QtWidgets, QtCore, QtGui
 from cylinderDialog_ui import Ui_CylinderDialog
 from utils import M2MM, SQM2SQCM, RAD2DEG, MM2M, CCM2CM, SQCM2SQM, DEG2RAD, CM2CCM,\
-                  DEFAULT_DVP, convert_string, set_plot, check_if_float, show_message
+                  DEFAULT_DVP, INSTALL_PATH, convert_string, set_plot, check_if_float,\
+                  show_message, LOADS_PATH
 
 JSON_CYLINDER_KEYS = ["crank_radius", "type_ig", "label", "full_implicit", "ndof", "model_ht",\
                       "factor_ht", "piston_area", "ownState", "mass_C", "nnod", "scavenge_type",\
@@ -85,15 +86,13 @@ class CylinderDialog(QtWidgets.QDialog):
     class to manage the cylinder atributes. If current_cylinder is None, we are 
     creating a new one. On the other hand, we are modifying an old one.
     """
-    def __init__(self, current_dir, current_cylinder = None, item_index = 0):
+    def __init__(self, current_cylinder = None, item_index = 0):
         QtWidgets.QDialog.__init__(self)
         self.ui_cd = Ui_CylinderDialog()
         self.ui_cd.setupUi(self)
-#        self.setFixedSize(654, 873)
         self.setBaseSize(654, 873)
         self.set_restrictions()
         self.current_dict = None # default cylinder dictionary
-        self.current_dir = current_dir
         self.setWindowTitle( self.windowTitle() + " " + str(item_index) )
         if not current_cylinder:
             self.load_default()
@@ -131,7 +130,7 @@ class CylinderDialog(QtWidgets.QDialog):
         """
         load the default cylinder template
         """
-        filename = self.current_dir + "templates/cylinder_default.json"
+        filename = os.path.join(INSTALL_PATH,"templates","cylinder_default.json")
         if not os.path.isfile(filename):
             show_message("Cannot find default cylinder configuration file")
             return
@@ -215,7 +214,7 @@ class CylinderDialog(QtWidgets.QDialog):
         dialog = QtWidgets.QFileDialog(self)
         dialog.setNameFilter(" (*.txt)")
         dialog.setWindowTitle('Select a File to Open')
-        dialog.setDirectory("./loads")
+        dialog.setDirectory(LOADS_PATH)
         if dialog.exec_():
             filename = dialog.selectedFiles()[0]
         else:

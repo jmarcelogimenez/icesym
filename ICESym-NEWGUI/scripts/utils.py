@@ -20,25 +20,26 @@ CCM2CM      = 1e-6
 SQCM2SQM    = 1e-4
 
 # rutas de imagenes
-VALVE_EXH_PATH  = os.environ["ICESYM_INST_DIR"]+'/images/newicons/valve_exhaust_color.svg'
-VALVE_INT_PATH  = os.environ["ICESYM_INST_DIR"]+'/images/newicons/valve_intake_color.svg'
-ATMOS_PATH      = os.environ["ICESYM_INST_DIR"]+'/images/newicons/atmosphere_color.svg'
-TUBE_PATH       = os.environ["ICESYM_INST_DIR"]+'/images/newicons/tube_color.svg'
-TANK_PATH       = os.environ["ICESYM_INST_DIR"]+'/images/newicons/tank_color.svg'
-JUNCTION_PATH   = os.environ["ICESYM_INST_DIR"]+'/images/newicons/Junction_color.svg'
-CYLINDER_PATH   = os.environ["ICESYM_INST_DIR"]+'/images/newicons/cylinder_color.svg'
-VALVE_EXH_PATH_NC  = os.environ["ICESYM_INST_DIR"]+'/images/newicons/valve_exhaust_thumb.svg'
-VALVE_INT_PATH_NC  = os.environ["ICESYM_INST_DIR"]+'/images/newicons/valve_intake_thumb.svg'
-ATMOS_PATH_NC      = os.environ["ICESYM_INST_DIR"]+'/images/newicons/atmosphere_thumb.svg'
-TUBE_PATH_NC       = os.environ["ICESYM_INST_DIR"]+'/images/newicons/tube_thumb.svg'
-TANK_PATH_NC       = os.environ["ICESYM_INST_DIR"]+'/images/newicons/tank_thumb.svg'
-JUNCTION_PATH_NC   = os.environ["ICESYM_INST_DIR"]+'/images/newicons/Junction_thumb.svg'
-CYLINDER_PATH_NC   = os.environ["ICESYM_INST_DIR"]+'/images/newicons/cylinder_thumb.svg'
+VALVE_EXH_PATH  = os.path.join(os.environ["ICESYM_INST_DIR"],'images','newicons','valve_exhaust_color.svg')
+VALVE_INT_PATH  = os.path.join(os.environ["ICESYM_INST_DIR"],'images','newicons','valve_intake_color.svg')
+ATMOS_PATH      = os.path.join(os.environ["ICESYM_INST_DIR"],'images','newicons','atmosphere_color.svg')
+TUBE_PATH       = os.path.join(os.environ["ICESYM_INST_DIR"],'images','newicons','tube_color.svg')
+TANK_PATH       = os.path.join(os.environ["ICESYM_INST_DIR"],'images','newicons','tank_color.svg')
+JUNCTION_PATH   = os.path.join(os.environ["ICESYM_INST_DIR"],'images','newicons','Junction_color.svg')
+CYLINDER_PATH   = os.path.join(os.environ["ICESYM_INST_DIR"],'images','newicons','cylinder_color.svg')
+VALVE_EXH_PATH_NC  = os.path.join(os.environ["ICESYM_INST_DIR"],'images','newicons','valve_exhaust_thumb.svg')
+VALVE_INT_PATH_NC  = os.path.join(os.environ["ICESYM_INST_DIR"],'images','newicons','valve_intake_thumb.svg')
+ATMOS_PATH_NC      = os.path.join(os.environ["ICESYM_INST_DIR"],'images','newicons','atmosphere_thumb.svg')
+TUBE_PATH_NC       = os.path.join(os.environ["ICESYM_INST_DIR"],'images','newicons','tube_thumb.svg')
+TANK_PATH_NC       = os.path.join(os.environ["ICESYM_INST_DIR"],'images','newicons','tank_thumb.svg')
+JUNCTION_PATH_NC   = os.path.join(os.environ["ICESYM_INST_DIR"],'images','newicons','Junction_thumb.svg')
+CYLINDER_PATH_NC   = os.path.join(os.environ["ICESYM_INST_DIR"],'images','newicons','cylinder_thumb.svg')
 
 # paths, for all the cases the same
-SIMULATOR_PATH = os.environ["ICESYM_INST_DIR"]+'/simulator'
-RUNS_PATH      = os.environ["ICESYM_INST_DIR"]+'/runs'
-CASES_PATH     = os.environ["ICESYM_INST_DIR"]+'/cases'
+SIMULATOR_PATH = os.path.join(os.environ["ICESYM_INST_DIR"],'simulator')
+RUNS_PATH      = os.path.join(os.environ["ICESYM_INST_DIR"],'runs')
+CASES_PATH     = os.path.join(os.environ["ICESYM_INST_DIR"],'cases')
+LOADS_PATH     = os.path.join(os.environ["ICESYM_INST_DIR"],'loads')
 INSTALL_PATH   = os.environ["ICESYM_INST_DIR"]
 
 ICON_PATHS = {}
@@ -155,7 +156,7 @@ def show_errors(currentFolder):
     """
     Chequear si hubo algun error e imprimirlo en un mensaje
     """
-    filename = '%s/error.log'%currentFolder
+    filename = os.path.join(currentFolder,'error.log')
     #Si fue creado y tiene algo escrito lo muestro y lo muevo
     if os.path.isfile(filename) and os.path.getsize(filename) > 0:
         with open(filename, 'r') as log:
@@ -212,7 +213,7 @@ def load_templates():
     default_dict['Configurations'] = None
     items = ['valve','atmosphere','cylinder','junction','tube','tank','configuration']
     for item in items:
-        filename = INSTALL_PATH + "/templates/%s_default.json"%item
+        filename = os.path.join(INSTALL_PATH,"templates","%s_default.json"%item)
         if not os.path.isfile(filename):
             show_message("Cannot find default %s template file"%item)
             return {}
@@ -230,8 +231,7 @@ def load_templates():
 
 def load_cylinder_template(nstroke, type_ig):
     type_ig_s = 'SI' if type_ig==0 else 'CI'
-    
-    filename = INSTALL_PATH + "/templates/cylinder_default_%sstroke_%s.json"%(nstroke,type_ig_s)
+    filename = os.path.join(INSTALL_PATH,"templates","cylinder_default_%sstroke_%s.json"%(nstroke,type_ig_s))
     if not os.path.isfile(filename):
         show_message("Cannot find %s"%filename)
         return {}
@@ -300,7 +300,7 @@ def end_object_lines(object_name):
 
 def save_data_aux(cw, objects, case_dir, case_name, filename = None, wizard = False):
     if not filename:
-        filename = case_dir+"/"+case_name+".py"
+        filename = os.path.join(case_dir,case_name+".py")
 
     with open(filename, "w") as f:
 

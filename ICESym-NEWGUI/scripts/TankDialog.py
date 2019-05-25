@@ -10,7 +10,7 @@ import os, json
 from PyQt5 import QtWidgets, QtCore, QtGui
 from tankDialog_ui import Ui_TankDialog
 from utils import M2MM, SQM2SQCM, CM2CCM, CCM2CM, MM2M, SQCM2SQM, check_if_float,\
-                    show_message, convert_string
+                    show_message, convert_string, INSTALL_PATH, LOADS_PATH
 import numpy as np
 
 JSON_TANK_KEYS = ['label','nnod','ndof','Volume','mass','h_film','Area_wall','T_wall','Cd_ports','state_ini',\
@@ -28,14 +28,13 @@ class TankDialog(QtWidgets.QDialog):
     class to manage the tank atributes. If current_tank is None, we are 
     creating a new one. On the other hand, we are modifying an old one.
     """
-    def __init__(self, current_dir, current_tank = None, item_index = 0):
+    def __init__(self, current_tank = None, item_index = 0):
         QtWidgets.QDialog.__init__(self)
         self.ui_td = Ui_TankDialog()
         self.ui_td.setupUi(self)
         self.setFixedSize(452, 578)
         self.set_restrictions()
         self.current_dict = None # default tank dictionary
-        self.current_dir = current_dir
         self.setWindowTitle( self.windowTitle() + " " + str(item_index) )
         if not current_tank:
             self.load_default()
@@ -60,7 +59,7 @@ class TankDialog(QtWidgets.QDialog):
         """
         load the default tank template
         """
-        filename = self.current_dir + "templates/tank_default.json"
+        filename = os.path.join(INSTALL_PATH,"templates","tank_default.json")
         if not os.path.isfile(filename):
             show_message("Cannot find default tank configuration file")
             return
@@ -122,7 +121,7 @@ class TankDialog(QtWidgets.QDialog):
         dialog = QtWidgets.QFileDialog(self)
         dialog.setNameFilter(" (*.txt)")
         dialog.setWindowTitle('Select a File to Open')
-        dialog.setDirectory("./loads")
+        dialog.setDirectory(LOADS_PATH)
         if dialog.exec_():
             filename = dialog.selectedFiles()[0]
         else:

@@ -11,7 +11,7 @@ import json
 import numpy as np
 from PyQt5 import QtGui, QtWidgets, QtCore
 from tubeDialog_ui import Ui_TubeDialog
-from utils import check_if_float, show_message, convert_string
+from utils import check_if_float, show_message, convert_string, INSTALL_PATH, LOADS_PATH
 
 JSON_TUBE_KEYS = ['diameter', 'nnod', 'label', 'twall', 'ndof', 'state_ini', \
                    'histo', 'xnod', 'longitud', "tleft", "nleft", "tright", \
@@ -38,13 +38,12 @@ class TubeDialog(QtWidgets.QDialog):
     class to manage the valve atributes. If current_valve is None, we are creating
     a new one. On the other hand, we are modifying an old one.
     """
-    def __init__(self, current_dir, current_tube = None, item_index = 0):
+    def __init__(self, current_tube = None, item_index = 0):
         QtWidgets.QDialog.__init__(self)
         self.ui_td = Ui_TubeDialog()
         self.ui_td.setupUi(self)
         self.setFixedSize(560, 725)        
         self.current_dict = None # default valve dictionary
-        self.current_dir = current_dir
         self.setWindowTitle( self.windowTitle() + " " + str(item_index) )
         if not current_tube:
             self.load_default()
@@ -67,7 +66,7 @@ class TubeDialog(QtWidgets.QDialog):
         """
         load the default atmosphere template
         """
-        filename = self.current_dir + "templates/tube_default.json"
+        filename = os.path.join(INSTALL_PATH,"templates","tube_default.json")
         if not os.path.isfile(filename):
             show_message("Cannot find default tube configuration file")
             return
@@ -236,7 +235,7 @@ class TubeDialog(QtWidgets.QDialog):
         dialog = QtWidgets.QFileDialog(self)
         dialog.setNameFilter(" (*.txt)")
         dialog.setWindowTitle('Select a File to Open')
-        dialog.setDirectory("./loads")
+        dialog.setDirectory(LOADS_PATH)
         if dialog.exec_():
             filename = dialog.selectedFiles()[0]
         else:

@@ -20,7 +20,8 @@ from JunctionDialog import JunctionDialog
 from PyQt5.QtSvg import QGraphicsSvgItem
 from LogTabWidget import LogTabWidget
 from SceneItem import SceneItem
-from utils import show_message, load_templates, save_data_aux, ICON_PATHS, ICON_PATHS_NC, DEFAULT_DVP
+from utils import show_message, load_templates, save_data_aux, ICON_PATHS,\
+                  ICON_PATHS_NC, DEFAULT_DVP, INSTALL_PATH, CASES_PATH
 
 TREE_POSITION = {} 
 TREE_POSITION['Cylinders']      = 0
@@ -41,16 +42,13 @@ CONNECTION_RULES['Tanks']        = ['Tubes']
 CONNECTION_RULES['Valves']       = ['Cylinders','Tubes']
 
 class ICESymMainWindow(QtWidgets.QMainWindow):
-    def __init__(self, instalation_dir, case_name = None, case_dir = None, case_type = None):
+    def __init__(self, case_name = None, case_dir = None, case_type = None):
         QtWidgets.QMainWindow.__init__(self)
         self.ui = Ui_ICESymMainWindow()
         self.ui.setupUi(self)
         self.setGeometry(0, 0, 1350, 760)
-        # ubica la interfaz en el centro de la interfaz
-        self.centerOnScreen()        
-
-        self.current_dir = instalation_dir
-        self.simulator_dir = instalation_dir+"/simulator"
+        # ubica la interfaz en el centro de la pantalla
+        self.centerOnScreen()
 
         self.ui.tab_configuration.setAutoFillBackground(True)
         self.ui.tab_modeling.setAutoFillBackground(True)
@@ -131,12 +129,11 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         self.cw = configurationWidget(self.current_configuration, self.case_name)
         self.ui.tab_configuration.layout().addWidget(self.cw)
         self.cw.setAutoFillBackground(True)            
-        self.ppw = postProcessWidget(self.current_dir,self.current_configuration,self.objects)
+        self.ppw = postProcessWidget(self.current_configuration,self.objects)
         self.ui.tab_postProcess.layout().addWidget(self.ppw)
         self.ppw.setAutoFillBackground(True)
-        self.ltw = LogTabWidget(self.case_name, self.case_dir, self.current_dir, \
-                                self.current_configuration['folder_name'], self.current_configuration['rpms'],\
-                                self.save_data)
+        self.ltw = LogTabWidget(self.case_name, self.case_dir, self.current_configuration['folder_name'],\
+                                self.current_configuration['rpms'], self.save_data)
         self.ui.tab_run.layout().addWidget(self.ltw)
         self.ltw.setAutoFillBackground(True)
         return
@@ -262,17 +259,17 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
                 if (item.type == 'Valves'):
                     # A valve le debo pasar el SceneItem y el parent porque en
                     # caso de que cambie el tipo, debe cambiar el icono
-                    dialog = ValveDialog(self.current_dir,item,item_index,self)
+                    dialog = ValveDialog(item,item_index,self)
                 if (item.type == 'Atmospheres'):
-                    dialog = AtmosphereDialog(self.current_dir,item.object,item_index)
+                    dialog = AtmosphereDialog(item.object,item_index)
                 if (item.type == 'Tubes'):
-                    dialog = TubeDialog(self.current_dir,item.object,item_index)
+                    dialog = TubeDialog(item.object,item_index)
                 if (item.type == 'Cylinders'):
-                    dialog = CylinderDialog(self.current_dir,item.object,item_index)
+                    dialog = CylinderDialog(item.object,item_index)
                 if (item.type == 'Tanks'):
-                    dialog = TankDialog(self.current_dir,item.object,item_index)
+                    dialog = TankDialog(item.object,item_index)
                 if (item.type == 'Junctions'):
-                    dialog = JunctionDialog(self.current_dir,item.object,item_index)
+                    dialog = JunctionDialog(item.object,item_index)
                 if dialog:
                     dialog.exec_()
                     item.object = dialog.current_dict
@@ -576,7 +573,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             try:
                 item_index = int(item_index)
                 item = self.objects['Tubes'][item_index]
-                dialog = TubeDialog(self.current_dir,item.object,item_index)
+                dialog = TubeDialog(item.object,item_index)
             except:
                 return
         elif 'Cylinder' in component:
@@ -584,7 +581,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             try:
                 item_index = int(item_index)
                 item = self.objects['Cylinders'][item_index]
-                dialog = CylinderDialog(self.current_dir,item.object,item_index)
+                dialog = CylinderDialog(item.object,item_index)
             except:
                 return
         elif 'Junction' in component:
@@ -592,7 +589,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             try:
                 item_index = int(item_index)
                 item = self.objects['Junctions'][item_index]
-                dialog = JunctionDialog(self.current_dir,item.object,item_index)
+                dialog = JunctionDialog(item.object,item_index)
             except:
                 return
         elif 'Tank' in component:
@@ -600,7 +597,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             try:
                 item_index = int(item_index)
                 item = self.objects['Tanks'][item_index]
-                dialog = TankDialog(self.current_dir,item.object,item_index)
+                dialog = TankDialog(item.object,item_index)
             except:
                 return
         elif 'Atmosphere' in component:
@@ -608,7 +605,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             try:
                 item_index = int(item_index)
                 item = self.objects['Atmospheres'][item_index]
-                dialog = AtmosphereDialog(self.current_dir,item.object,item_index)
+                dialog = AtmosphereDialog(item.object,item_index)
             except:
                 return
         elif 'Valve' in component:
@@ -616,7 +613,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             try:
                 item_index = int(item_index)
                 item = self.objects['Valves'][item_index]
-                dialog = ValveDialog(self.current_dir,item,item_index,self)
+                dialog = ValveDialog(item,item_index,self)
             except:
                 return
         else:
@@ -633,7 +630,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         """
         items = ['valve','atmosphere','cylinder','junction','tube','tank','configuration']
         for item in items:
-            filename = self.current_dir + "/templates/%s_default.json"%item
+            filename = os.path.join(INSTALL_PATH,"templates","%s_default.json"%item)
             if not os.path.isfile(filename):
                 show_message("Cannot find default %s template file"%item)
                 return False
@@ -880,7 +877,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         return
     
     def open_terminal(self):
-        command = "xterm -e 'cd %s && /bin/bash' &"%self.current_dir
+        command = "xterm -e 'cd %s && /bin/bash' &"%INSTALL_PATH
         os.system(command)
         return
 
@@ -888,7 +885,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         self.cleanObjects()
         self.current_configuration = self.default_dict['Configurations']
         self.case_name = 'default_case'
-        self.case_dir = self.current_dir+'/cases'
+        self.case_dir = CASES_PATH
         self.set_configuration_run_and_postProcess_widgets()
         show_message('Case successfully closed!', 1)
         return
@@ -917,7 +914,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         dialog = QtGui.QFileDialog(self)
         dialog.setNameFilter("Python Files (*.py)")
         dialog.setWindowTitle('Open an ICESym-GUI Case')
-        dialog.setDirectory(self.current_dir)
+        dialog.setDirectory(INSTALL_PATH)
         if dialog.exec_():
             filename = dialog.selectedFiles()[0]
             with open(filename, "r") as f:

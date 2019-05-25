@@ -9,7 +9,7 @@ Created on Wed Nov 28 17:13:17 2018
 import os, json
 from PyQt5 import QtWidgets, QtCore
 from junctionDialog_ui import Ui_JunctionDialog
-from utils import show_message
+from utils import show_message, INSTALL_PATH
 
 JSON_JUNCTION_KEYS = ['label','ndof','nnod','type_end','node2tube','histo', 'extras']
 
@@ -24,14 +24,12 @@ class JunctionDialog(QtWidgets.QDialog):
     class to manage the junction atributes. If current_tank is None, we are 
     creating a new one. On the other hand, we are modifying an old one.
     """
-    def __init__(self, current_dir, current_junction = None, item_index = 0):
+    def __init__(self, current_junction = None, item_index = 0):
         QtWidgets.QDialog.__init__(self)
         self.ui_jd = Ui_JunctionDialog()
         self.ui_jd.setupUi(self)
         self.setFixedSize(358, 300)
-#        self.set_restrictions()
         self.current_dict = None # default junction dictionary
-        self.current_dir = current_dir
         self.setWindowTitle( self.windowTitle() + " " + str(item_index) )
         if not current_junction:
             self.load_default()
@@ -45,7 +43,7 @@ class JunctionDialog(QtWidgets.QDialog):
         """
         load the default junction template
         """
-        filename = self.current_dir + "templates/junction_default.json"
+        filename = os.path.join(INSTALL_PATH,"templates","junction_default.json")
         if not os.path.isfile(filename):
             show_message("Cannot find default junction configuration file")
             return

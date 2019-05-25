@@ -6,7 +6,7 @@ Created on Wed Mar 13 00:08:25 2019
 @author: etekken
 """
 
-import os, sys, h5py
+import os, h5py
 from PyQt5 import QtCore, QtGui, QtWidgets
 from postProcessWidget_ui import Ui_PostProcessWidget
 from PlotTypeOneWidget import PlotTypeOneWidget
@@ -14,7 +14,8 @@ from PlotTypeTwoWidget import PlotTypeTwoWidget
 from PlotTypeThreeWidget import PlotTypeThreeWidget
 import pyqtgraph as pg
 import numpy as np
-from utils import set_plot, show_message, check_two_equals, SelectionDialog, PLOT_ARGUMENTS
+from utils import set_plot, show_message, check_two_equals, SelectionDialog, PLOT_ARGUMENTS,\
+                  INSTALL_PATH, RUNS_PATH
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -33,13 +34,12 @@ except AttributeError:
 NTYPE_PLOTS = 6
 
 class postProcessWidget(QtWidgets.QWidget):
-    def __init__(self, current_dir, current_configuration, current_objects):
+    def __init__(self, current_configuration, current_objects):
         QtWidgets.QWidget.__init__(self)
         self.ui_ppw = Ui_PostProcessWidget()
         self.ui_ppw.setupUi(self)
-        self.current_dir = current_dir
         self.change_attributes(current_configuration, current_objects)
-        self.current_test_dir = 'runs/' + self.current_configuration['folder_name']
+        self.current_run_dir = os.path.join(RUNS_PATH,self.current_configuration['folder_name'])
         self.apw = None
         self.tpw = None
         self.rpw = None
@@ -58,13 +58,14 @@ class postProcessWidget(QtWidgets.QWidget):
 
     def change_attributes(self, current_configuration, current_objects):
         self.current_configuration = current_configuration
+        self.current_run_dir = os.path.join(RUNS_PATH,self.current_configuration['folder_name'])
         self.current_objects = current_objects
         return
 
     def enable_ppw(self):
         # Primera vez, se verifica que todos los plots sean None
         if not self.plot_widgets:
-            if os.path.isdir(self.current_test_dir):
+            if os.path.isdir(self.current_run_dir):
                 try:
                     (run_attributes,irpm_missing) = self.load_current_attributes()
                     self.run_attributes = run_attributes
@@ -106,7 +107,7 @@ class postProcessWidget(QtWidgets.QWidget):
         run_attributes['rpms']         = []
         run_attributes['final_times']  = []
 
-        calculated_rpms = [int(f.replace('RPM_','')) for f in os.listdir(self.current_test_dir) if 'RPM_' in f]
+        calculated_rpms = [int(f.replace('RPM_','')) for f in os.listdir(self.current_run_dir) if 'RPM_' in f]
         
         # Las calculadas se incluyen
         for irpm in calculated_rpms:
@@ -114,7 +115,7 @@ class postProcessWidget(QtWidgets.QWidget):
                 self.current_configuration['rpms'].append(irpm)
         # Ahora veo de las seteadas, cuales no existen
         for irpm in self.current_configuration['rpms']:
-            rpm_folder = self.current_test_dir + "/RPM_%s"%irpm
+            rpm_folder = os.path.join(self.current_run_dir,"RPM_%s"%irpm)
             if not os.path.isdir(rpm_folder):
                 irpm_missing.append(irpm)
                 continue
@@ -128,37 +129,37 @@ class postProcessWidget(QtWidgets.QWidget):
 
     def set_plot_widgets(self):
         if not self.apw:
-            self.apw = PlotTypeOneWidget(self.plot, self.current_test_dir, self.run_attributes, \
+            self.apw = PlotTypeOneWidget(self.plot, self.current_run_dir, self.run_attributes, \
                                          self.current_objects, 0, self.get_open_archives, self.set_open_archives)
             self.ui_ppw.widget_angle_layout.addWidget(self.apw)
             self.apw.setAutoFillBackground(True)
             self.plot_widgets.append(self.apw)
         if not self.tpw:
-            self.tpw = PlotTypeOneWidget(self.plot, self.current_test_dir, self.run_attributes, \
+            self.tpw = PlotTypeOneWidget(self.plot, self.current_run_dir, self.run_attributes, \
                                          self.current_objects, 1, self.get_open_archives, self.set_open_archives)
             self.ui_ppw.widget_time_layout.addWidget(self.tpw)
             self.tpw.setAutoFillBackground(True)
             self.plot_widgets.append(self.tpw)
         if not self.rpw:
-            self.rpw = PlotTypeOneWidget(self.plot, self.current_test_dir, self.run_attributes, \
+            self.rpw = PlotTypeOneWidget(self.plot, self.current_run_dir, self.run_attributes, \
                                          self.current_objects, 2, self.get_open_archives, self.set_open_archives)
             self.ui_ppw.widget_rpms_layout.addWidget(self.rpw)
             self.rpw.setAutoFillBackground(True)
             self.plot_widgets.append(self.rpw)
         if not self.cpw:
-            self.cpw = PlotTypeOneWidget(self.plot, self.current_test_dir, self.run_attributes, \
+            self.cpw = PlotTypeOneWidget(self.plot, self.current_run_dir, self.run_attributes, \
                                          self.current_objects, 3, self.get_open_archives, self.set_open_archives)
             self.ui_ppw.widget_cycles_layout.addWidget(self.cpw)
             self.cpw.setAutoFillBackground(True)
             self.plot_widgets.append(self.cpw)
         if not self.spw:
-            self.spw = PlotTypeTwoWidget(self.plot, self.current_test_dir, self.run_attributes, \
+            self.spw = PlotTypeTwoWidget(self.plot, self.current_run_dir, self.run_attributes, \
                                          self.current_objects, 4, self.get_open_archives, self.set_open_archives)
             self.ui_ppw.widget_space_layout.addWidget(self.spw)
             self.spw.setAutoFillBackground(True)
             self.plot_widgets.append(self.spw)
         if not self.fpw:
-            self.fpw = PlotTypeThreeWidget(self.plot, self.current_test_dir, self.run_attributes, \
+            self.fpw = PlotTypeThreeWidget(self.plot, self.current_run_dir, self.run_attributes, \
                                          self.current_objects, 5, self.get_open_archives, self.set_open_archives)
             self.ui_ppw.widget_free_layout.addWidget(self.fpw)
             self.fpw.setAutoFillBackground(True)
@@ -351,7 +352,7 @@ class postProcessWidget(QtWidgets.QWidget):
         dialog = QtWidgets.QFileDialog(self)
         dialog.setNameFilter("Hierarchical Data Format Files (*.hdf)")
         dialog.setWindowTitle('Open a Post Process File')
-        dialog.setDirectory(self.current_dir)
+        dialog.setDirectory(INSTALL_PATH)
         if dialog.exec_():
             filename = dialog.selectedFiles()[0]            
             if self.exists_plots():

@@ -30,11 +30,11 @@ except AttributeError:
 LISTNDOFA = ['Density', 'Velocity', 'Pressure']
     
 class PlotTypeTwoWidget(QtWidgets.QWidget):
-    def __init__(self, plot_function, current_test_dir, run_attributes, current_objects, plot_type, get_oa, set_oa):
+    def __init__(self, plot_function, current_run_dir, run_attributes, current_objects, plot_type, get_oa, set_oa):
         QtWidgets.QWidget.__init__(self)
         self.ui = Ui_PlotTypeTwoWidget()
         self.ui.setupUi(self)
-        self.current_test_dir   = current_test_dir
+        self.current_run_dir    = current_run_dir
         self.plot_function      = plot_function
         self.plot_type          = plot_type
         self.change_attributes(run_attributes,current_objects)
@@ -125,8 +125,8 @@ class PlotTypeTwoWidget(QtWidgets.QWidget):
         try:
             
             plot_attributes = self.get_plot_attributes()
-            rpm_folder = self.current_test_dir + "/RPM_%s"%plot_attributes['rpm']
-            archive = rpm_folder + "/tube_" + plot_attributes['index_element'] + ".txt"
+            rpm_folder = os.path.join(self.current_run_dir,"RPM_%s"%plot_attributes['rpm'])
+            archive = os.path.join(rpm_folder,"tube_"+plot_attributes['index_element']+".txt")
             (data,new_time) = self.read_normal_txt(archive,plot_attributes['time'],plot_attributes['variable_index'],plot_attributes['unit'])
             datas.append(data)
             legends.append(plot_attributes['legend'] + '_time_' + str(new_time) + '_tube_' + plot_attributes['index_element'])

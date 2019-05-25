@@ -10,7 +10,7 @@ import os
 import json
 from PyQt5 import QtGui, QtWidgets
 from atmosphereDialog_ui import Ui_AtmosphereDialog
-from utils import show_message
+from utils import show_message, INSTALL_PATH
 
 JSON_ATMOSPHERE_KEYS = ['nnod','ndof','state_ini']
 
@@ -19,14 +19,13 @@ class AtmosphereDialog(QtWidgets.QDialog):
     class to manage the atmosphere atributes. If current_atmosphere is None, we are creating
     a new one. On the other hand, we are modifying an old one.
     """
-    def __init__(self, current_dir, current_atmosphere = None, item_index = 0):
+    def __init__(self, current_atmosphere = None, item_index = 0):
         QtWidgets.QDialog.__init__(self)
         self.ui_ad = Ui_AtmosphereDialog()
         self.ui_ad.setupUi(self)
         self.setFixedSize(300, 260)
         self.set_restrictions()
         self.current_dict = None
-        self.current_dir = current_dir
         self.setWindowTitle( self.windowTitle() + " " + str(item_index) )
         if not current_atmosphere:
             self.load_default()
@@ -60,7 +59,7 @@ class AtmosphereDialog(QtWidgets.QDialog):
         """
         load the default atmosphere template
         """
-        filename = self.current_dir + "templates/atmosphere_default.json"
+        filename = os.path.join(INSTALL_PATH,"templates","atmosphere_default.json")
         if not os.path.isfile(filename):
             show_message("Cannot find default atmosphere configuration file")
             return

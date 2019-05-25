@@ -28,14 +28,12 @@ def main():
         w.exec_()
         sys.exit(1)
 
-    install_dir = os.environ["ICESYM_INST_DIR"]
     from NewCaseDialog import NewCaseDialog
     open_dialog = NewCaseDialog()
     ret = open_dialog.exec_()
     if ret:
         from ICESymMainWindow import ICESymMainWindow
-        ismw = ICESymMainWindow(install_dir, open_dialog.case_name, \
-                                open_dialog.case_dir, open_dialog.case_type)
+        ismw = ICESymMainWindow(open_dialog.case_name, open_dialog.case_dir, open_dialog.case_type)
         ismw.show()
         sys.exit(app.exec_())
     return

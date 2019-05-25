@@ -6,16 +6,17 @@ Created on Wed Mar 27 18:40:34 2019
 @author: etekken
 """
 
+import os
 from numpy import trapz
 from math import pi
 from utils import show_message
-from units import UNITS, CONVERSIONS
+from units import CONVERSIONS
 
 GROUP_A = ['IMEP per Cylinder','FMEP per Cylinder','BMEP per Cylinder']
 GROUP_B = ['Power Indicated','Power Effective','Torque Indicated','Torque Effective','Mechanical Efficiency']
 
 class GeneralAttributes():
-    def __init__(self, run_attributes, read_normal_txt, read_extras_txt, cylinders, rho, current_test_dir):
+    def __init__(self, run_attributes, read_normal_txt, read_extras_txt, cylinders, rho, current_run_dir):
         self.general_atributes = {}
         self.run_attributes = run_attributes
         self.read_extras_txt = read_extras_txt
@@ -26,7 +27,7 @@ class GeneralAttributes():
         self.ncyls = len(cylinders)
         self.cylinders = cylinders
         self.rho = rho
-        self.current_test_dir = current_test_dir
+        self.current_run_dir = current_run_dir
         return
     
     def return_calculated_variable(self, variable, icycle, label, unit):        
@@ -70,10 +71,10 @@ class GeneralAttributes():
                 pMax[icylinder][irpm]       = {}
                 for icycle in range(1,self.ncycles+1):
     				# Volumen
-                    archive = "%s/RPM_%s/cyl_extras_%s.txt"%(self.current_test_dir,irpm,icylinder)
+                    archive = os.path.join(self.current_run_dir,"RPM_%s"%irpm,"cyl_extras_%s.txt"%icylinder)
                     volData = self.read_extras_txt(archive,icycle,'Volume','Cylinders','m^3')
     				# Presion
-                    archive = "%s/RPM_%s/cyl_%s.txt"%(self.current_test_dir,irpm,icylinder)
+                    archive = os.path.join(self.current_run_dir,"RPM_%s"%irpm,"cyl_%s.txt"%icylinder)
                     pData = self.read_normal_txt(archive,0,icycle,1,'Pa')
 
                     work    = []
@@ -308,8 +309,8 @@ class GeneralAttributes():
             for irpm in self.rpms:
                 mfc[icylinder][irpm]  = {}
                 mair[icylinder][irpm] = {}
-                rpm_folder = self.current_test_dir + "/RPM_%s"%irpm
-                archive = rpm_folder + "/cyl_extras_" + str(icylinder) + ".txt"
+                rpm_folder = os.path.join(self.current_run_dir,"RPM_%s"%irpm)
+                archive = os.path.join(rpm_folder,"cyl_extras_"+str(icylinder)+".txt")
                 for icycle in range(1,self.ncycles+1):
                     ms = []
                     for ivariable in ('Mass of Fuel','Mass of Air'):

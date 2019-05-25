@@ -85,12 +85,12 @@ TANKEXTRA_LINES['Mass']                             = -2
 TANKEXTRA_LINES['Convective Heat-Transfer Rate']    = -1
 
 class PlotTypeOneWidget(QtWidgets.QWidget):
-    def __init__(self, plot_function, current_test_dir, run_attributes, current_objects, plot_type, get_oa, set_oa):
+    def __init__(self, plot_function, current_run_dir, run_attributes, current_objects, plot_type, get_oa, set_oa):
         #ptype: plot type. 0 angle, 1 time, 2 RPM, 3 Cycle
         QtWidgets.QWidget.__init__(self)
         self.ui = Ui_PlotTypeOneWidget()
         self.ui.setupUi(self)
-        self.current_test_dir = current_test_dir
+        self.current_run_dir = current_run_dir
         self.plot_function = plot_function
         self.plot_type = plot_type
         self.change_attributes(run_attributes, current_objects)
@@ -115,7 +115,7 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
         elif self.plot_type==2:
             self.ga = GeneralAttributes(self.run_attributes, self.read_normal_txt, \
                                         self.read_extras_txt, self.current_objects['Cylinders'], \
-                                        self.current_objects['Atmospheres'][0].object['state_ini'][0], self.current_test_dir)
+                                        self.current_objects['Atmospheres'][0].object['state_ini'][0], self.current_run_dir)
         if self.plot_type in (1,3):
             self.ui.cycles.setEnabled(False)
         if self.plot_type == 2:
@@ -180,7 +180,7 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
         selected_rpms = self.get_list_items(self.ui.rpms)
         added_elements = []
         for irpm in selected_rpms:
-            rpm_folder = self.current_test_dir + "/RPM_%s"%irpm
+            rpm_folder = os.path.join(self.current_run_dir,"RPM_%s"%irpm)
             if not os.path.isdir(rpm_folder):
                 show_message("There is no folder for RPM %s"%irpm)
                 return
@@ -226,7 +226,7 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
         index_element = int(element[-1])
         component = element[0:-2]+'s'
         selected_rpms = self.get_list_items(self.ui.rpms)
-        rpm_folder = self.current_test_dir + "/RPM_%s"%selected_rpms[0] # TODO ver bien como hacer esto (verificar que los extras esten en todas las rpm)
+        rpm_folder = os.path.join(self.current_run_dir,"RPM_%s"%selected_rpms[0])
         archive_extra = [f for f in os.listdir(rpm_folder) if (COMPONENTS_DICT[component] \
                             in f and '.txt' in f and 'extras' in f and str(index_element) in f)]
         if component in ('Cylinders','Tanks'):
@@ -315,10 +315,10 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
     
     def archive_to_open(self, variable, rpm_folder, component):
         if variable in LISTNDOFA or variable in LISTNDOFB:
-            archive = rpm_folder + "/" + COMPONENTS_DICT[component] + "_" + str(self.current_index_element) + ".txt"
+            archive = os.path.join(rpm_folder,COMPONENTS_DICT[component]+"_"+str(self.current_index_element)+".txt")
             extras = False
         elif variable in CYLEXTRAS_DICT[self.plot_type] or variable in TANKEXTRAS:
-            archive = rpm_folder + "/" + COMPONENTS_DICT[component] + "_extras_" + str(self.current_index_element) + ".txt"
+            archive = os.path.join(rpm_folder,COMPONENTS_DICT[component]+"_extras_"+str(self.current_index_element)+".txt")
             extras = True
         return (archive,extras)
 
@@ -356,7 +356,7 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
         legends = []
         plot_attributes['node'] = int(self.ui.node.currentText())
         for irpm in plot_attributes['selected_rpms']:
-            rpm_folder = self.current_test_dir + "/RPM_%s"%irpm
+            rpm_folder = os.path.join(self.current_run_dir,"RPM_%s"%irpm)
             for icycle in plot_attributes['selected_cycles']:
                 (archive, extras) = self.archive_to_open(plot_attributes['variable'],rpm_folder,plot_attributes['component'])
                 try:
@@ -377,7 +377,7 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
         plot_attributes['node'] = int(self.ui.node.currentText())
         for irpm in plot_attributes['selected_rpms']:
             data_irpm = []
-            rpm_folder = self.current_test_dir + "/RPM_%s"%irpm
+            rpm_folder = os.path.join(self.current_run_dir,"RPM_%s"%irpm)
             for icycle in plot_attributes['selected_cycles']:
                 (archive, extras) = self.archive_to_open(plot_attributes['variable'],rpm_folder,plot_attributes['component'])
                 try:
@@ -412,7 +412,7 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
             for icycle in plot_attributes['selected_cycles']:
                 data_icycle = []
                 for irpm in plot_attributes['selected_rpms']:
-                    rpm_folder = self.current_test_dir + "/RPM_%s"%irpm
+                    rpm_folder = os.path.join(self.current_run_dir,"RPM_%s"%irpm)
                     (archive, extras) = self.archive_to_open(plot_attributes['variable'],rpm_folder,plot_attributes['component'])
                     try:
                         if extras:
