@@ -82,6 +82,7 @@ cd ICESym-NEWGUI/simulator
 1) For packaged version, just run:
 
 ```bash
+source etc/bashrc
 ./icesym
 ```
 
