@@ -135,7 +135,7 @@ class Simulator
 	vector<Tank> tanks;
 	vector<Atmosphere> atmospheres;
 
-	static const double pi = 3.1415926;
+	const double pi = 3.1415926;
 };
 
 extern "C"{

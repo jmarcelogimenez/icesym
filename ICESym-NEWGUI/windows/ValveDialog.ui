@@ -19,6 +19,10 @@
   <property name="windowTitle">
    <string>Configure Valve</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../images/images.qrc">
+    <normaloff>:/fromHelyx/newicons/icon.png</normaloff>:/fromHelyx/newicons/icon.png</iconset>
+  </property>
   <property name="autoFillBackground">
    <bool>true</bool>
   </property>

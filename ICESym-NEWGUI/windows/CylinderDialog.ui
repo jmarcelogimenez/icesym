@@ -19,6 +19,10 @@
   <property name="windowTitle">
    <string>Configure Cylinder</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../images/images.qrc">
+    <normaloff>:/fromHelyx/newicons/icon.png</normaloff>:/fromHelyx/newicons/icon.png</iconset>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">

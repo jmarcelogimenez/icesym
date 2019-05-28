@@ -226,7 +226,7 @@ def load_templates():
         with open(filename) as openedfile:
             try:
                 default_dict[parsed_name] = json.load(openedfile)
-            except ValueError, error:
+            except ValueError as error:
                 show_message('JSON object issue: %s'%error)
                 return {}
         if default_dict[parsed_name] is None:
@@ -243,7 +243,7 @@ def load_cylinder_template(nstroke, type_ig):
     with open(filename) as openedfile:
         try:
             default_dict = json.load(openedfile)
-        except ValueError, error:
+        except ValueError as error:
             show_message('JSON object issue: %s'%error)
             return {}
     if default_dict is None:
@@ -252,21 +252,27 @@ def load_cylinder_template(nstroke, type_ig):
     return default_dict
 
 def explode_atribute(atribute):
-	line = ''
-	if not(isinstance(atribute,list)):
-		if isinstance(atribute,str):
-			line = line + "'" + atribute + "'"		
-		else:
-			line = line + str(atribute)
-		return line
-	else:	
+    line = ''
+    if not(isinstance(atribute,list)):
+        try:
+        		if isinstance(atribute,str) or isinstance(atribute,unicode):
+        			line = line + "'" + atribute + "'"		
+        		else:
+        			line = line + str(atribute)
+        except:
+            if isinstance(atribute,str):
+        			line = line + "'" + atribute + "'"		
+            else:
+        			line = line + str(atribute)
+        return line
+    else:	
 		line = line + "["
 		for l in range(len(atribute)):
 			line = line + explode_atribute(atribute[l])			
 			if l+1 < len(atribute):
 				line = line + ", "
 		line = line + "]"
-	return line
+    return line
     
 def get_lines(current_dict, object_name, iobject):
     lines = object_name + str(iobject) + " = dict()\n"

@@ -41,3 +41,6 @@ ICESym-NEWGUI/runs
 ICESym-NEWGUI/simulator/exec
 ICESym-NEWGUI/simulator/*.so
 ICESym-NEWGUI/cases
+*.tar.gz
+**/dist_win/*
+**/dist_linux/*

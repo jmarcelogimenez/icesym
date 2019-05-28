@@ -30,6 +30,10 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../images/images.qrc">
+    <normaloff>:/fromHelyx/newicons/icon.png</normaloff>:/fromHelyx/newicons/icon.png</iconset>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="10" column="0">
     <widget class="QLabel" name="label_9">

@@ -19,6 +19,10 @@
   <property name="windowTitle">
    <string>ICESym Main Window</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../images/images.qrc">
+    <normaloff>:/fromHelyx/newicons/icon.png</normaloff>:/fromHelyx/newicons/icon.png</iconset>
+  </property>
   <property name="iconSize">
    <size>
     <width>20</width>

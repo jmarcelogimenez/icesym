@@ -22,6 +22,10 @@
 #include <limits.h>
 #include <sstream>
 #include <vector>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 double modulo(double x, double y){
 	return x-y*floor(x/y);
@@ -908,25 +912,52 @@ void Simulator::saveState(){
 	free(file);
 }
 
+/*
+   \brief Checks if a directory exists
+*/
+int dirExists(const char *path)
+{
+    struct stat info;
+
+    if(stat( path, &info ) != 0)
+        return 0;
+    else if(info.st_mode & S_IFDIR)
+        return 1;
+    else
+        return 0;
+}
+
 /**
    \brief Create folder for save the data for the actual RPM
 */
 void Simulator::createDir(bool newRPM){
 	if(!newRPM){
+#ifdef __linux__
 		char mk[] = "mkdir -p ";
 		char runsChar[] = "runs/";
+#endif
+#ifdef _WIN32
+		char mk[] = "mkdir ";
+		char runsChar[] = "runs\\";
+#endif
 		char* folder = strconcat(runsChar,folder_name);
-		char* makeFolder = strconcat(mk,folder);	
-		system(makeFolder);
+		char* makeFolder = strconcat(mk,folder);
+		if (!dirExists(folder)) system(makeFolder);
 		strcopy(this->folderGral,folder);
 	}
 	else{
+#ifdef __linux__
 		char mk[] = "mkdir -p ";
 		char* folder = strconcat(this->folderGral,(char*)"/RPM_");
+#endif
+#ifdef _WIN32
+		char mk[] = "mkdir ";
+		char* folder = strconcat(this->folderGral,(char*)"\\RPM_");
+#endif
 		char* out = int2char(rpms[irpm]);
 		folder = strconcat(folder,out);
 		char* makeFolderRPM = strconcat(mk,folder);		
-		system(makeFolderRPM);
+		if (!dirExists(folder)) system(makeFolderRPM);
 		strcopy(this->folderRPM,folder);
 		cout<<"Folder created: "<<this->folderRPM<<endl;
 		free(out);

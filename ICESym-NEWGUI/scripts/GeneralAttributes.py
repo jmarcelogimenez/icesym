@@ -283,7 +283,7 @@ class GeneralAttributes():
                     aux3 = aux3 + self.general_atributes['BMEP per Cylinder'][icylinder][irpm][icycle]
                     aux4 = aux4 + self.general_atributes['FMEP per Cylinder'][icylinder][irpm][icycle]
                     if self.general_atributes['IMEP per Cylinder'][icylinder][irpm][icycle] <= 0.0:
-    					active_cyls -= 1
+                        active_cyls -= 1
                 aux1 = aux1/active_cyls
                 aux2 = aux2/active_cyls
                 aux3 = aux3/active_cyls

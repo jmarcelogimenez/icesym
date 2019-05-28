@@ -163,5 +163,6 @@
         <file>newicons/tube_thumb.svg</file>
         <file>newicons/valve_exhaust_thumb.svg</file>
         <file>newicons/valve_intake_thumb.svg</file>
+	   <file>newicons/icon.png</file>
     </qresource>
 </RCC>

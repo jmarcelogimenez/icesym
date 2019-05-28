@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Start a New ICESym Case</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../images/images.qrc">
+    <normaloff>:/fromHelyx/newicons/icon.png</normaloff>:/fromHelyx/newicons/icon.png</iconset>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0" colspan="3">
     <widget class="Line" name="line">
