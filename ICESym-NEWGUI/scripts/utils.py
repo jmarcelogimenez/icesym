@@ -255,23 +255,23 @@ def explode_atribute(atribute):
     line = ''
     if not(isinstance(atribute,list)):
         try:
-        		if isinstance(atribute,str) or isinstance(atribute,unicode):
-        			line = line + "'" + atribute + "'"		
-        		else:
-        			line = line + str(atribute)
+            if isinstance(atribute,str) or isinstance(atribute,unicode):
+                line = line + "'" + atribute + "'"		
+            else:
+                line = line + str(atribute)
         except:
             if isinstance(atribute,str):
-        			line = line + "'" + atribute + "'"		
+                line = line + "'" + atribute + "'"		
             else:
-        			line = line + str(atribute)
+                line = line + str(atribute)
         return line
     else:	
-		line = line + "["
-		for l in range(len(atribute)):
-			line = line + explode_atribute(atribute[l])			
-			if l+1 < len(atribute):
-				line = line + ", "
-		line = line + "]"
+        line = line + "["
+        for l in range(len(atribute)):
+            line = line + explode_atribute(atribute[l])			
+            if l+1 < len(atribute):
+                line = line + ", "
+        line = line + "]"
     return line
     
 def get_lines(current_dict, object_name, iobject):

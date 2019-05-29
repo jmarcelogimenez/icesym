@@ -1,1 +1,0 @@
-export ICESYM_INST_DIR=$(pwd)
