@@ -55,9 +55,10 @@ cd DIR_VIRTUALENV
 wget -c https://sourceforge.net/projects/pyqt/files/sip/sip-4.19.8/sip-4.19.8.tar.gz
 tar xvzf sip-4.19.8.tar.gz 
 cd sip-4.19.8/
-python configure.py --incdir=../../include/python2.7
+python configure.py --incdir=../include/python2.7
 make -jNPROC
 make install
+cd DIR_VIRTUALENV
 
 wget -c https://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-5.10.1/PyQt5_gpl-5.10.1.tar.gz
 tar xvzf PyQt-gpl-5.10.1.tar.gz 
@@ -65,9 +66,11 @@ cd PyQt-gpl-5.10.1/
 python configure.py --qmake=/usr/bin/qmake --sip-incdir=../sip-4.19.8/siplib --no-qml-plugin --no-designer-plugin
 make -jNPROC
 make install
+cd DIR_VIRTUALENV
 
-pip install pyqtgraph
-pip install pyinstaller==3.4
+pip install -r icesym/dist_linux/requirements.txt
+cd DIR_VIRTUALENV/icesym/ICESym-NEWGUI/scripts
+./compileWidgets_linux.sh
 ```
 
 There is a final step to use the simulator with the GUI, you must copy the **simCythonCPP.so** library builded in ICESym-1D to the simulator folder located in ICESym-NEWGUI. Then:
