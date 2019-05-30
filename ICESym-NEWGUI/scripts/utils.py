@@ -10,7 +10,7 @@ import math, os, json
 from sys import platform
 from PyQt5 import QtGui, QtWidgets, QtCore
 
-# constantes de conversion
+# conversion constants
 RAD2DEG     = 180.0/math.pi
 DEG2RAD     = math.pi/180.0
 M2MM        = 1e3
@@ -20,7 +20,7 @@ MM2M        = 1e-3
 CCM2CM      = 1e-6
 SQCM2SQM    = 1e-4
 
-# rutas de imagenes
+# images paths
 VALVE_EXH_PATH  = os.path.join(os.environ["ICESYM_INST_DIR"],'images','newicons','valve_exhaust_color.svg')
 VALVE_INT_PATH  = os.path.join(os.environ["ICESYM_INST_DIR"],'images','newicons','valve_intake_color.svg')
 ATMOS_PATH      = os.path.join(os.environ["ICESYM_INST_DIR"],'images','newicons','atmosphere_color.svg')
@@ -103,6 +103,10 @@ PLOT_ARGUMENTS[3]['normal_x_var']   = 2
 PLOT_ARGUMENTS[3]['extras_x_var']   = 1
 PLOT_ARGUMENTS[4]['title']          = 'Space Plot'
 PLOT_ARGUMENTS[5]['title']          = 'Free Plot'
+
+# default plots to graph when the simulation finish
+DEFAULT_PLOTS = []
+DEFAULT_PLOTS.append([0,'Cylinders',0,'Density',[-1],'Density_Cyl0',[-1],'Angle Plot',-1,'kg/m^3'])
 
 
 def set_plot(plot, leg_bottom, leg_left, title, units_x = '', units_y = ''):

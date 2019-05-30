@@ -975,3 +975,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         if tab_index==3:
             self.ppw.enable_ppw()
         return
+    
+    def plot_defaults(self):
+        self.ppw.plot_defaults()
+        return

@@ -338,17 +338,17 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
 
     def get_plot_attributes(self):
         plot_attributes = {}
-        plot_attributes['component'] = str(self.ui.component.currentText())
-        plot_attributes['variable'] = str(self.ui.variable.currentText())
-        plot_attributes['selected_cycles'] = self.get_list_items(self.ui.cycles) if self.plot_type!=3\
+        plot_attributes['component']        = str(self.ui.component.currentText())
+        plot_attributes['variable']         = str(self.ui.variable.currentText())
+        plot_attributes['selected_cycles']  = self.get_list_items(self.ui.cycles) if self.plot_type!=3\
                         else [int(icycle) for icycle in range(1,int(self.run_attributes['ncycles'])+1)]
-        plot_attributes['label'] = str(self.ui.legend.text())
-        plot_attributes['selected_rpms'] = self.get_list_items(self.ui.rpms) if self.plot_type!=2\
+        plot_attributes['label']            = str(self.ui.legend.text())
+        plot_attributes['selected_rpms']    = self.get_list_items(self.ui.rpms) if self.plot_type!=2\
                         else [int(irpm) for irpm in self.run_attributes['rpms']]
-        plot_attributes['variable_index'] = int(self.ui.variable.currentIndex())
-        plot_attributes['title'] = str(self.ui.title.text())
-        plot_attributes['figure_number'] = self.ui.figure_number.currentIndex()-1
-        plot_attributes['unit'] = str(self.ui.units.currentText())
+        plot_attributes['variable_index']   = int(self.ui.variable.currentIndex())
+        plot_attributes['title']            = str(self.ui.title.text())
+        plot_attributes['figure_number']    = self.ui.figure_number.currentIndex()-1
+        plot_attributes['unit']             = str(self.ui.units.currentText())
         return plot_attributes
 
     def plot_angle_or_time(self, plot_attributes):
@@ -429,11 +429,11 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
                 legends.append(plot_attributes['label']+"_Cycle_"+str(icycle))
         return (datas,legends)
 
-    def prepare_plot(self):
+    def prepare_plot(self, _plot_attributes=None):
         self.ui.plot_pushButton.setEnabled(False)
         QtWidgets.QApplication.processEvents()
         try:
-            plot_attributes = self.get_plot_attributes()
+            plot_attributes = _plot_attributes if _plot_attributes else self.get_plot_attributes()
             datas = []
             legends = []
             if self.plot_type<2:

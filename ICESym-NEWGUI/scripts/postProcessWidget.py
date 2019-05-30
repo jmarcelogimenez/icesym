@@ -15,7 +15,7 @@ from PlotTypeThreeWidget import PlotTypeThreeWidget
 import pyqtgraph as pg
 import numpy as np
 from utils import set_plot, show_message, check_two_equals, SelectionDialog, PLOT_ARGUMENTS,\
-                  INSTALL_PATH, RUNS_PATH
+                  INSTALL_PATH, RUNS_PATH, DEFAULT_PLOTS
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -385,5 +385,39 @@ class postProcessWidget(QtWidgets.QWidget):
                 show_message('Post Process successfully loaded!',1)
             except:
                 show_message('Error opening the archive %s'%filename)
+        return
+    """
+    When a simulation finish, this routine reads a series of default lists with
+    a particular configuration (in indexs):
+    plot_list = [type_of_plot,component,node,variable,[cycles],legend,[rpms],title,figure,units]
+    Then it plot it (if possible)
+    In rpms or cycle the negative values implies the last calculated values (-1 last, -2 last last, etc)
+    """
+    def plot_defaults(self):
+        self.enable_ppw()
+
+        for index,iplot in enumerate(DEFAULT_PLOTS):
+            (tabWidget,plotWidget) = self.choose_widgets(iplot[0])
+            plot_attributes = {}
+            plot_attributes['component']        = iplot[1]
+            plot_attributes['node']             = iplot[2]
+            plot_attributes['variable']         = iplot[3]
+            plot_attributes['selected_cycles']  = []
+            for icycle in iplot[4]:
+                plot_attributes['selected_cycles'].append(icycle if icycle>0 else self.run_attributes['ncycles'])
+            plot_attributes['label']            = iplot[5]
+            plot_attributes['selected_rpms']    = []
+            for irpm in iplot[6]:
+                plot_attributes['selected_rpms'].append(irpm if irpm>0 else self.run_attributes['rpms'][irpm])
+            plot_attributes['variable_index']   = plotWidget.ui.variable.findText(iplot[3])
+            plot_attributes['title']            = iplot[7]
+            plot_attributes['figure_number']    = iplot[8]
+            plot_attributes['unit']             = iplot[9]
+            try:
+                plotWidget.prepare_plot(plot_attributes)
+            except:
+                show_message('Cannot plot the default configuration number %s'%index)
+
+        show_message('Default Post Process sucessfully created!',1)
         return
         
