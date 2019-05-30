@@ -265,7 +265,7 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
 
     def loadextratxt(self, archive, offset):
         with open(archive, "r") as f:
-            all_data = [map(float,x.split()) for x in f.readlines()]
+            all_data = [list(map(float,x.split())) for x in f.readlines()]
         A = array([])
         A = append(A,all_data)
         return A
@@ -282,7 +282,7 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
             self.set_open_archives(archive,A)
         else:
             A = open_archives[archive]
-            
+
         # El extras de cilindro repite un patron cada cuatro lineas.
         # Primer linea: ciclo, angulo, tiempo
         # Segunda, tercera, cuarta linea: varias variables
@@ -294,7 +294,6 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
             ntubes = A[0][3]
             TANKEXTRA_LINES['Enthalpy Flow Rate'] = int(ntubes)
             variable_col = TANKEXTRA_LINES[variable]
-
         ndata = A.shape[0]
         data = [[ A[i][self.extras_x_var], A[i+variable_line][variable_col]*scale ] \
                 for i in range(0,ndata,offset) if (int(A[i][0])==int(icycle) or self.not_check_cycle)]

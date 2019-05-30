@@ -77,7 +77,8 @@ CONVERSIONS['g']  = 1e3
 # Momento de Fuerza
 CONVERSIONS['N.m'] = 1
 CONVERSIONS['kgf'] = 0.1
-
+# Ninguna
+CONVERSIONS[''] = 1.0
 
 def conversion(data,units):
 	if not(units == ''):
