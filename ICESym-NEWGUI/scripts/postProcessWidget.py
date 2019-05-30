@@ -82,6 +82,8 @@ class postProcessWidget(QtWidgets.QWidget):
                 except:
                     show_message('Error in setting the PostProcess Tab')
         else:
+            if not os.path.isdir(self.current_run_dir):
+                return
             (run_attributes,irpm_missing) = self.load_current_attributes()
             if self.run_attributes!=run_attributes:
                 self.run_attributes = run_attributes
@@ -90,7 +92,7 @@ class postProcessWidget(QtWidgets.QWidget):
         return
 
     def load_current_attributes(self):
-        # Atributos para la funcion getMasses de GeneralAttributes
+        # Attributes for getMasses of GeneralAttributes
         for icylinder in self.current_objects['Cylinders']:
             try:
                 angleClose  = np.rad2deg(icylinder.object['intake_valves'][0]['angle_VC'])
@@ -101,7 +103,7 @@ class postProcessWidget(QtWidgets.QWidget):
             icylinder.object['angleClose']  = angleClose
             icylinder.object['Q_fuel']      = Q_fuel
 
-        # Atributos varios para los PlotWidgets
+        # Attributes for PlotWidgets
         irpm_missing = []
         run_attributes = {}
         run_attributes['rpms']         = []
@@ -109,17 +111,23 @@ class postProcessWidget(QtWidgets.QWidget):
 
         calculated_rpms = [int(f.replace('RPM_','')) for f in os.listdir(self.current_run_dir) if 'RPM_' in f]
         
-        # Las calculadas se incluyen
+        # First, include the calculated ones
         for irpm in calculated_rpms:
             if irpm not in self.current_configuration['rpms']:
                 self.current_configuration['rpms'].append(irpm)
-        # Ahora veo de las seteadas, cuales no existen
+        # Of the "set" one, check the ones that are not calculated
         for irpm in self.current_configuration['rpms']:
             rpm_folder = os.path.join(self.current_run_dir,"RPM_%s"%irpm)
             if not os.path.isdir(rpm_folder):
                 irpm_missing.append(irpm)
                 continue
             run_attributes['rpms'].append(irpm)
+        
+        # Order the rpms, because maybe the user simulates 1000-3000 and then 4000
+        # If the list is not ordered, we can get [4000,1000,2000,3000]
+        list.sort(run_attributes['rpms'])
+        
+        for irpm in run_attributes['rpms']:
             final_time = (60.0/irpm)*self.current_configuration['ncycles']*(self.current_configuration['nstroke'])/2.0
             run_attributes['final_times'].append(final_time)
 
