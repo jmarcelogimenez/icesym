@@ -38,5 +38,9 @@ call dist_win/pyuic ../windows/PlotTypeOneWidget.ui -o plotTypeOneWidget_ui.py
 call dist_win/pyuic ../windows/PlotTypeTwoWidget.ui -o plotTypeTwoWidget_ui.py
 
 "C:\Program Files (x86)\GnuWin32\bin\sed.exe" -i "/setContentsMargins/d" "plotTypeTwoWidget_ui.py"
+
+call dist_win/pyuic ../windows/PlotTypeThreeWidget.ui -o plotTypeThreeWidget_ui.py
+
+"C:\Program Files (x86)\GnuWin32\bin\sed.exe" -i "/setContentsMargins/d" "plotTypeThreeWidget_ui.py"
 call dist_win/pyuic ../windows/NewCaseDialog.ui -o newCaseDialog_ui.py
 "C:\Program Files (x86)\GnuWin32\bin\sed.exe" -i "/setContentsMargins/d" "newCaseDialog_ui.py"
