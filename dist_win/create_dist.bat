@@ -23,6 +23,5 @@ cd ..\ICESym-NEWGUI\scripts\dist_win\
 call create_dist.bat
 cd %~dp0%
 xcopy ..\ICESym-NEWGUI\scripts\dist_win\dist\icesym.exe icesym
-mkdir icesym\etc
-xcopy ..\ICESym-NEWGUI\etc\bashrc_win.bat icesym\etc
+xcopy ..\ICESym-NEWGUI\etc\bashrc_win.bat icesym
 pause

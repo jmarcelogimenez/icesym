@@ -3,7 +3,7 @@
 block_cipher = None
 
 added_files = [
-               ('C:\\Program Files\\Anaconda3\\Library\\plugins\\platforms\\qwindows.dll', 'platforms')
+               (os.environ['ANACONDA3PATH']+'\\Library\\plugins\\platforms\\qwindows.dll', 'platforms')
               ]
 
 a = Analysis(['..\\__main__.py'],
