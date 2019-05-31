@@ -328,7 +328,7 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
         y.insert(0,value)
         x.insert(0,0.0)
         max_angle = 720.0 if max(x)>370.0 else 360.0
-#        max_angle = 720.0 if x[-1]>370.0 else 360.0 # TODO: bug gui vieja
+#        max_angle = 720.0 if x[-1]>370.0 else 360.0 # bug gui vieja
         x.append(max_angle)
         y.append(value)
         res = trapz(y,x)
