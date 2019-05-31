@@ -87,6 +87,9 @@ class postProcessWidget(QtWidgets.QWidget):
             (run_attributes,irpm_missing) = self.load_current_attributes()
             if self.run_attributes!=run_attributes:
                 self.run_attributes = run_attributes
+                # If the run attributes or the current objects changed, it is possible
+                # that also the open archives.. maybe an incomplete rpm is now complete
+                self.open_archives = {}
                 for ipw in self.plot_widgets:
                     ipw.change_attributes(run_attributes, self.current_objects)
         return
