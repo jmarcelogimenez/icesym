@@ -378,7 +378,7 @@
    </property>
    <property name="font">
     <font>
-     <pointsize>8</pointsize>
+     <pointsize>9</pointsize>
     </font>
    </property>
    <property name="windowTitle">
@@ -749,7 +749,7 @@
   <action name="actionCylinder">
    <property name="icon">
     <iconset resource="../images/images.qrc">
-     <normaloff>:/fromHelyx/newicons/cylinder_thumb.svg</normaloff>:/fromHelyx/newicons/cylinder_thumb.svg</iconset>
+     <normaloff>:/fromHelyx/newicons/cylinder_color.svg</normaloff>:/fromHelyx/newicons/cylinder_color.svg</iconset>
    </property>
    <property name="text">
     <string>Cylinder</string>
@@ -763,7 +763,7 @@
   <action name="actionTube">
    <property name="icon">
     <iconset resource="../images/images.qrc">
-     <normaloff>:/fromHelyx/newicons/tube_thumb.svg</normaloff>:/fromHelyx/newicons/tube_thumb.svg</iconset>
+     <normaloff>:/fromHelyx/newicons/tube_color.svg</normaloff>:/fromHelyx/newicons/tube_color.svg</iconset>
    </property>
    <property name="text">
     <string>Tube</string>
@@ -777,7 +777,7 @@
   <action name="actionValve">
    <property name="icon">
     <iconset resource="../images/images.qrc">
-     <normaloff>:/fromHelyx/newicons/valve_exhaust_thumb.svg</normaloff>:/fromHelyx/newicons/valve_exhaust_thumb.svg</iconset>
+     <normaloff>:/fromHelyx/newicons/valve_intake_color.svg</normaloff>:/fromHelyx/newicons/valve_intake_color.svg</iconset>
    </property>
    <property name="text">
     <string>Valve</string>
@@ -791,7 +791,7 @@
   <action name="actionTank">
    <property name="icon">
     <iconset resource="../images/images.qrc">
-     <normaloff>:/fromHelyx/newicons/tank_thumb.svg</normaloff>:/fromHelyx/newicons/tank_thumb.svg</iconset>
+     <normaloff>:/fromHelyx/newicons/tank_color.svg</normaloff>:/fromHelyx/newicons/tank_color.svg</iconset>
    </property>
    <property name="text">
     <string>Tank</string>
@@ -805,7 +805,7 @@
   <action name="actionJunction">
    <property name="icon">
     <iconset resource="../images/images.qrc">
-     <normaloff>:/fromHelyx/newicons/Junction_thumb.svg</normaloff>:/fromHelyx/newicons/Junction_thumb.svg</iconset>
+     <normaloff>:/fromHelyx/newicons/Junction_color.svg</normaloff>:/fromHelyx/newicons/Junction_color.svg</iconset>
    </property>
    <property name="text">
     <string>Junction</string>
@@ -819,7 +819,7 @@
   <action name="actionAtmosphere">
    <property name="icon">
     <iconset resource="../images/images.qrc">
-     <normaloff>:/fromHelyx/newicons/atmosphere_thumb.svg</normaloff>:/fromHelyx/newicons/atmosphere_thumb.svg</iconset>
+     <normaloff>:/fromHelyx/newicons/atmosphere_color.svg</normaloff>:/fromHelyx/newicons/atmosphere_color.svg</iconset>
    </property>
    <property name="text">
     <string>Atmosphere</string>

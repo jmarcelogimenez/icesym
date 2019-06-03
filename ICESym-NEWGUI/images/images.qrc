@@ -163,6 +163,13 @@
         <file>newicons/tube_thumb.svg</file>
         <file>newicons/valve_exhaust_thumb.svg</file>
         <file>newicons/valve_intake_thumb.svg</file>
-	   <file>newicons/icon.png</file>
+        <file>newicons/icon.png</file>
+        <file>newicons/atmosphere_color.svg</file>
+        <file>newicons/cylinder_color.svg</file>
+        <file>newicons/Junction_color.svg</file>
+        <file>newicons/tank_color.svg</file>
+        <file>newicons/tube_color.svg</file>
+        <file>newicons/valve_exhaust_color.svg</file>
+        <file>newicons/valve_intake_color.svg</file>
     </qresource>
 </RCC>
