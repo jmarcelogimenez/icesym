@@ -197,13 +197,17 @@ class LogTabWidget(QtWidgets.QWidget):
         errorlogfile = os.path.join(SIMULATOR_PATH,'error.log')
         if 'linux' in platform:
             command = "%s %s %s 1> %s 2> %s"%(simulator,self.case_dir,self.case_name,logfile,errorlogfile)
-        elif 'win' in platform:            
+        elif 'win' in platform:
             command = "echo.> %s"%logfile
             os.system(command)
+            while not os.path.isfile(logfile):
+                None
             command_ex = "%s %s %s 1^> %s 2^> %s"%(simulator,self.case_dir,self.case_name,logfile,errorlogfile)
             execwfile = os.path.join(SIMULATOR_PATH,'execw.bat')
             command = "echo %s > %s"%(command_ex,execwfile)
             os.system(command)
+            while not os.path.isfile(execwfile):
+                None
             command = os.path.join(SIMULATOR_PATH,'execw.bat')
 
         self.thread_runSimulation = Thread(command)
