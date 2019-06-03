@@ -45,3 +45,6 @@ call dist_win/pyuic ../windows/PlotTypeThreeWidget.ui -o plotTypeThreeWidget_ui.
 
 call dist_win/pyuic ../windows/NewCaseDialog.ui -o newCaseDialog_ui.py
 %SEDPATH%\sed.exe -i "/setContentsMargins/d" "newCaseDialog_ui.py"
+
+call dist_win/pyuic ../windows/UsageDialog.ui -o usageDialog_ui.py
+%SEDPATH%\sed.exe -i "/setContentsMargins/d" "usageDialog_ui.py"
