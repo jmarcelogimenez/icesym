@@ -369,111 +369,6 @@
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1036</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Ubuntu</family>
-     <pointsize>9</pointsize>
-    </font>
-   </property>
-   <property name="autoFillBackground">
-    <bool>true</bool>
-   </property>
-   <widget class="QMenu" name="menuFile">
-    <property name="font">
-     <font>
-      <family>Ubuntu</family>
-      <pointsize>9</pointsize>
-     </font>
-    </property>
-    <property name="autoFillBackground">
-     <bool>true</bool>
-    </property>
-    <property name="title">
-     <string>File</string>
-    </property>
-    <addaction name="actionOpen"/>
-    <addaction name="actionSave"/>
-    <addaction name="actionSave_As"/>
-    <addaction name="actionClose"/>
-    <addaction name="separator"/>
-    <addaction name="actionExit"/>
-   </widget>
-   <widget class="QMenu" name="menuEdit">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="autoFillBackground">
-     <bool>true</bool>
-    </property>
-    <property name="title">
-     <string>Edit</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menuSimulation">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="autoFillBackground">
-     <bool>true</bool>
-    </property>
-    <property name="title">
-     <string>Simulation</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menuComponents">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="autoFillBackground">
-     <bool>true</bool>
-    </property>
-    <property name="title">
-     <string>Components</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menuHelp">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="font">
-     <font>
-      <family>Ubuntu</family>
-      <pointsize>9</pointsize>
-     </font>
-    </property>
-    <property name="autoFillBackground">
-     <bool>true</bool>
-    </property>
-    <property name="title">
-     <string>Help</string>
-    </property>
-    <addaction name="actionUsage"/>
-   </widget>
-   <widget class="QMenu" name="menuPost_Process">
-    <property name="title">
-     <string>Post Process</string>
-    </property>
-    <addaction name="actionSave_Post_Process"/>
-    <addaction name="actionLoad_Post_Process"/>
-    <addaction name="separator"/>
-    <addaction name="actionDefault_Post_Process"/>
-   </widget>
-   <addaction name="menuFile"/>
-   <addaction name="menuEdit"/>
-   <addaction name="menuSimulation"/>
-   <addaction name="menuComponents"/>
-   <addaction name="menuPost_Process"/>
-   <addaction name="menuHelp"/>
-  </widget>
   <widget class="QToolBar" name="toolBar">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -519,12 +414,15 @@
    <addaction name="actionClose"/>
    <addaction name="actionExit"/>
    <addaction name="separator"/>
-   <addaction name="actionNew_Tube"/>
-   <addaction name="actionNew_Cylinder"/>
-   <addaction name="actionNew_Junction"/>
-   <addaction name="actionNew_Tank"/>
-   <addaction name="actionNew_Atmosphere"/>
-   <addaction name="actionNew_Valve"/>
+   <addaction name="actionCylinder"/>
+   <addaction name="actionTube"/>
+   <addaction name="actionValve"/>
+   <addaction name="actionTank"/>
+   <addaction name="actionJunction"/>
+   <addaction name="actionAtmosphere"/>
+   <addaction name="separator"/>
+   <addaction name="actionRun"/>
+   <addaction name="actionKill"/>
    <addaction name="separator"/>
    <addaction name="actionSave_Post_Process"/>
    <addaction name="actionLoad_Post_Process"/>
@@ -534,108 +432,133 @@
    <addaction name="separator"/>
    <addaction name="actionTerminal"/>
   </widget>
-  <action name="actionNew_Tube">
-   <property name="checkable">
-    <bool>false</bool>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1036</width>
+     <height>23</height>
+    </rect>
    </property>
-   <property name="checked">
-    <bool>false</bool>
+   <property name="font">
+    <font>
+     <family>Ubuntu</family>
+     <pointsize>9</pointsize>
+    </font>
    </property>
-   <property name="enabled">
+   <property name="autoFillBackground">
     <bool>true</bool>
    </property>
-   <property name="icon">
-    <iconset resource="../images/images.qrc">
-     <normaloff>:/fromHelyx/newicons/tube_thumb.svg</normaloff>:/fromHelyx/newicons/tube_thumb.svg</iconset>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="toolTip">
-    <string/>
-   </property>
-   <property name="whatsThis">
-    <string/>
-   </property>
-   <property name="font">
-    <font/>
-   </property>
-   <property name="shortcutContext">
-    <enum>Qt::WindowShortcut</enum>
-   </property>
-  </action>
-  <action name="actionNew_Cylinder">
-   <property name="icon">
-    <iconset resource="../images/images.qrc">
-     <normaloff>:/fromHelyx/newicons/cylinder_thumb.svg</normaloff>:/fromHelyx/newicons/cylinder_thumb.svg</iconset>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="font">
-    <font/>
-   </property>
-  </action>
-  <action name="actionNew_Junction">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../images/images.qrc">
-     <normaloff>:/fromHelyx/newicons/Junction_thumb.svg</normaloff>:/fromHelyx/newicons/Junction_thumb.svg</iconset>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="font">
-    <font/>
-   </property>
-  </action>
-  <action name="actionNew_Tank">
-   <property name="icon">
-    <iconset resource="../images/images.qrc">
-     <normaloff>:/fromHelyx/newicons/tank_thumb.svg</normaloff>:/fromHelyx/newicons/tank_thumb.svg</iconset>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="font">
-    <font/>
-   </property>
-  </action>
-  <action name="actionNew_Atmosphere">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
-   <property name="checked">
-    <bool>false</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../images/images.qrc">
-     <normaloff>:/fromHelyx/newicons/atmosphere_thumb.svg</normaloff>:/fromHelyx/newicons/atmosphere_thumb.svg</iconset>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="font">
-    <font/>
-   </property>
-  </action>
-  <action name="actionNew_Valve">
-   <property name="icon">
-    <iconset resource="../images/images.qrc">
-     <normaloff>:/fromHelyx/newicons/valve_exhaust_thumb.svg</normaloff>:/fromHelyx/newicons/valve_exhaust_thumb.svg</iconset>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="font">
-    <font/>
-   </property>
-  </action>
+   <widget class="QMenu" name="menuFile">
+    <property name="font">
+     <font>
+      <family>Ubuntu</family>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionSave_As"/>
+    <addaction name="actionClose"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuSimulation">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="title">
+     <string>Simulation</string>
+    </property>
+    <addaction name="actionRun"/>
+    <addaction name="actionKill"/>
+   </widget>
+   <widget class="QMenu" name="menuComponents">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="title">
+     <string>Components</string>
+    </property>
+    <widget class="QMenu" name="menuNew">
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>New</string>
+     </property>
+     <addaction name="actionCylinder"/>
+     <addaction name="actionTube"/>
+     <addaction name="actionTank"/>
+     <addaction name="actionJunction"/>
+     <addaction name="actionAtmosphere"/>
+     <addaction name="actionValve"/>
+    </widget>
+    <addaction name="menuNew"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="font">
+     <font>
+      <family>Ubuntu</family>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionUsage"/>
+   </widget>
+   <widget class="QMenu" name="menuPost_Process">
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
+    <property name="title">
+     <string>Post Process</string>
+    </property>
+    <addaction name="actionSave_Post_Process"/>
+    <addaction name="actionLoad_Post_Process"/>
+    <addaction name="separator"/>
+    <addaction name="actionDefault_Post_Process"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuComponents"/>
+   <addaction name="menuSimulation"/>
+   <addaction name="menuPost_Process"/>
+   <addaction name="menuHelp"/>
+  </widget>
   <action name="actionTerminal">
    <property name="icon">
     <iconset resource="../images/images.qrc">
@@ -795,107 +718,123 @@
     <string>Usage</string>
    </property>
   </action>
+  <action name="actionRun">
+   <property name="icon">
+    <iconset resource="../images/images.qrc">
+     <normaloff>:/fromHelyx/fromHelyx/startAll16.png</normaloff>:/fromHelyx/fromHelyx/startAll16.png</iconset>
+   </property>
+   <property name="text">
+    <string>Run Simulation</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>9</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionKill">
+   <property name="icon">
+    <iconset resource="../images/images.qrc">
+     <normaloff>:/fromHelyx/fromHelyx/stop16.png</normaloff>:/fromHelyx/fromHelyx/stop16.png</iconset>
+   </property>
+   <property name="text">
+    <string>Kill Simulation</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>9</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionCylinder">
+   <property name="icon">
+    <iconset resource="../images/images.qrc">
+     <normaloff>:/fromHelyx/newicons/cylinder_thumb.svg</normaloff>:/fromHelyx/newicons/cylinder_thumb.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Cylinder</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>9</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionTube">
+   <property name="icon">
+    <iconset resource="../images/images.qrc">
+     <normaloff>:/fromHelyx/newicons/tube_thumb.svg</normaloff>:/fromHelyx/newicons/tube_thumb.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Tube</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>9</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionValve">
+   <property name="icon">
+    <iconset resource="../images/images.qrc">
+     <normaloff>:/fromHelyx/newicons/valve_exhaust_thumb.svg</normaloff>:/fromHelyx/newicons/valve_exhaust_thumb.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Valve</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>9</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionTank">
+   <property name="icon">
+    <iconset resource="../images/images.qrc">
+     <normaloff>:/fromHelyx/newicons/tank_thumb.svg</normaloff>:/fromHelyx/newicons/tank_thumb.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Tank</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>9</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionJunction">
+   <property name="icon">
+    <iconset resource="../images/images.qrc">
+     <normaloff>:/fromHelyx/newicons/Junction_thumb.svg</normaloff>:/fromHelyx/newicons/Junction_thumb.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Junction</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>9</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionAtmosphere">
+   <property name="icon">
+    <iconset resource="../images/images.qrc">
+     <normaloff>:/fromHelyx/newicons/atmosphere_thumb.svg</normaloff>:/fromHelyx/newicons/atmosphere_thumb.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Atmosphere</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>9</pointsize>
+    </font>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="../images/images.qrc"/>
  </resources>
  <connections>
-  <connection>
-   <sender>actionNew_Valve</sender>
-   <signal>triggered()</signal>
-   <receiver>ICESymMainWindow</receiver>
-   <slot>addValve()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>517</x>
-     <y>314</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionNew_Atmosphere</sender>
-   <signal>triggered()</signal>
-   <receiver>ICESymMainWindow</receiver>
-   <slot>addAtmosphere()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>517</x>
-     <y>314</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionNew_Tube</sender>
-   <signal>triggered()</signal>
-   <receiver>ICESymMainWindow</receiver>
-   <slot>addTube()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>517</x>
-     <y>314</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionNew_Cylinder</sender>
-   <signal>triggered()</signal>
-   <receiver>ICESymMainWindow</receiver>
-   <slot>addCylinder()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>517</x>
-     <y>314</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionNew_Tank</sender>
-   <signal>triggered()</signal>
-   <receiver>ICESymMainWindow</receiver>
-   <slot>addTank()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>517</x>
-     <y>314</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionNew_Junction</sender>
-   <signal>triggered()</signal>
-   <receiver>ICESymMainWindow</receiver>
-   <slot>addJunction()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>517</x>
-     <y>314</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>actionSave</sender>
    <signal>triggered()</signal>
@@ -1088,6 +1027,134 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionRun</sender>
+   <signal>triggered()</signal>
+   <receiver>ICESymMainWindow</receiver>
+   <slot>run_simulation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>517</x>
+     <y>320</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionKill</sender>
+   <signal>triggered()</signal>
+   <receiver>ICESymMainWindow</receiver>
+   <slot>kill_simulation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>517</x>
+     <y>320</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAtmosphere</sender>
+   <signal>triggered()</signal>
+   <receiver>ICESymMainWindow</receiver>
+   <slot>addAtmosphere()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>517</x>
+     <y>320</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionCylinder</sender>
+   <signal>triggered()</signal>
+   <receiver>ICESymMainWindow</receiver>
+   <slot>addCylinder()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>517</x>
+     <y>320</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionJunction</sender>
+   <signal>triggered()</signal>
+   <receiver>ICESymMainWindow</receiver>
+   <slot>addJunction()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>517</x>
+     <y>320</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionTank</sender>
+   <signal>triggered()</signal>
+   <receiver>ICESymMainWindow</receiver>
+   <slot>addTank()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>517</x>
+     <y>320</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionTube</sender>
+   <signal>triggered()</signal>
+   <receiver>ICESymMainWindow</receiver>
+   <slot>addTube()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>517</x>
+     <y>320</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionValve</sender>
+   <signal>triggered()</signal>
+   <receiver>ICESymMainWindow</receiver>
+   <slot>addValve()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>517</x>
+     <y>320</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>updateCaseSetup()</slot>
@@ -1110,5 +1177,7 @@
   <slot>plot_defaults()</slot>
   <slot>show_about()</slot>
   <slot>show_usage()</slot>
+  <slot>run_simulation()</slot>
+  <slot>kill_simulation()</slot>
  </slots>
 </ui>

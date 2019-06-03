@@ -941,7 +941,10 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         return
     
     def exit(self):
-        self.close()
+        msg = "Do you want to exit ICESym?"
+        reply = show_message(msg,4,QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
+        if reply == QtWidgets.QMessageBox.Yes:
+            self.close()
         return
     
     def check_valve_type(self, scene_item):
@@ -971,18 +974,25 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
     def load_postpro(self):
         self.ppw.load_postpro()
         return
-    
+
     def enable_postpro(self, tab_index):
         if tab_index==3:
             self.ppw.enable_ppw()
         return
-    
+
     def plot_defaults(self):
         self.ppw.plot_defaults()
         return
-    
+
     def show_usage(self):
         ud = UsageDialog()
         ud.exec_()
         return
-        
+
+    def run_simulation(self):
+        self.ltw.run_simulation()
+        return
+
+    def kill_simulation(self):
+        self.ltw.kill_process()
+        return
