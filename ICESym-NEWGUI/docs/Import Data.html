@@ -1,0 +1,25 @@
+<h3> Import Data From Files </h3>
+ICESym-GUI allows you to complete most of the tables with manual input or importing an array from ascii file.
+The requeried format is the standart octave export format and it MUST contains exactly the same number of values that the field to complete.
+
+<p> For example, to complete the values of <b>Tube->Temperature Wall</b>, you can choose <i>Constant</i> or <i>Linear</i> values, but if you want to use a more specific law, you can import that values using the Load button.
+
+<p> <center><img src="ICESYM_IMG_DIRload_buttons.png" title="Load Buttons" align="middle"/> </center> </p> <br>
+
+If <b>Tube->nnod = 10</b>, you must choose an ascii file with ten values and the next format: </p>
+
+
+<p> <code>
+#--------START FILE---------------#<br>
+value0<br>
+value1<br>
+value2<br>
+value3<br>
+value4<br>
+value5<br>
+value6<br>
+value7<br>
+value8<br>
+value9<br>
+#--------END FILE---------------#
+</code> </p>

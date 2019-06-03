@@ -29,3 +29,5 @@ pyuic5 ../windows/PlotTypeThreeWidget.ui -o plotTypeThreeWidget_ui.py
 sed -i "/\b\(setContentsMargins\)\b/d" plotTypeThreeWidget_ui.py
 pyuic5 ../windows/NewCaseDialog.ui -o newCaseDialog_ui.py
 sed -i "/\b\(setContentsMargins\)\b/d" newCaseDialog_ui.py
+pyuic5 ../windows/UsageDialog.ui -o usageDialog_ui.py
+sed -i "/\b\(setContentsMargins\)\b/d" usageDialog_ui.py

@@ -41,6 +41,7 @@ SIMULATOR_PATH = os.path.join(os.environ["ICESYM_INST_DIR"],'simulator')
 RUNS_PATH      = os.path.join(os.environ["ICESYM_INST_DIR"],'runs')
 CASES_PATH     = os.path.join(os.environ["ICESYM_INST_DIR"],'cases')
 LOADS_PATH     = os.path.join(os.environ["ICESYM_INST_DIR"],'loads')
+DOCS_PATH      = os.path.join(os.environ["ICESYM_INST_DIR"],'docs')
 INSTALL_PATH   = os.environ["ICESYM_INST_DIR"]
 
 ICON_PATHS = {}

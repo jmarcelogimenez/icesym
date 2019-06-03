@@ -1,0 +1,79 @@
+<center><img src="ICESYM_IMG_DIRcylinder_thumb.svg" width="50" height="32"/></center>
+<center><h3> Cylinder </h3></center>
+This object models a cylinder in the simulation. If a simulation has some cylinder object,
+it is considered an engine simulation. The formulary is divided into six sections (different tabs). 
+Each one allows you to set different parameters.
+
+<h4> Cylinder Attributes</h4>
+
+Defines the geometry principally, moreover allows set others parameters such as temperatures, scavenges, etc.
+
+<ul>
+    <p><li><b>Label: </b>Choose a label for this object to identifies it in object-tree and in Post Process.</li></p>
+    <p><li><b>Number of Zones: </b> How many zones is the interior of the cylinder divided.</li></p>
+    <p><li><b>Degress of Freedom: </b>Number of degrees of freedom.</li></p>
+    <p><li><b>Bore: </b>Cylinder bore [m].</li></p>
+    <p><li><b>Crank Radius: </b>Crank radius [m].</li></p>
+    <p><li><b>Vol Clearance: </b>Minimum volume of the combustion chamber [m^3].</li></p>
+    <p><li><b>Head Chamber Area: </b>Surface area of the wall combustion chamber [m^2].</li></p>
+    <p><li><b>Piston Area: </b>Piston crown area [m^2].</li></p>
+    <p><li><b>Delta CA: </b>Lag angle between crank shafts (only applicable for opposed-piston engines) [deg].</li></p>
+    <p><li><b>Rod Lenght: </b>Connecting rod length [m].</li></p>
+    <p><li><b>Temperature Type: </b><i>Homogeneus</i> or <i>No Homogeneus.</i></li></p>
+    <li>
+        <p><b>Temperatures: </b> Cylinder temperature [ºK]. If is selected <i>Homogeneus</i> you only must set the wall temperature. Else, if is selected <i>No Homogeneus</i>
+        you must specified the Piston, Intake, Exhaust and Liners Temperatures.</p>
+    </li>
+    <p><li><b>Model ht: </b>Heat-transfer model:<i>Annand model</i>, <i>Woschni model </i> or <i> Taylor model.</i></li></p>
+    <p><li><b>Factor ht: </b>Coefficient affecting the heat-transfer law.</li></p>
+    <p><li><b>Mass C:</b>Mass of fuel, air and residual gases into the cylinder [kg].</li></p>
+    <p><li><b>Type Ignition: </b>Ignition type: Spark-ignition or Compression ignition.</li></p>
+    <p><li><b>Has Scavenge: </b>Switches on/off (1/0) the scavenge computation.</li></p>
+    <p><li><b>Scavenge Type: </b>Scavenge type: <i>uniflow</i>, <i>scre</i>, <i>yam1</i>, <i>yam6</i>, <i>cd</i> or <i>qubcr</i>.</li></p>
+    <p><li><b>SRv: </b>Scavenge ratio by volume.</li></p>
+    <p><li><b>Full Implicit: </b>Switches on/off (1/0) the implicit computation of the cylinder and valves updates.</li></p>
+    <p><li><b>State: </b> Initial State. You need to complete it only if <b>Configuration->Get Inital State From</b> is set <i>From Here</i>.</p>
+    </li>
+</ul>
+
+<br>
+
+<h4> Fuel Attributtes</h4>
+
+Defines the characteristics of the used fuel.
+
+<ul>
+    <p><li><b>Q Fuel: </b>Fuel lower heating value [J/kg].</li></p>
+    <p><li><b>y: </b>H/C ratio of fuel.</li></p>
+    <p><li><b>Hvap Fuel: </b>Fuel heat of vaporization [J/kg].</li></p>
+</ul>
+
+<br>
+<h4> Injection Attributtes</h4>
+
+Defines the characteristics of the injection. Only is used if the engine has <i>Spark Ignition</i>.
+
+<ul>
+    <p><li><b>Pulse: </b>Shape of the injection pulse: <i>Squared sine-wave</i>, <i>Square wave</i>, <i>User-defined</i> (actives Mass Injection Rate).</li>
+    <p><li><b>Mass Injected per Cycle: </b>Total injected mass per pulse [kg].</li>
+    <p><li><b>dTheta injected: </b>Duration of the injection pulse in crank angle degrees.</li>
+    <p><li><b>Temperature Fuel: </b>Fuel injection temperature [K].</li>
+    <p><li><b>Theta Injected Initial: </b>Injection starting angle.</li>
+    <p><li><b>Ignition Delay Model: </b>Ignition delay model:<i>Livengood and Wu model</i>, <i>Hardenber and Hase model</i>,<i>Constant user-defined delay.</i></li>
+    <p><li><b>theta Id: </b>Ignition delay angle (only needed for ignition delay model 2) [deg].</li>
+    <p><li><b>Mass Injected Rate:</b>Two-column array with the user-defined injection pulse (angle and injected mass rate).</li>
+</ul>
+
+<br>
+<h4> Combustion Attributtes</h4>
+
+Defines the characteristics of the combustion.
+<ul>
+    <p><li><b>Theta Ignition 0: </b>Combustion starting angle.</li></p>
+    <p><li><b>dtheta Combustion: </b>Duration of the combustion in crank angle degrees.</li></p>
+    <p><li><b>Phi: </b>Fuel/air equivalence ratio.</li></p>
+    <p><li><b>Comb Efficiency Parameter: </b>Combustion efficiency parameter for the Wiebe function.</li></p>
+    <p><li><b>Shape Parameter: </b>Shape parameter for the Wiebe function.</li></p>
+    <p><li><b>Combustion Model: </b>Combustion model for compression-ignition engines: <i>Mass fraction burned profile defined by the user</i>, <i>Two Wiebe functions</i>, <i>Three Wiebe functions</i> or <i>Watson model.</i></li></p>
+    <p><li><b>Burned Mass fraction: </b>Two-column array with the user-defined mass fraction burned.</li></p>
+</ul>

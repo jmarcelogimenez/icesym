@@ -20,6 +20,7 @@ from JunctionDialog import JunctionDialog
 from PyQt5.QtSvg import QGraphicsSvgItem
 from LogTabWidget import LogTabWidget
 from SceneItem import SceneItem
+from UsageDialog import UsageDialog
 from utils import show_message, load_templates, save_data_aux, ICON_PATHS,\
                   ICON_PATHS_NC, DEFAULT_DVP, INSTALL_PATH, CASES_PATH
 
@@ -979,3 +980,9 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
     def plot_defaults(self):
         self.ppw.plot_defaults()
         return
+    
+    def show_usage(self):
+        ud = UsageDialog()
+        ud.exec_()
+        return
+        

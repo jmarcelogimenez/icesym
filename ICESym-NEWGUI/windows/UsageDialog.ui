@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>UsageDialog</class>
+ <widget class="QDialog" name="UsageDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>662</width>
+    <height>603</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <family>Ubuntu</family>
+    <pointsize>9</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>ICESym Usage</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../images/images.qrc">
+    <normaloff>:/fromHelyx/newicons/icon.png</normaloff>:/fromHelyx/newicons/icon.png</iconset>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="QTreeWidget" name="treeWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>150</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <column>
+      <property name="text">
+       <string>ICESym Usage</string>
+      </property>
+      <property name="font">
+       <font>
+        <family>Ubuntu</family>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
+     </column>
+     <item>
+      <property name="text">
+       <string>About</string>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
+      <property name="icon">
+       <iconset resource="../images/images.qrc">
+        <normaloff>:/fromHelyx/fromHelyx/pointField16.png</normaloff>:/fromHelyx/fromHelyx/pointField16.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Wizard</string>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
+      <property name="icon">
+       <iconset resource="../images/images.qrc">
+        <normaloff>:/fromHelyx/fromHelyx/pointField16.png</normaloff>:/fromHelyx/fromHelyx/pointField16.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Pre Process</string>
+      </property>
+      <property name="font">
+       <font>
+        <family>Ubuntu</family>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
+      <property name="icon">
+       <iconset resource="../images/images.qrc">
+        <normaloff>:/fromHelyx/fromHelyx/pointField16.png</normaloff>:/fromHelyx/fromHelyx/pointField16.png</iconset>
+      </property>
+      <item>
+       <property name="text">
+        <string>Configuration</string>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
+       <property name="icon">
+        <iconset resource="../images/images.qrc">
+         <normaloff>:/fromHelyx/fromHelyx/pointField16.png</normaloff>:/fromHelyx/fromHelyx/pointField16.png</iconset>
+       </property>
+      </item>
+     </item>
+     <item>
+      <property name="text">
+       <string>Modeling</string>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
+      <property name="icon">
+       <iconset resource="../images/images.qrc">
+        <normaloff>:/fromHelyx/fromHelyx/pointField16.png</normaloff>:/fromHelyx/fromHelyx/pointField16.png</iconset>
+      </property>
+      <item>
+       <property name="text">
+        <string>Connections</string>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
+       <property name="icon">
+        <iconset resource="../images/images.qrc">
+         <normaloff>:/fromHelyx/fromHelyx/pointField16.png</normaloff>:/fromHelyx/fromHelyx/pointField16.png</iconset>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Manipulation</string>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
+       <property name="icon">
+        <iconset resource="../images/images.qrc">
+         <normaloff>:/fromHelyx/fromHelyx/pointField16.png</normaloff>:/fromHelyx/fromHelyx/pointField16.png</iconset>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Import Data</string>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
+       <property name="icon">
+        <iconset resource="../images/images.qrc">
+         <normaloff>:/fromHelyx/fromHelyx/pointField16.png</normaloff>:/fromHelyx/fromHelyx/pointField16.png</iconset>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Plot Data</string>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
+       <property name="icon">
+        <iconset resource="../images/images.qrc">
+         <normaloff>:/fromHelyx/fromHelyx/pointField16.png</normaloff>:/fromHelyx/fromHelyx/pointField16.png</iconset>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Objects</string>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
+       <property name="icon">
+        <iconset resource="../images/images.qrc">
+         <normaloff>:/fromHelyx/fromHelyx/pointField16.png</normaloff>:/fromHelyx/fromHelyx/pointField16.png</iconset>
+       </property>
+       <item>
+        <property name="text">
+         <string>Atmosphere</string>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>9</pointsize>
+         </font>
+        </property>
+        <property name="icon">
+         <iconset resource="../images/images.qrc">
+          <normaloff>:/fromHelyx/fromHelyx/pointField16.png</normaloff>:/fromHelyx/fromHelyx/pointField16.png</iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Cylinder</string>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>9</pointsize>
+         </font>
+        </property>
+        <property name="icon">
+         <iconset resource="../images/images.qrc">
+          <normaloff>:/fromHelyx/fromHelyx/pointField16.png</normaloff>:/fromHelyx/fromHelyx/pointField16.png</iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Valve</string>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>9</pointsize>
+         </font>
+        </property>
+        <property name="icon">
+         <iconset resource="../images/images.qrc">
+          <normaloff>:/fromHelyx/fromHelyx/pointField16.png</normaloff>:/fromHelyx/fromHelyx/pointField16.png</iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Tank</string>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>9</pointsize>
+         </font>
+        </property>
+        <property name="icon">
+         <iconset resource="../images/images.qrc">
+          <normaloff>:/fromHelyx/fromHelyx/pointField16.png</normaloff>:/fromHelyx/fromHelyx/pointField16.png</iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Tube</string>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>9</pointsize>
+         </font>
+        </property>
+        <property name="icon">
+         <iconset resource="../images/images.qrc">
+          <normaloff>:/fromHelyx/fromHelyx/pointField16.png</normaloff>:/fromHelyx/fromHelyx/pointField16.png</iconset>
+        </property>
+       </item>
+      </item>
+     </item>
+     <item>
+      <property name="text">
+       <string>Run</string>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
+      <property name="icon">
+       <iconset resource="../images/images.qrc">
+        <normaloff>:/fromHelyx/fromHelyx/pointField16.png</normaloff>:/fromHelyx/fromHelyx/pointField16.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Post Process</string>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
+      <property name="icon">
+       <iconset resource="../images/images.qrc">
+        <normaloff>:/fromHelyx/fromHelyx/pointField16.png</normaloff>:/fromHelyx/fromHelyx/pointField16.png</iconset>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QWidget" name="verticalLayoutWidget">
+      <layout class="QVBoxLayout" name="usageLayout">
+       <item>
+        <widget class="QTextEdit" name="usage_textEdit">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Sunken</enum>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../images/images.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>treeWidget</sender>
+   <signal>itemDoubleClicked(QTreeWidgetItem*,int)</signal>
+   <receiver>UsageDialog</receiver>
+   <slot>updateCaseSetup()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>59</x>
+     <y>24</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>247</x>
+     <y>301</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>updateCaseSetup()</slot>
+ </slots>
+</ui>

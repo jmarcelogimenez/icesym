@@ -1,0 +1,76 @@
+<h3> Connection Between Objects </h3>
+
+Perhaps the most important operation to do in the Modeling is the connection between components. For an operational engine
+model, the first requirement is the relationship between its parts in a natural way. This natural way determines
+what objects can be connected with others.
+<br><br>
+Moreover, there are other restrictions that limit the connections possibilities. To connect the objects, you must select the left object (left, not means left in the screen), and right click in the right object. In the simulation, this means that the exhaust in the first object is intake in the
+second object. But, be careful, that some type of objects only can be connected with only one specific type of object.
+This system rules are based in the real engines, and can be resumed in the next table:
+<br>
+<br>
+
+<table align="center" border="1">
+    <tr>
+        <th>Object From</th>
+        <th>Object To</th>
+        <th>Number Intakes</th>
+        <th>Number Exhaust</th>
+    </tr>
+    <tr>
+        <td>Tube</td>
+        <td>All</td>
+        <td>1</td>
+        <td>1</td>
+    </tr>
+    <tr>
+        <td>Junction</td>
+        <td>Tube</td>
+        <td>N</td>
+        <td>N</td>
+    </tr>
+    <tr>
+        <td>Atmosphere</td>
+        <td>Tube</td>
+        <td>1 or 0</td>
+        <td>1 or 0</td>
+    </tr>
+    <tr>
+        <td>Cylinder</td>
+        <td>Exhaust Valve</td>
+        <td>N</td>
+        <td>N</td>
+    </tr>
+    <tr>
+        <td>Intake Valve</td>
+        <td>Tube (in intake) - Cylinder (in exhaust)</td>
+        <td>1</td>
+        <td>1</td>
+    </tr>
+    <tr>
+        <td>Exhaust Valve</td>
+        <td>Cylinder (in intake) - Tube (in exhaust)</td>
+        <td>1</td>
+        <td>1</td>
+    </tr>
+    <tr>
+        <td>Tank</td>
+        <td>Tube</td>
+        <td>N</td>
+        <td>N</td>
+    </tr>
+</table>
+<br>
+<br>
+<br>
+Example: <b> Connecting Objects </b>
+<br>
+<br>
+In this example, we shall to explain how connect a simulation composed for: Atmosphere-Tube-Atmosphere (for example, if we need to verify the behavior of the flux in the tube when there are differents conditions in the intake atmosphere and the exhaust atmosphere).
+<br>
+<ul>
+    <p><li><b>1 - </b>Create the three objects: two atmospheres and one tube (see the first image) <br><br><center><img src="ICESYM_IMG_DIRconection0.png" title="Three Objects Created" align="middle"/> </center><br></li></p>
+    <p><li><b>2 - </b>Select the first Atmosphere and do right click over the Tube. This action will connect the objects.</li></p>
+    <p><li><b>3 - </b>Select the Tube and do right click over the second Atmosphere. Now we have the connections required. <br><br><center><img src="ICESYM_IMG_DIRconection1.png" title="Three Objects Connected" align="middle" /></center> <br></li></p>
+    <p><li><b>4 - </b>For remove connections, select the line that represents the connection (it will be colored in red), and press the "Supr" key.</li></p>
+</ul>

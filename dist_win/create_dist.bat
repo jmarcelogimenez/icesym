@@ -4,7 +4,9 @@ mkdir icesym\cases
 xcopy ..\ICESym-NEWGUI\cases icesym\cases
 mkdir icesym\images
 mkdir icesym\images\newicons
+mkdir icesym\images\about
 xcopy ..\ICESym-NEWGUI\images\newicons icesym\images\newicons
+xcopy ..\ICESym-NEWGUI\images\about icesym\images\about
 mkdir icesym\loads
 xcopy ..\ICESym-NEWGUI\loads icesym\loads
 mkdir icesym\runs

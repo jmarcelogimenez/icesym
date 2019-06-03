@@ -1,0 +1,25 @@
+<center><img src="ICESYM_IMG_DIRtube_thumb.svg" width="60" height="40"/></center>
+<center><h3> Tube </h3></center>
+This object models a tube in the simulation. 
+
+<h4> List of Attributes</h4>
+
+<ul>
+	<p><li><b>Label: </b>Choose a label for this object to identifies it in the object-tree and in Post Process.</li>
+	<p><li><b>Number of Nodes: </b> Number of nodes.</li>
+	<p><li><b>Degrees of Freedom: </b> Number of degrees of freedom.</li>
+	<p><li><b>Length: </b>Pipe length [m].</li>
+	<p><li><b>Equispaced: </b>Switch (0/1) if you want to make automatically the array xnod, dividing the length of the pipe in nnod nodes equispaced.</li>
+	<p><li><b>Has Curvature: </b>Switch (0/1) if you want that the pipe has curvature.</li>
+	<p><li><b>Xnod: </b>Coordinates in x for each node [m].</li>
+	<p><li><b>Diameter: </b>Pipe diameter [m].</li> 
+	<p><li><b>Twall: </b>Wall pipe temperature [K].</li>
+	<p><li><b>Curvature: </b>Curvature in each node along the pipe.</li>
+	<p><li>
+		<b>State: </b> Initial State. You need to complete it only if <b>Configuration->Get Inital State</b> is set <i>from Here</i>.
+	</li>
+	<p><li><b>Type Save: </b>You can choose the way to save data (which nodes).</li>
+	<p><li><b>Normalized Points: </b> You can choose how many points you want to save. After, you must specify the normalized positions of that points.<br>
+Example: If the pipe length is 0.2m, and you needs save the data in the nodes at 0.0m, 0.1m and 0.2m, you must choose <i>Normalized points = 3</i> and in the table below you must input 0 - 0.5 - 1.
+	</li>
+</ul>

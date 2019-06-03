@@ -442,7 +442,13 @@
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="enabled">
-     <bool>false</bool>
+     <bool>true</bool>
+    </property>
+    <property name="font">
+     <font>
+      <family>Ubuntu</family>
+      <pointsize>9</pointsize>
+     </font>
     </property>
     <property name="autoFillBackground">
      <bool>true</bool>
@@ -450,6 +456,7 @@
     <property name="title">
      <string>Help</string>
     </property>
+    <addaction name="actionUsage"/>
    </widget>
    <widget class="QMenu" name="menuPost_Process">
     <property name="title">
@@ -767,6 +774,24 @@
     </font>
    </property>
   </action>
+  <action name="actionAbout">
+   <property name="icon">
+    <iconset resource="../images/images.qrc">
+     <normaloff>:/fromHelyx/newicons/icon.png</normaloff>:/fromHelyx/newicons/icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionUsage">
+   <property name="icon">
+    <iconset resource="../images/images.qrc">
+     <normaloff>:/fromHelyx/fromHelyx/share16.png</normaloff>:/fromHelyx/fromHelyx/share16.png</iconset>
+   </property>
+   <property name="text">
+    <string>Usage</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="../images/images.qrc"/>
@@ -1044,6 +1069,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionUsage</sender>
+   <signal>triggered()</signal>
+   <receiver>ICESymMainWindow</receiver>
+   <slot>show_usage()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>517</x>
+     <y>320</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>updateCaseSetup()</slot>
@@ -1064,5 +1105,7 @@
   <slot>load_postpro()</slot>
   <slot>enable_postpro()</slot>
   <slot>plot_defaults()</slot>
+  <slot>show_about()</slot>
+  <slot>show_usage()</slot>
  </slots>
 </ui>

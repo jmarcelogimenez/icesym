@@ -42,7 +42,7 @@ class TubeDialog(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self)
         self.ui_td = Ui_TubeDialog()
         self.ui_td.setupUi(self)
-        self.setFixedSize(560, 725)        
+        self.setBaseSize(560, 725)        
         self.current_dict = None # default valve dictionary
         self.setWindowTitle( self.windowTitle() + " " + str(item_index) )
         if not current_tube:
