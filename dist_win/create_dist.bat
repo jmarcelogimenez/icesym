@@ -9,6 +9,8 @@ xcopy ..\ICESym-NEWGUI\images\newicons icesym\images\newicons
 xcopy ..\ICESym-NEWGUI\images\about icesym\images\about
 mkdir icesym\loads
 xcopy ..\ICESym-NEWGUI\loads icesym\loads
+mkdir icesym\docs
+xcopy ..\ICESym-NEWGUI\docs icesym\docs
 mkdir icesym\runs
 mkdir icesym\simulator
 rd /s /q ..\ICESym-NEWGUI\simulator\dist_win\dist

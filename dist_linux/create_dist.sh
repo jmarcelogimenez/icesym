@@ -32,3 +32,4 @@ cp -r $ICESYM_INST_DIR/etc/bashrc_linux etc/bashrc
 cp -r $ICESYM_INST_DIR/cases .
 cp -r $ICESYM_INST_DIR/loads .
 cp -r $ICESYM_INST_DIR/templates .
+cp -r $ICESYM_INST_DIR/docs .
