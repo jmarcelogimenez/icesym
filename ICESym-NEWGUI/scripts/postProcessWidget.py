@@ -81,9 +81,12 @@ class postProcessWidget(QtWidgets.QWidget):
                         self.ui_ppw.tabWidget_plots.setEnabled(True)
                 except:
                     show_message('Error in setting the PostProcess Tab')
+                    return False
+            else:
+                return False
         else:
             if not os.path.isdir(self.current_run_dir):
-                return
+                return False
             (run_attributes,irpm_missing) = self.load_current_attributes()
             if self.run_attributes!=run_attributes:
                 self.run_attributes = run_attributes
@@ -92,7 +95,7 @@ class postProcessWidget(QtWidgets.QWidget):
                 self.open_archives = {}
                 for ipw in self.plot_widgets:
                     ipw.change_attributes(run_attributes, self.current_objects)
-        return
+        return True
 
     def load_current_attributes(self):
         # Attributes for getMasses of GeneralAttributes
@@ -405,7 +408,9 @@ class postProcessWidget(QtWidgets.QWidget):
     In rpms or cycle the negative values implies the last calculated values (-1 last, -2 last last, etc)
     """
     def plot_defaults(self):
-        self.enable_ppw()
+        if not self.enable_ppw():
+            show_message('Post Process not enabled.')
+            return
 
         for index,iplot in enumerate(DEFAULT_PLOTS):
             (tabWidget,plotWidget) = self.choose_widgets(iplot[0])

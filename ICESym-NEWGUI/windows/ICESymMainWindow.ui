@@ -513,12 +513,24 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionOpen"/>
+   <addaction name="actionSave"/>
+   <addaction name="actionSave_As"/>
+   <addaction name="actionClose"/>
+   <addaction name="actionExit"/>
+   <addaction name="separator"/>
    <addaction name="actionNew_Tube"/>
    <addaction name="actionNew_Cylinder"/>
    <addaction name="actionNew_Junction"/>
    <addaction name="actionNew_Tank"/>
    <addaction name="actionNew_Atmosphere"/>
    <addaction name="actionNew_Valve"/>
+   <addaction name="separator"/>
+   <addaction name="actionSave_Post_Process"/>
+   <addaction name="actionLoad_Post_Process"/>
+   <addaction name="actionDefault_Post_Process"/>
+   <addaction name="separator"/>
+   <addaction name="actionUsage"/>
    <addaction name="separator"/>
    <addaction name="actionTerminal"/>
   </widget>
@@ -774,19 +786,10 @@
     </font>
    </property>
   </action>
-  <action name="actionAbout">
-   <property name="icon">
-    <iconset resource="../images/images.qrc">
-     <normaloff>:/fromHelyx/newicons/icon.png</normaloff>:/fromHelyx/newicons/icon.png</iconset>
-   </property>
-   <property name="text">
-    <string>About</string>
-   </property>
-  </action>
   <action name="actionUsage">
    <property name="icon">
     <iconset resource="../images/images.qrc">
-     <normaloff>:/fromHelyx/fromHelyx/share16.png</normaloff>:/fromHelyx/fromHelyx/share16.png</iconset>
+     <normaloff>:/fromHelyx/newicons/icon.png</normaloff>:/fromHelyx/newicons/icon.png</iconset>
    </property>
    <property name="text">
     <string>Usage</string>
