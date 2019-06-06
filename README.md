@@ -7,11 +7,12 @@ This project consists of two main parts:
 2) The GUI, located in the folder ICESym-NEWGUI.
 
 ## Linux Distributions
-### Installation
 
-There are two ways to install ICESym:
+### PACKAGED VERSION:
 
-1) Download the packaged version from [ICESym-Linux64](https://sourceforge.net/projects/icesym/files/icesym-l64-20190524.tar.gz/download). It includes the simulator and GUI and it was tested in the following distros:
+#### Installation
+
+Download the packaged version from [ICESym-Linux64](https://sourceforge.net/projects/icesym/files/icesym-l64-20190524.tar.gz/download). It includes the simulator and GUI and it was tested in the following distros:
 
 - Ubuntu 14.04 
 - Ubuntu 16.04
@@ -19,7 +20,20 @@ There are two ways to install ICESym:
 
 Please, if you use ICESym in another distro please contact us to add it to the list.
 
-2) Create a virtual environment and download all the needed packages. To start, you will need the following packages:
+#### Usage
+
+For packaged version, just run:
+
+```bash
+source etc/bashrc
+./icesym
+```
+
+### FROM SOURCES VERSION:
+
+#### Installation
+
+Create a virtual environment and download all the needed packages. To start, you will need the following packages:
 
 - Python 2.7
 - virtualenv (tested in version 15.1.0)
@@ -81,16 +95,9 @@ cd ICESym-NEWGUI/simulator/dist_linux
 ./create_dist
 ```
 
-### Usage
+#### Usage
 
-1) For packaged version, just run:
-
-```bash
-source etc/bashrc
-./icesym
-```
-
-2) For the compiled version:
+For the compiled version:
 
 ```bash
 cd ICESym-NEWGUI
@@ -113,18 +120,26 @@ Then, inside the folder dist_linux:
 
 ## Windows Distributions
 
-### Installation
+### PACKAGED VERSION
 
-There are also two ways to install ICESym:
+#### Installation
 
-1) Download the packaged version from [ICESym-Win64](https://sourceforge.net/projects/icesym/files/icesym-w64-20190528.zip/download). It includes the simulator and GUI and it was tested in the following distros:
+Download the packaged version from [ICESym-Win64](https://sourceforge.net/projects/icesym/files/icesym-w64-20190528.zip/download). It includes the simulator and GUI and it was tested in the following distros:
 
 - Windows 7
 - Windows 10
 
 Please, if you use ICESym in another distro please contact us to add it to the list.
 
-2) Create the work enviroment. First, download and install the needed packages.
+#### Usage
+
+For packaged version, first execute the etc/bashrc_win.bat and then execute icesym.exe.
+
+### FROM SOURCES VERSION:
+
+#### Installation
+
+Create the work enviroment. First, download and install the needed packages.
 
 - Install the package [Anaconda3-4.3.0-Windows-x86_64](https://repo.continuum.io/archive/). Then, set the ANACONDA3PATH environment variable indicating the installation folder.
 - Download and extract [mingw64 4.8](https://sourceforge.net/projects/mingwbuilds/files/host-windows/releases/4.8.0/64-bit/threads-win32/seh/x64-4.8.0-release-win32-seh-rev2.7z/download). Then, add the path of the bin folder inside mingw64 into the PATH environment variable.
@@ -148,11 +163,9 @@ To create the exec.exe file, copy the created .pyd to the folder ICESym-NEWGUI/s
 create_dist.bat
 ```
 
-### Usage
+#### Usage
 
-1) For packaged version, first execute the bashrc_win.bat and then execute icesym.exe.
-
-2) For the compiled version:
+For the compiled version:
 
 ```bash
 cd ICESym-NEWGUI
