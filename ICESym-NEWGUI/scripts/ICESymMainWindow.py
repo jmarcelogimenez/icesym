@@ -96,7 +96,6 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         self.configure_default['Valves'] = configure_default_valve
         self.configure_default['Tubes']  = configure_default_tube
 
-        self.drawGrid(QtWidgets.QDesktopWidget().screenGeometry())
         self.old_size_view = self.view.size()
         
         # templates para cada objeto
@@ -209,22 +208,26 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         for iline in self.grid_lines:
             self.scene.removeItem(iline)
         self.drawGrid( self.view.sceneRect() )
-        
+        # TODO: in order to draw the connection lines on the top of the grid, on
+        # every resize this lines must be removed and done again.. in some way
+        # this is inefficient, but it works for now
+        for conection in self.scene_connections:
+            self.deleteConnection(conection[0], conection[1])
+            self.scene.removeItem(conection[2])
+            self.scene.removeItem(conection[3])
+            self.scene.removeItem(conection[4])
+            self.drawConection(conection[0], conection[1])
         self.resizeEventOld(event)
-
         for item in self.scene_items:
             pos = self.view.mapToScene(item.position)
-            item.pixmap.setPos( pos )
+            item.pixmap.setPos(pos)
         return
 
-    def drawGrid(self, windowsize):
+    def drawGrid(self, windowsize):        
         X_SIZE = 66
         Y_SIZE = 66
         self.centroids = []
         self.grid_lines = []
-#        self.grid_centroids = []
-        #self.cells = {}
-        #self.cells_inv = {}
         centroids_x = []
         centroids_y = []
         pencil = QtGui.QPen(QtCore.Qt.gray, 1)
@@ -246,10 +249,6 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             for index_y,icentroid_y in enumerate(centroids_y):
                 pc = self.view.mapToScene( QtCore.QPoint( float(icentroid_x) , float(icentroid_y)) )
                 self.centroids.append( pc )
-                #self.cells[pc] = [index_x,index_y]
-                #self.cells_inv[index_x,index_y] = pc
-#                self.grid_centroids.append( self.scene.addEllipse( QtCore.QRectF(pc.x(),\
-#                            pc.y(),1.0,1.0), pencil, QtGui.QBrush(QtCore.Qt.black)) )
         return
 
     def doubleClick(self, event):
@@ -888,6 +887,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         reply = show_message(msg,4,QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
         if reply == QtWidgets.QMessageBox.Yes:
             self.cleanObjects()
+            self.drawGrid( self.view.sceneRect() )
             self.current_configuration = self.default_dict['Configurations']
             self.case_name = 'default_case'
             self.case_dir = CASES_PATH
@@ -899,6 +899,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         sys.path.append(str(self.case_dir))
         externalData = __import__(str(self.case_name))
         self.cleanObjects()
+        self.drawGrid( self.view.sceneRect() )
 
         self.current_configuration = externalData.Simulator
         self.drawObjects('Cylinders',   externalData.Cylinders)
@@ -907,8 +908,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         self.drawObjects('Tubes',       externalData.Tubes)
         self.drawObjects('Valves',      externalData.Valves)
         self.drawObjects('Atmospheres', externalData.Atmospheres)
-
-        self.drawGrid(QtWidgets.QDesktopWidget().screenGeometry())
+        
         self.drawAllConnections()
         self.set_configuration_run_and_postProcess_widgets()
         
