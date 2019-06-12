@@ -884,12 +884,15 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         return
 
     def close_case(self):
-        self.cleanObjects()
-        self.current_configuration = self.default_dict['Configurations']
-        self.case_name = 'default_case'
-        self.case_dir = CASES_PATH
-        self.set_configuration_run_and_postProcess_widgets()
-        show_message('Case successfully closed!', 1)
+        msg = "Do you want to close the current case?"
+        reply = show_message(msg,4,QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
+        if reply == QtWidgets.QMessageBox.Yes:
+            self.cleanObjects()
+            self.current_configuration = self.default_dict['Configurations']
+            self.case_name = 'default_case'
+            self.case_dir = CASES_PATH
+            self.set_configuration_run_and_postProcess_widgets()
+            show_message('Case successfully closed!', 1)
         return
     
     def open_data(self):
@@ -935,9 +938,10 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
     
     def save_as(self):
         name = QtWidgets.QFileDialog.getSaveFileName(self, 'Save File As', "./", "Python Files (*.py)")
-        filename = name[ 0 ]
-        filename = filename+'.py' if filename.find('.py')==-1 else filename
-        self.save_data(filename)
+        if name[0] != '':
+            filename = name[ 0 ]
+            filename = filename+'.py' if filename.find('.py')==-1 else filename
+            self.save_data(filename)
         return
     
     def exit(self):
