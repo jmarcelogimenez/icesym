@@ -208,15 +208,13 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         for iline in self.grid_lines:
             self.scene.removeItem(iline)
         self.drawGrid( self.view.sceneRect() )
-        # TODO: in order to draw the connection lines on the top of the grid, on
-        # every resize this lines must be removed and done again.. in some way
-        # this is inefficient, but it works for now
         for conection in self.scene_connections:
-            self.deleteConnection(conection[0], conection[1])
-            self.scene.removeItem(conection[2])
             self.scene.removeItem(conection[3])
             self.scene.removeItem(conection[4])
-            self.drawConection(conection[0], conection[1])
+        for conection in self.scene_connections:
+            self.scene.addItem(conection[3])
+            self.scene.addItem(conection[4])
+        
         self.resizeEventOld(event)
         for item in self.scene_items:
             pos = self.view.mapToScene(item.position)
