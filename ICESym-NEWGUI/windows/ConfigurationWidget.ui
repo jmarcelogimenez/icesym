@@ -113,6 +113,9 @@
           <bold>false</bold>
          </font>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::ClickFocus</enum>
+        </property>
         <property name="text">
          <string>0</string>
         </property>
@@ -163,6 +166,9 @@
           <weight>50</weight>
           <bold>false</bold>
          </font>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::ClickFocus</enum>
         </property>
         <property name="text">
          <string>0</string>
@@ -259,6 +265,9 @@
           <bold>false</bold>
          </font>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::ClickFocus</enum>
+        </property>
         <property name="text">
          <string>0</string>
         </property>
@@ -325,6 +334,9 @@
           <bold>false</bold>
          </font>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::ClickFocus</enum>
+        </property>
         <property name="text">
          <string>0</string>
         </property>
@@ -346,6 +358,9 @@
           <bold>false</bold>
          </font>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::ClickFocus</enum>
+        </property>
         <property name="text">
          <string>287</string>
         </property>
@@ -366,6 +381,9 @@
           <weight>50</weight>
           <bold>false</bold>
          </font>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::ClickFocus</enum>
         </property>
         <property name="text">
          <string>0</string>
@@ -445,6 +463,9 @@
           <weight>50</weight>
           <bold>false</bold>
          </font>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::ClickFocus</enum>
         </property>
         <property name="text">
          <string>1.4</string>
@@ -559,6 +580,9 @@
           <bold>false</bold>
          </font>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::ClickFocus</enum>
+        </property>
        </widget>
       </item>
       <item row="0" column="0">
@@ -664,6 +688,9 @@
           <bold>false</bold>
          </font>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::ClickFocus</enum>
+        </property>
        </widget>
       </item>
       <item row="3" column="0">
@@ -696,6 +723,9 @@
           <weight>50</weight>
           <bold>false</bold>
          </font>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::ClickFocus</enum>
         </property>
        </widget>
       </item>
@@ -773,6 +803,9 @@
           <bold>false</bold>
          </font>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::ClickFocus</enum>
+        </property>
         <property name="text">
          <string>5</string>
         </property>
@@ -806,6 +839,9 @@
           <weight>50</weight>
           <bold>false</bold>
          </font>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::ClickFocus</enum>
         </property>
         <property name="text">
          <string>5</string>
@@ -871,6 +907,9 @@
           <weight>50</weight>
           <bold>false</bold>
          </font>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::ClickFocus</enum>
         </property>
         <property name="dragEnabled">
          <bool>true</bool>
@@ -950,6 +989,9 @@
           <bold>false</bold>
          </font>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::WheelFocus</enum>
+        </property>
         <property name="minimum">
          <number>0</number>
         </property>
@@ -979,6 +1021,9 @@
           <weight>50</weight>
           <bold>false</bold>
          </font>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::ClickFocus</enum>
         </property>
         <attribute name="horizontalHeaderStretchLastSection">
          <bool>true</bool>

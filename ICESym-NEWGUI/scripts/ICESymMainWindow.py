@@ -62,6 +62,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         layout = QtWidgets.QVBoxLayout()
         layout.addWidget(self.view)
         self.ui.canvas_widget.setLayout(layout)
+        self.view.setMouseTracking(True)
         self.view.mousePressEvent = self.mouse_press
         self.view.mouseDoubleClickEvent = self.double_click
         self.view.mouseMoveEvent = self.mouse_movement
@@ -73,6 +74,9 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         self.click_positions = []
         self.sel_rect = None   
         self.rectangle_selection_active = None
+        self.item_to_copy = None
+        self.current_mouse_position = QtCore.QPointF(0.0,0.0)
+        self.current_selected_item = None
         self.ui.canvas_widget.show()
 
         # array con todos los items presentes
@@ -666,6 +670,18 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         scene_item.pixmap.setPos(scene_item.position)        
         self.scene.addItem(scene_item.pixmap)
         return
+
+    def find_optimum_cell_position(self, current_position):
+        # Buscar que centroide se acerca mas a la posicion
+        min_dist = 100
+        import math
+        min_centroid = self.centroids[0]
+        for icentroid in self.centroids:
+            dist =  math.sqrt((icentroid.x()-current_position.x())**2+(icentroid.y()-current_position.y())**2)
+            if dist<min_dist:
+                min_dist = dist
+                min_centroid = icentroid
+        return min_centroid+QtCore.QPointF(-32.0,-32.0)
     
 # Keyboard manipulation and auxiliary functions
 # -----------------------------------------------------------------------------
@@ -673,7 +689,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
     def key_press_event(self, event):
         if not self.check_tab(INDEX_TAB_MODELING):
             return
-        if event.key()==QtCore.Qt.Key_Delete:
+        if event.key() == QtCore.Qt.Key_Delete:
             for item in self.scene_items:
                 if item.pixmap.isSelected():
                     item_name = item.type[0:-1] + " " + str(self.objects[item.type].index(item))
@@ -708,6 +724,20 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
                         show_message("Operation cancelled", 1)
                         return
                     return
+        if event.modifiers() == QtCore.Qt.ControlModifier:
+            if event.key() == QtCore.Qt.Key_C:
+                for item in self.scene_items:
+                    if item.pixmap.isSelected():
+                        self.item_to_copy = item
+            if event.key() == QtCore.Qt.Key_V:
+                if self.item_to_copy:
+                    msg = "Do you want to paste the selected %s?"%self.item_to_copy.type[0:-1]
+                    reply = show_message(msg,4,QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
+                    if reply == QtWidgets.QMessageBox.Yes:
+                        object_position = self.find_optimum_cell_position(self.current_mouse_position)
+                        self.addSceneItem(self.item_to_copy.type, object_position,\
+                                          self.item_to_copy.object)
+                        self.item_to_copy = None
         return
 
 # Mouse manipulation and auxiliary functions
@@ -737,11 +767,14 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
                 if dialog:
                     dialog.exec_()
                     item.object = dialog.current_dict
+        self.current_selected_item = None
         return
 
     def mouse_movement(self, event):
         if not self.check_tab(INDEX_TAB_MODELING):
             return
+
+        # TODO: under construction
         if self.rectangle_selection_active:
             self.rect_sel_end = event.pos()
             pencil = QtGui.QPen(QtCore.Qt.black, 1)
@@ -757,36 +790,32 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         # globales donde el 0,0 del objeto esta en el vertice superior izquierdo y el de la vista
         # en el vertice superior izquierdo
         # event.pos() da la posicion del click, con el origen en el vertice inferior izq
-        for item in self.scene_items:
-            if item.pixmap.isSelected():
-                if item.offset == -1:
-                    item.offset = event.pos() - self.view.mapFromScene(QtCore.QPoint(item.pixmap.pos().x(), item.pixmap.pos().y()))
-                position = self.view.mapToScene( (event.pos() - item.offset).x(), (event.pos() - item.offset).y() )
-                # Buscar que centroide se acerca mas a la posicion
-                min_dist = 100
-                import math
-                min_centroid = self.centroids[0]
-                for icentroid in self.centroids:
-                    dist =  math.sqrt((icentroid.x()-position.x())**2+(icentroid.y()-position.y())**2)
-                    if dist<min_dist:
-                        min_dist = dist
-                        min_centroid = icentroid
-                #item.current_celd = self.cells[min_centroid]
-                position = min_centroid+QtCore.QPointF(-32.0,-32.0)
+        if self.current_selected_item and self.current_selected_item.pixmap.isSelected():
+            if self.current_selected_item.offset == -1:
+                self.current_selected_item.offset = event.pos() - \
+                self.view.mapFromScene(QtCore.QPoint(self.current_selected_item.pixmap.pos().x(),\
+                                                     self.current_selected_item.pixmap.pos().y()))
+            current_position = self.view.mapToScene( (event.pos() - \
+                                              self.current_selected_item.offset).x(),\
+                                             (event.pos() - self.current_selected_item.offset).y() )
+            
+            position = self.find_optimum_cell_position(current_position)
+            self.current_selected_item.pixmap.setPos(position)            
+            offset = event.pos() - QtCore.QPoint(self.current_selected_item.pixmap.pos().x(), \
+                               self.current_selected_item.pixmap.pos().y())
+            position = QtCore.QPoint((event.pos() - offset).x(), (event.pos() - offset).y())
+            self.current_selected_item.position = position
+            for conection in self.scene_connections:
+                if self.current_selected_item == conection[0] or \
+                   self.current_selected_item == conection[1]:
+                    # ver como hacer mas optimo esto
+                    self.deleteConnection(conection[0], conection[1])
+                    self.scene.removeItem(conection[2])
+                    self.scene.removeItem(conection[3])
+                    self.scene.removeItem(conection[4])
+                    self.drawConection(conection[0], conection[1])
 
-                item.pixmap.setPos(position)
-                
-                offset = event.pos() - QtCore.QPoint(item.pixmap.pos().x(), item.pixmap.pos().y())
-                position = QtCore.QPoint((event.pos() - offset).x(), (event.pos() - offset).y())
-                item.position = position
-                for conection in self.scene_connections:
-                    if item == conection[0] or item == conection[1]:
-                        # ver como hacer mas optimo esto
-                        self.deleteConnection(conection[0], conection[1])
-                        self.scene.removeItem(conection[2])
-                        self.scene.removeItem(conection[3])
-                        self.scene.removeItem(conection[4])
-                        self.drawConection(conection[0], conection[1])
+        self.current_mouse_position = self.view.mapToScene(event.pos())
         return
     
     def mouse_release(self, event):
@@ -795,6 +824,8 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         if self.rectangle_selection_active:
             self.rectangle_selection_active = False
             self.scene.removeItem(self.sel_rect)
+            
+        self.current_selected_item = None
 
         # Ver si hay alguna conexion entre dos items
         if event.button() == QtCore.Qt.RightButton:
@@ -839,17 +870,18 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
     def mouse_press(self, event):
         if not self.check_tab(INDEX_TAB_MODELING):
             return
-        offset = self.view.mapFromScene( QtCore.QPoint(0,0) )
+        offset = self.view.mapFromScene(QtCore.QPoint(0,0))
         mouseClick = event.pos() - offset
-        # Checkear si hay algun item seleccionado
-        if event.button() == QtCore.Qt.LeftButton:
-            
+
+        if event.button() == QtCore.Qt.LeftButton: # Check if there is a selected item
+            # TODO: under construction
             if event.modifiers() == QtCore.Qt.ControlModifier:
                 self.view.setDragMode(QtWidgets.QGraphicsView.RubberBandDrag)
                 self.rect_sel_beg = event.pos()
                 self.rect_sel_end = event.pos()
                 self.rectangle_selection_active = True
 
+            self.current_selected_item = None
             for item in self.scene_items:
                 item.pixmap.setSelected(False)
                 item.offset = -1
@@ -861,8 +893,10 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
 
             for item in self.scene_items: # Check if an item is selected
                 if self.check_if_item_is_inside(mouseClick, item.pixmap.x(), item.pixmap.y(),\
-                                      item.pixmap.boundingRect().width(), item.pixmap.boundingRect().height()):
+                                                item.pixmap.boundingRect().width(),\
+                                                item.pixmap.boundingRect().height()):
                     item.pixmap.setSelected(True)
+                    self.current_selected_item = item
                     return
 
             for connection in self.scene_connections: # Check if a connection is selected
@@ -873,7 +907,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
                 if self.check_if_line_is_inside(mouseClick, p1, p2, length):
                     pencil = self.getLinePen(QtCore.Qt.red)
                     line.setPen(pencil)
-#                    line.setSelected(True) #no funciona
+                    # line.setSelected(True) # Not working
                     return
         return
 
