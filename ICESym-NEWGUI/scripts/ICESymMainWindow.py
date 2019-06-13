@@ -22,7 +22,9 @@ from LogTabWidget import LogTabWidget
 from SceneItem import SceneItem
 from UsageDialog import UsageDialog
 from utils import show_message, load_templates, save_data_aux, ICON_PATHS,\
-                  ICON_PATHS_NC, DEFAULT_DVP, INSTALL_PATH, CASES_PATH
+                  ICON_PATHS_NC, DEFAULT_DVP, INSTALL_PATH, CASES_PATH,\
+                  INDEX_TAB_MODELING, INDEX_TAB_RUN, INDEX_TAB_POSTPROCESS,\
+                  TAB_INFORMATION
 
 TREE_POSITION = {} 
 TREE_POSITION['Cylinders']      = 0
@@ -60,15 +62,13 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         layout = QtWidgets.QVBoxLayout()
         layout.addWidget(self.view)
         self.ui.canvas_widget.setLayout(layout)
-        self.view.mousePressEvent = self.mousePress
-        self.view.mouseDoubleClickEvent = self.doubleClick
-        self.view.mouseMoveEvent = self.mouseMovement
-        self.view.mouseReleaseEvent = self.mouseRelease
-        
+        self.view.mousePressEvent = self.mouse_press
+        self.view.mouseDoubleClickEvent = self.double_click
+        self.view.mouseMoveEvent = self.mouse_movement
+        self.view.mouseReleaseEvent = self.mouse_release
         self.resizeEventOld = self.view.resizeEvent
         self.view.resizeEvent = self.resizeView
-        
-        self.view.keyPressEvent = self.keyPressEvent
+        self.view.keyPressEvent = self.key_press_event
 
         self.click_positions = []
         self.sel_rect = None   
@@ -105,6 +105,8 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         self.cw     = None
         self.ppw    = None
         self.ltw    = None
+        
+        self.current_tab_widget_index = 0
         
         self.case_name  = case_name
         self.case_dir   = case_dir
@@ -179,31 +181,6 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         self.objects[itype].append(item)
         return
 
-    def addValve(self):
-        self.addSceneItem('Valves')
-        return
-
-    def addAtmosphere(self):
-        self.addSceneItem('Atmospheres')
-        return
-
-    def addTube(self):
-        self.addSceneItem('Tubes')
-        return
-
-    def addTank(self):
-        self.addSceneItem('Tanks')
-        return
-
-    def addJunction(self):
-        self.addSceneItem('Junctions')
-        return
-
-    def addCylinder(self):
-        self.addSceneItem('Cylinders')
-        self.cw.edit_ig_order(len(self.objects['Cylinders'])-1,False)
-        return
-
     def resizeView(self, event):
         for iline in self.grid_lines:
             self.scene.removeItem(iline)
@@ -247,78 +224,6 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             for index_y,icentroid_y in enumerate(centroids_y):
                 pc = self.view.mapToScene( QtCore.QPoint( float(icentroid_x) , float(icentroid_y)) )
                 self.centroids.append( pc )
-        return
-
-    def doubleClick(self, event):
-        for item in self.scene_items:
-            if item.pixmap.isSelected():
-                dialog = None
-                item_index = self.objects[item.type].index(item)
-                if (item.type == 'Valves'):
-                    # A valve le debo pasar el SceneItem y el parent porque en
-                    # caso de que cambie el tipo, debe cambiar el icono
-                    dialog = ValveDialog(item,item_index,self)
-                if (item.type == 'Atmospheres'):
-                    dialog = AtmosphereDialog(item.object,item_index)
-                if (item.type == 'Tubes'):
-                    dialog = TubeDialog(item.object,item_index)
-                if (item.type == 'Cylinders'):
-                    dialog = CylinderDialog(item.object,item_index)
-                if (item.type == 'Tanks'):
-                    dialog = TankDialog(item.object,item_index)
-                if (item.type == 'Junctions'):
-                    dialog = JunctionDialog(item.object,item_index)
-                if dialog:
-                    dialog.exec_()
-                    item.object = dialog.current_dict
-        return
-
-    def mouseMovement(self, event):        
-        if self.rectangle_selection_active:
-            self.rect_sel_end = event.pos()
-            pencil = QtGui.QPen(QtCore.Qt.black, 1)
-            pencil.setStyle(QtCore.Qt.DashLine)
-            pencil.setCosmetic(True)
-            if self.sel_rect:
-                self.scene.removeItem(self.sel_rect)
-            self.sel_rect = self.scene.addRect( QtCore.QRectF(self.rect_sel_beg, self.rect_sel_end), \
-                                               pencil, QtGui.QBrush(QtCore.Qt.NoBrush) )            
-
-        # mapFromScene mapea las coordenadas del objeto, que tienen como origen el vertice
-        # inferior izquierdo y el centro de coordenadas es el centro de la pantalla, en coordenadas
-        # globales donde el 0,0 del objeto esta en el vertice superior izquierdo y el de la vista
-        # en el vertice superior izquierdo
-        # event.pos() da la posicion del click, con el origen en el vertice inferior izq
-        for item in self.scene_items:
-            if item.pixmap.isSelected():
-                if item.offset == -1:
-                    item.offset = event.pos() - self.view.mapFromScene(QtCore.QPoint(item.pixmap.pos().x(), item.pixmap.pos().y()))
-                position = self.view.mapToScene( (event.pos() - item.offset).x(), (event.pos() - item.offset).y() )
-                # Buscar que centroide se acerca mas a la posicion
-                min_dist = 100
-                import math
-                min_centroid = self.centroids[0]
-                for icentroid in self.centroids:
-                    dist =  math.sqrt((icentroid.x()-position.x())**2+(icentroid.y()-position.y())**2)
-                    if dist<min_dist:
-                        min_dist = dist
-                        min_centroid = icentroid
-                #item.current_celd = self.cells[min_centroid]
-                position = min_centroid+QtCore.QPointF(-32.0,-32.0)
-
-                item.pixmap.setPos(position)
-                
-                offset = event.pos() - QtCore.QPoint(item.pixmap.pos().x(), item.pixmap.pos().y())
-                position = QtCore.QPoint((event.pos() - offset).x(), (event.pos() - offset).y())
-                item.position = position
-                for conection in self.scene_connections:
-                    if item == conection[0] or item == conection[1]:
-                        # ver como hacer mas optimo esto
-                        self.deleteConnection(conection[0], conection[1])
-                        self.scene.removeItem(conection[2])
-                        self.scene.removeItem(conection[3])
-                        self.scene.removeItem(conection[4])
-                        self.drawConection(conection[0], conection[1])
         return
     
     def getLinePen(self, color):
@@ -438,7 +343,6 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         return False
 
     def connectionIsAllowed(self,item1,item2):
-        
         type1 = item1.type
         type2 = item2.type
 
@@ -476,90 +380,6 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
                 message += "- " + itype + "\n"
             show_message(message)
             return False
-
-    def mouseRelease(self, event):
-        
-        if self.rectangle_selection_active:
-            self.rectangle_selection_active = False
-            self.scene.removeItem(self.sel_rect)
-
-        # ver si hay alguna conexion entre dos items
-        if event.button() == QtCore.Qt.RightButton:
-            for item1 in self.scene_items:
-                if item1.pixmap.isSelected():
-                    offset = self.view.mapFromScene( QtCore.QPoint(0,0) )
-                    posMouse = event.pos() - offset
-                    for item2 in self.scene_items:
-                        if item1 == item2:
-                            continue
-                        item2x = item2.pixmap.x()
-                        item2y = item2.pixmap.y()
-                        item2w = item2.pixmap.boundingRect().width()
-                        item2h = item2.pixmap.boundingRect().height()
-                        # si existe un objeto seleccionado, y el release se hace sobre otro objeto, se dibuja una conexion entre
-                        # ellos, apuntando al segundo (solo si no existe uno)
-                        if self.checkIfItemInside(posMouse, item2x, item2y, item2w, item2h)\
-                        and not self.existsRightConnection(item1)\
-                        and not self.existsConnection(item1,item2)\
-                        and self.connectionIsAllowed(item1,item2):
-                            self.drawConection(item1, item2, True)
-        return
-
-    def checkIfItemInside(self, click, posx, posy, width, height):
-        # ver si un click fue adentro de un item
-        return ( click.x() > posx and click.x() < posx + width and click.y() > posy and click.y() < posy + width )
-
-    def checkIfLineInside(self, click, p1, p2, length):
-        # ver si un click fue adentro de una linea (uso ffs)
-        dxc = click.x() - p1.x()
-        dyc = click.y() - p1.y()
-        dxl = p2.x() - p1.x()
-        dyl = p2.y() - p1.y()
-        cross = dxc*dyl - dyc*dxl
-        if abs(cross)>400.0:
-            return False
-        alpha1 = QtCore.QPointF.dotProduct(click-p1,p2-p1)/(length**2)
-        alpha2 = QtCore.QPointF.dotProduct(p2-click,p2-p1)/(length**2)
-        return alpha1>0.0 and alpha1<1.0 and alpha2>0.0 and alpha2<1.0
-
-    def mousePress(self, event):
-        offset = self.view.mapFromScene( QtCore.QPoint(0,0) )
-        mouseClick = event.pos() - offset
-        # checkear si hay algun item seleccionado
-        if event.button() == QtCore.Qt.LeftButton:
-            
-            if event.modifiers() == QtCore.Qt.ControlModifier:
-                self.view.setDragMode(QtWidgets.QGraphicsView.RubberBandDrag)
-                self.rect_sel_beg = event.pos()
-                self.rect_sel_end = event.pos()
-                self.rectangle_selection_active = True
-
-            for item in self.scene_items:
-                item.pixmap.setSelected(False)
-                item.offset = -1
-            for connection in self.scene_connections: #check if a connection is selected
-                line = connection[2]
-                pencil = self.getLinePen(QtCore.Qt.black)
-                line.setPen(pencil)
-                line.setSelected(False)
-
-            for item in self.scene_items: #check if an item is selected
-                if self.checkIfItemInside(mouseClick, item.pixmap.x(), item.pixmap.y(),\
-                                      item.pixmap.boundingRect().width(), item.pixmap.boundingRect().height()):
-                    item.pixmap.setSelected(True)
-                    return
-
-            for connection in self.scene_connections: #check if a connection is selected
-                line = connection[2]
-                p1 = line.line().p1()
-                p2 = line.line().p2()
-                length = line.line().length()
-                if self.checkIfLineInside(mouseClick, p1, p2, length):
-                    pencil = self.getLinePen(QtCore.Qt.red)
-                    line.setPen(pencil)
-#                    line.setSelected(True) #no funciona
-                    return
-        return
 
     def updateCaseSetup(self, QTreeWidgetItem, index):
         if not QTreeWidgetItem:
@@ -655,7 +475,6 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             if sitem.object == tobject:
                 return sitem
         return None
-            
     
     def drawAllConnections(self):
         for itype in self.objects.keys():
@@ -816,8 +635,44 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             type_valve = 'intake_valves' if item2==item_cylinder else 'exhaust_valves'
             item_cylinder.object[type_valve].remove(item_valve.object)
         return
+
+    def drawObjects(self, itype, dict_data):
+        for idata in dict_data:
+            self.addSceneItem( itype, QtCore.QPoint(idata['position'][0], idata['position'][1]), idata)
+        return
     
-    def keyPressEvent(self, event):
+    def cleanObjects(self):
+        for ikey in self.objects.keys():
+            self.objects[ikey] = []
+        self.scene.clear()
+        self.scene_items = []
+        self.scene_connections = []
+        self.number_of_objects = [0, 0, 0, 0, 0, 0]        
+        for itype in TREE_POSITION.keys():
+            tree_item = self.ui.componentsTreeWidget.topLevelItem(TREE_POSITION[itype])
+            while tree_item.childCount():
+                it = tree_item.child(0)
+                tree_item.removeChild(it)
+                del it
+        return
+    
+    def check_valve_type(self, scene_item):
+        self.scene.removeItem(scene_item.pixmap)
+        if scene_item.object['typeVal']=='int':
+            scene_item.pixmap = QGraphicsSvgItem(ICON_PATHS['Valve_int'])
+        else:
+            scene_item.pixmap = QGraphicsSvgItem(ICON_PATHS['Valve_exh'])
+        scene_item.pixmap.setFlags(QtWidgets.QGraphicsItem.ItemIsSelectable)
+        scene_item.pixmap.setPos(scene_item.position)        
+        self.scene.addItem(scene_item.pixmap)
+        return
+    
+# Keyboard manipulation and auxiliary functions
+# -----------------------------------------------------------------------------
+    
+    def key_press_event(self, event):
+        if not self.check_tab(INDEX_TAB_MODELING):
+            return
         if event.key()==QtCore.Qt.Key_Delete:
             for item in self.scene_items:
                 if item.pixmap.isSelected():
@@ -855,25 +710,175 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
                     return
         return
 
-    def drawObjects(self, itype, dict_data):
-        for idata in dict_data:
-            self.addSceneItem( itype, QtCore.QPoint(idata['position'][0], idata['position'][1]), idata)
+# Mouse manipulation and auxiliary functions
+# -----------------------------------------------------------------------------
+
+    def double_click(self, event):
+        if not self.check_tab(INDEX_TAB_MODELING):
+            return
+        for item in self.scene_items:
+            if item.pixmap.isSelected():
+                dialog = None
+                item_index = self.objects[item.type].index(item)
+                if (item.type == 'Valves'):
+                    # A valve le debo pasar el SceneItem y el parent porque en
+                    # caso de que cambie el tipo, debe cambiar el icono
+                    dialog = ValveDialog(item,item_index,self)
+                if (item.type == 'Atmospheres'):
+                    dialog = AtmosphereDialog(item.object,item_index)
+                if (item.type == 'Tubes'):
+                    dialog = TubeDialog(item.object,item_index)
+                if (item.type == 'Cylinders'):
+                    dialog = CylinderDialog(item.object,item_index)
+                if (item.type == 'Tanks'):
+                    dialog = TankDialog(item.object,item_index)
+                if (item.type == 'Junctions'):
+                    dialog = JunctionDialog(item.object,item_index)
+                if dialog:
+                    dialog.exec_()
+                    item.object = dialog.current_dict
+        return
+
+    def mouse_movement(self, event):
+        if not self.check_tab(INDEX_TAB_MODELING):
+            return
+        if self.rectangle_selection_active:
+            self.rect_sel_end = event.pos()
+            pencil = QtGui.QPen(QtCore.Qt.black, 1)
+            pencil.setStyle(QtCore.Qt.DashLine)
+            pencil.setCosmetic(True)
+            if self.sel_rect:
+                self.scene.removeItem(self.sel_rect)
+            self.sel_rect = self.scene.addRect( QtCore.QRectF(self.rect_sel_beg, self.rect_sel_end), \
+                                               pencil, QtGui.QBrush(QtCore.Qt.NoBrush) )            
+
+        # mapFromScene mapea las coordenadas del objeto, que tienen como origen el vertice
+        # inferior izquierdo y el centro de coordenadas es el centro de la pantalla, en coordenadas
+        # globales donde el 0,0 del objeto esta en el vertice superior izquierdo y el de la vista
+        # en el vertice superior izquierdo
+        # event.pos() da la posicion del click, con el origen en el vertice inferior izq
+        for item in self.scene_items:
+            if item.pixmap.isSelected():
+                if item.offset == -1:
+                    item.offset = event.pos() - self.view.mapFromScene(QtCore.QPoint(item.pixmap.pos().x(), item.pixmap.pos().y()))
+                position = self.view.mapToScene( (event.pos() - item.offset).x(), (event.pos() - item.offset).y() )
+                # Buscar que centroide se acerca mas a la posicion
+                min_dist = 100
+                import math
+                min_centroid = self.centroids[0]
+                for icentroid in self.centroids:
+                    dist =  math.sqrt((icentroid.x()-position.x())**2+(icentroid.y()-position.y())**2)
+                    if dist<min_dist:
+                        min_dist = dist
+                        min_centroid = icentroid
+                #item.current_celd = self.cells[min_centroid]
+                position = min_centroid+QtCore.QPointF(-32.0,-32.0)
+
+                item.pixmap.setPos(position)
+                
+                offset = event.pos() - QtCore.QPoint(item.pixmap.pos().x(), item.pixmap.pos().y())
+                position = QtCore.QPoint((event.pos() - offset).x(), (event.pos() - offset).y())
+                item.position = position
+                for conection in self.scene_connections:
+                    if item == conection[0] or item == conection[1]:
+                        # ver como hacer mas optimo esto
+                        self.deleteConnection(conection[0], conection[1])
+                        self.scene.removeItem(conection[2])
+                        self.scene.removeItem(conection[3])
+                        self.scene.removeItem(conection[4])
+                        self.drawConection(conection[0], conection[1])
         return
     
-    def cleanObjects(self):
-        for ikey in self.objects.keys():
-            self.objects[ikey] = []
-        self.scene.clear()
-        self.scene_items = []
-        self.scene_connections = []
-        self.number_of_objects = [0, 0, 0, 0, 0, 0]        
-        for itype in TREE_POSITION.keys():
-            tree_item = self.ui.componentsTreeWidget.topLevelItem(TREE_POSITION[itype])
-            while tree_item.childCount():
-                it = tree_item.child(0)
-                tree_item.removeChild(it)
-                del it
+    def mouse_release(self, event):
+        if not self.check_tab(INDEX_TAB_MODELING):
+            return
+        if self.rectangle_selection_active:
+            self.rectangle_selection_active = False
+            self.scene.removeItem(self.sel_rect)
+
+        # Ver si hay alguna conexion entre dos items
+        if event.button() == QtCore.Qt.RightButton:
+            for item1 in self.scene_items:
+                if item1.pixmap.isSelected():
+                    offset = self.view.mapFromScene( QtCore.QPoint(0,0) )
+                    posMouse = event.pos() - offset
+                    for item2 in self.scene_items:
+                        if item1 == item2:
+                            continue
+                        item2x = item2.pixmap.x()
+                        item2y = item2.pixmap.y()
+                        item2w = item2.pixmap.boundingRect().width()
+                        item2h = item2.pixmap.boundingRect().height()
+                        # Si existe un objeto seleccionado, y el release se hace 
+                        # sobre otro objeto, se dibuja una conexion entre
+                        # ellos, apuntando al segundo (solo si no existe uno)
+                        if self.check_if_item_is_inside(posMouse, item2x, item2y, item2w, item2h)\
+                        and not self.existsRightConnection(item1)\
+                        and not self.existsConnection(item1,item2)\
+                        and self.connectionIsAllowed(item1,item2):
+                            self.drawConection(item1, item2, True)
         return
+
+    def check_if_item_is_inside(self, click, posx, posy, width, height):
+        # Ver si un click fue adentro de un item
+        return ( click.x() > posx and click.x() < posx + width and click.y() > posy and click.y() < posy + width )
+
+    def check_if_line_is_inside(self, click, p1, p2, length):
+        # Ver si un click fue adentro de una linea (uso ffs)
+        dxc = click.x() - p1.x()
+        dyc = click.y() - p1.y()
+        dxl = p2.x() - p1.x()
+        dyl = p2.y() - p1.y()
+        cross = dxc*dyl - dyc*dxl
+        if abs(cross)>400.0:
+            return False
+        alpha1 = QtCore.QPointF.dotProduct(click-p1,p2-p1)/(length**2)
+        alpha2 = QtCore.QPointF.dotProduct(p2-click,p2-p1)/(length**2)
+        return alpha1>0.0 and alpha1<1.0 and alpha2>0.0 and alpha2<1.0
+
+    def mouse_press(self, event):
+        if not self.check_tab(INDEX_TAB_MODELING):
+            return
+        offset = self.view.mapFromScene( QtCore.QPoint(0,0) )
+        mouseClick = event.pos() - offset
+        # Checkear si hay algun item seleccionado
+        if event.button() == QtCore.Qt.LeftButton:
+            
+            if event.modifiers() == QtCore.Qt.ControlModifier:
+                self.view.setDragMode(QtWidgets.QGraphicsView.RubberBandDrag)
+                self.rect_sel_beg = event.pos()
+                self.rect_sel_end = event.pos()
+                self.rectangle_selection_active = True
+
+            for item in self.scene_items:
+                item.pixmap.setSelected(False)
+                item.offset = -1
+            for connection in self.scene_connections: # Check if a connection is selected
+                line = connection[2]
+                pencil = self.getLinePen(QtCore.Qt.black)
+                line.setPen(pencil)
+                line.setSelected(False)
+
+            for item in self.scene_items: # Check if an item is selected
+                if self.check_if_item_is_inside(mouseClick, item.pixmap.x(), item.pixmap.y(),\
+                                      item.pixmap.boundingRect().width(), item.pixmap.boundingRect().height()):
+                    item.pixmap.setSelected(True)
+                    return
+
+            for connection in self.scene_connections: # Check if a connection is selected
+                line = connection[2]
+                p1 = line.line().p1()
+                p2 = line.line().p2()
+                length = line.line().length()
+                if self.check_if_line_is_inside(mouseClick, p1, p2, length):
+                    pencil = self.getLinePen(QtCore.Qt.red)
+                    line.setPen(pencil)
+#                    line.setSelected(True) #no funciona
+                    return
+        return
+
+# Free Actions
+# -----------------------------------------------------------------------------
     
     def open_terminal(self):
         command = "xterm -e 'cd %s && /bin/bash' &"%INSTALL_PATH
@@ -942,24 +947,6 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             self.save_data(filename)
         return
     
-    def exit(self):
-        msg = "Do you want to exit ICESym?"
-        reply = show_message(msg,4,QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
-        if reply == QtWidgets.QMessageBox.Yes:
-            self.close()
-        return
-    
-    def check_valve_type(self, scene_item):
-        self.scene.removeItem(scene_item.pixmap)
-        if scene_item.object['typeVal']=='int':
-            scene_item.pixmap = QGraphicsSvgItem(ICON_PATHS['Valve_int'])
-        else:
-            scene_item.pixmap = QGraphicsSvgItem(ICON_PATHS['Valve_exh'])
-        scene_item.pixmap.setFlags(QtWidgets.QGraphicsItem.ItemIsSelectable)
-        scene_item.pixmap.setPos(scene_item.position)        
-        self.scene.addItem(scene_item.pixmap)
-        return
-
     def save_data(self, filename = None, wizard = None):
         try:
             save_data_aux(self.cw, self.objects, self.case_dir, self.case_name, filename, wizard)
@@ -969,21 +956,11 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             show_message('An error has occurred trying to save the file')
         return
     
-    def save_postpro(self):
-        self.ppw.save_postpro()
-        return
-
-    def load_postpro(self):
-        self.ppw.load_postpro()
-        return
-
-    def enable_postpro(self, tab_index):
-        if tab_index==3:
-            self.ppw.enable_ppw()
-        return
-
-    def plot_defaults(self):
-        self.ppw.plot_defaults()
+    def exit(self):
+        msg = "Do you want to exit ICESym?"
+        reply = show_message(msg,4,QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
+        if reply == QtWidgets.QMessageBox.Yes:
+            self.close()
         return
 
     def show_usage(self):
@@ -991,10 +968,94 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         ud.exec_()
         return
 
+# Tabs check/manipulation auxiliary functions
+# -----------------------------------------------------------------------------
+
+    def check_tab(self, tab_index, show_error_message=True):
+        if self.current_tab_widget_index!=tab_index:
+                if show_error_message:
+                    show_message('This action is enabled only in %s Tab'%TAB_INFORMATION[tab_index]['name'])
+                return False
+        return True
+
+    def change_tab(self, tab_index):
+        if tab_index==INDEX_TAB_POSTPROCESS:
+            self.ppw.enable_ppw()
+        self.current_tab_widget_index = tab_index
+        return
+
+# Modeling Tab Actions
+# -----------------------------------------------------------------------------
+        
+    def addValve(self):
+        if not self.check_tab(INDEX_TAB_MODELING):
+            return
+        self.addSceneItem('Valves')
+        return
+
+    def addAtmosphere(self):
+        if not self.check_tab(INDEX_TAB_MODELING):
+            return
+        self.addSceneItem('Atmospheres')
+        return
+
+    def addTube(self):
+        if not self.check_tab(INDEX_TAB_MODELING):
+            return
+        self.addSceneItem('Tubes')
+        return
+
+    def addTank(self):
+        if not self.check_tab(INDEX_TAB_MODELING):
+            return
+        self.addSceneItem('Tanks')
+        return
+
+    def addJunction(self):
+        if not self.check_tab(INDEX_TAB_MODELING):
+            return
+        self.addSceneItem('Junctions')
+        return
+
+    def addCylinder(self):
+        if not self.check_tab(INDEX_TAB_MODELING):
+            return
+        self.addSceneItem('Cylinders')
+        self.cw.edit_ig_order(len(self.objects['Cylinders'])-1,False)
+        return
+
+# Run Tab Actions
+# -----------------------------------------------------------------------------
+        
     def run_simulation(self):
+        if not self.check_tab(INDEX_TAB_RUN):
+            return
         self.ltw.run_simulation()
         return
 
     def kill_simulation(self):
+        if not self.check_tab(INDEX_TAB_RUN):
+            return
         self.ltw.kill_process()
+        return
+    
+# Post Process Tab Actions
+# -----------------------------------------------------------------------------
+        
+    def save_postpro(self):
+        if not self.check_tab(INDEX_TAB_POSTPROCESS):
+            return
+        self.ppw.save_postpro()
+        return
+
+    def load_postpro(self):
+        if not self.check_tab(INDEX_TAB_POSTPROCESS):
+            return
+        self.ppw.load_postpro()
+        return
+
+    def plot_defaults(self):
+        if not self.check_tab(INDEX_TAB_POSTPROCESS):
+            return
+        self.ppw.plot_defaults()
         return

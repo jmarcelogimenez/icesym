@@ -438,7 +438,7 @@
      <x>0</x>
      <y>0</y>
      <width>1036</width>
-     <height>23</height>
+     <height>20</height>
     </rect>
    </property>
    <property name="font">
@@ -727,9 +727,7 @@
     <string>Run Simulation</string>
    </property>
    <property name="font">
-    <font>
-     <pointsize>9</pointsize>
-    </font>
+    <font/>
    </property>
   </action>
   <action name="actionKill">
@@ -741,9 +739,7 @@
     <string>Kill Simulation</string>
    </property>
    <property name="font">
-    <font>
-     <pointsize>9</pointsize>
-    </font>
+    <font/>
    </property>
   </action>
   <action name="actionCylinder">
@@ -755,9 +751,7 @@
     <string>Cylinder</string>
    </property>
    <property name="font">
-    <font>
-     <pointsize>9</pointsize>
-    </font>
+    <font/>
    </property>
   </action>
   <action name="actionTube">
@@ -769,9 +763,7 @@
     <string>Tube</string>
    </property>
    <property name="font">
-    <font>
-     <pointsize>9</pointsize>
-    </font>
+    <font/>
    </property>
   </action>
   <action name="actionValve">
@@ -783,9 +775,7 @@
     <string>Valve</string>
    </property>
    <property name="font">
-    <font>
-     <pointsize>9</pointsize>
-    </font>
+    <font/>
    </property>
   </action>
   <action name="actionTank">
@@ -797,9 +787,7 @@
     <string>Tank</string>
    </property>
    <property name="font">
-    <font>
-     <pointsize>9</pointsize>
-    </font>
+    <font/>
    </property>
   </action>
   <action name="actionJunction">
@@ -811,9 +799,7 @@
     <string>Junction</string>
    </property>
    <property name="font">
-    <font>
-     <pointsize>9</pointsize>
-    </font>
+    <font/>
    </property>
   </action>
   <action name="actionAtmosphere">
@@ -825,9 +811,7 @@
     <string>Atmosphere</string>
    </property>
    <property name="font">
-    <font>
-     <pointsize>9</pointsize>
-    </font>
+    <font/>
    </property>
   </action>
  </widget>
@@ -972,22 +956,6 @@
     <hint type="sourcelabel">
      <x>-1</x>
      <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>517</x>
-     <y>320</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>tabWidget</sender>
-   <signal>currentChanged(int)</signal>
-   <receiver>ICESymMainWindow</receiver>
-   <slot>enable_postpro()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>517</x>
-     <y>353</y>
     </hint>
     <hint type="destinationlabel">
      <x>517</x>
@@ -1155,6 +1123,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>tabWidget</sender>
+   <signal>currentChanged(int)</signal>
+   <receiver>ICESymMainWindow</receiver>
+   <slot>change_tab()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>517</x>
+     <y>353</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>517</x>
+     <y>320</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>updateCaseSetup()</slot>
@@ -1179,5 +1163,6 @@
   <slot>show_usage()</slot>
   <slot>run_simulation()</slot>
   <slot>kill_simulation()</slot>
+  <slot>change_tab()</slot>
  </slots>
 </ui>

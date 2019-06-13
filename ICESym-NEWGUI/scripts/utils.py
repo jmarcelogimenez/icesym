@@ -109,6 +109,20 @@ PLOT_ARGUMENTS[5]['title']          = 'Free Plot'
 DEFAULT_PLOTS = []
 DEFAULT_PLOTS.append([0,'Cylinders',0,'Density',[-1],'Density_Cyl0',[-1],'Angle Plot',-1,'kg/m^3'])
 
+# tab's information
+INDEX_TAB_CONFIGURATION = 0
+INDEX_TAB_MODELING      = 1
+INDEX_TAB_RUN           = 2
+INDEX_TAB_POSTPROCESS   = 3
+TAB_INFORMATION = {}
+TAB_INFORMATION[INDEX_TAB_CONFIGURATION]    = {}
+TAB_INFORMATION[INDEX_TAB_MODELING]         = {}
+TAB_INFORMATION[INDEX_TAB_RUN]              = {}
+TAB_INFORMATION[INDEX_TAB_POSTPROCESS]      = {}
+TAB_INFORMATION[INDEX_TAB_CONFIGURATION]['name']    = 'Configuration'
+TAB_INFORMATION[INDEX_TAB_MODELING]['name']         = 'Modeling'
+TAB_INFORMATION[INDEX_TAB_RUN]['name']              = 'Run'
+TAB_INFORMATION[INDEX_TAB_POSTPROCESS]['name']      = 'Post Process'
 
 def set_plot(plot, leg_bottom, leg_left, title, units_x = '', units_y = ''):
     """
