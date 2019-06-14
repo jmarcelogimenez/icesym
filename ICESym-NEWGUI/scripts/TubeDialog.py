@@ -496,7 +496,7 @@ class TubeDialog(QtWidgets.QDialog):
         try:
             self.get_table('diameter', self.ui_td.diameter_tableWidget, self.current_dict, 1e-3)
             self.get_table('xnod', self.ui_td.nodalcoord_tableWidget, self.current_dict, 1e-3)
-            self.get_table('twall', self.ui_td.nodalcoord_tableWidget, self.current_dict, 1.0)
+            self.get_table('twall', self.ui_td.temperature_tableWidget, self.current_dict, 1.0)
             self.get_table('state_ini', self.ui_td.state_tableWidget, self.current_dict, 1.0)
             if self.ui_td.has_curvature_checkBox.isChecked():
                 self.get_table('curvature', self.ui_td.curvature_tableWidget, self.current_dict, 1.0)
