@@ -144,7 +144,7 @@ class TubeDialog(QtWidgets.QDialog):
         if not self.ui_td.equispaced_checkBox.isChecked() or self.ui_td.length_lineEdit.text() == '':
                return
         try:
-            longitud = int ( float ( self.ui_td.length_lineEdit.text() ) )
+            longitud = float ( self.ui_td.length_lineEdit.text() )
             nnodes = self.ui_td.nnodes_spinBox.value()
         except:
             show_message("Bad Value in Length or Number of Nodes")
