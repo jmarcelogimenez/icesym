@@ -42,6 +42,7 @@ RUNS_PATH      = os.path.join(os.environ["ICESYM_INST_DIR"],'runs')
 CASES_PATH     = os.path.join(os.environ["ICESYM_INST_DIR"],'cases')
 LOADS_PATH     = os.path.join(os.environ["ICESYM_INST_DIR"],'loads')
 DOCS_PATH      = os.path.join(os.environ["ICESYM_INST_DIR"],'docs')
+TEMPLATES_PATH = os.path.join(os.environ["ICESYM_INST_DIR"],'templates')
 INSTALL_PATH   = os.environ["ICESYM_INST_DIR"]
 
 ICON_PATHS = {}
@@ -378,6 +379,42 @@ def save_data_aux(cw, objects, case_dir, case_name, filename = None, wizard = Fa
         icylinder.object['exhaust_valves']  = cyl_e[icylinder]
     return
 
+def save_current_configuration_aux(parent, dict_to_save):
+    """
+    Save a defined user configuration
+    """
+    name = QtWidgets.QFileDialog.getSaveFileName(parent, 'Save Current Configuration', TEMPLATES_PATH, "json Files (*.json)")
+    if name[0] != '':
+        try:
+            filename = name[0]
+            if '.json' not in filename:
+                filename = filename+'.json'
+            with open(filename, 'w') as openedfile:
+                json.dump(dict_to_save, openedfile)
+            show_message('Configuration successfully saved!',1)
+        except:
+            show_message('There was an error trying to save this configuration.')
+    return
+
+def load_configuration_aux(parent, ctype):
+    """
+    Load a defined user configuration
+    """
+    dialog = QtGui.QFileDialog(parent)
+    dialog.setNameFilter("json Files (*.json)")
+    dialog.setWindowTitle('Load a %s configuration'%ctype)
+    dialog.setDirectory(TEMPLATES_PATH)
+    new_configuration = None
+    if dialog.exec_():
+        try:
+            filename = dialog.selectedFiles()[0]
+            with open(filename, "r") as openedfile:
+                new_configuration = json.load(openedfile)
+            show_message('Configuration successfully loaded!',1)
+            return (True,new_configuration)
+        except:
+            show_message('There was an error trying to load this configuration.')
+    return (False,new_configuration)
 
 """
 Given a list, checks if 2 items are equal in it

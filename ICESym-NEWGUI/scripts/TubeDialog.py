@@ -8,10 +8,13 @@ Created on Wed Jul 25 00:42:08 2018
 
 import os
 import json
+import copy
 import numpy as np
+from time import localtime, strftime
 from PyQt5 import QtGui, QtWidgets, QtCore
 from tubeDialog_ui import Ui_TubeDialog
-from utils import check_if_float, show_message, convert_string, INSTALL_PATH, LOADS_PATH
+from utils import check_if_float, show_message, convert_string, INSTALL_PATH,\
+                  LOADS_PATH, save_current_configuration_aux, load_configuration_aux
 
 JSON_TUBE_KEYS = ['diameter', 'nnod', 'label', 'twall', 'ndof', 'state_ini', \
                    'histo', 'xnod', 'longitud', "tleft", "nleft", "tright", \
@@ -83,13 +86,34 @@ class TubeDialog(QtWidgets.QDialog):
             return
         self.set_parameters()
         return
-    
-    def check_json_keys(self):
+
+    def save_current_configuration(self):
+        dict_to_save = copy.deepcopy(self.current_dict)
+        dict_to_save['nleft']   = -1
+        dict_to_save['nright']  = -1
+        dict_to_save['tleft']   = "<none>"
+        dict_to_save['tright']  = "<none>"
+        time_label = strftime("%Y%m%d", localtime())
+        dict_to_save['label']   = "%s_save_%s"%(dict_to_save['label'],time_label)
+        save_current_configuration_aux(self,dict_to_save)
+        return
+
+    def load_configuration(self):
+        (success,new_configuration) = load_configuration_aux(self,'tube')
+        if not success or not self.check_json_keys(new_configuration):
+            return
+        self.current_dict = new_configuration
+        self.set_parameters()
+        return
+
+    def check_json_keys(self, configuration_to_check = None):
         """
         check if the loaded json include all the obligatory keys
         """
+        if not configuration_to_check:
+            configuration_to_check = self.current_dict
         for ikey in JSON_TUBE_KEYS:
-            if ikey not in self.current_dict.keys():
+            if ikey not in configuration_to_check.keys():
                 show_message("Wrong number of keys in json default tube archive")
                 return False
         return True

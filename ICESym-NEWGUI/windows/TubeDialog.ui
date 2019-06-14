@@ -32,7 +32,7 @@
      <item>
       <widget class="QPushButton" name="save_cofiguration_pushButton">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="font">
         <font>
@@ -48,6 +48,20 @@
        <property name="icon">
         <iconset resource="../images/images.qrc">
          <normaloff>:/fromHelyx/fromHelyx/save16.png</normaloff>:/fromHelyx/fromHelyx/save16.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="load_configuration_pushButton">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="text">
+        <string> Load Configuration</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../images/images.qrc">
+         <normaloff>:/fromHelyx/fromHelyx/downloadZip16.png</normaloff>:/fromHelyx/fromHelyx/downloadZip16.png</iconset>
        </property>
       </widget>
      </item>
@@ -1338,6 +1352,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>save_cofiguration_pushButton</sender>
+   <signal>released()</signal>
+   <receiver>TubeDialog</receiver>
+   <slot>save_current_configuration()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>76</x>
+     <y>702</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>292</x>
+     <y>362</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>load_configuration_pushButton</sender>
+   <signal>released()</signal>
+   <receiver>TubeDialog</receiver>
+   <slot>load_configuration()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>217</x>
+     <y>702</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>292</x>
+     <y>362</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>change_nnodes()</slot>
@@ -1351,5 +1397,7 @@
   <slot>change_numNorm_max()</slot>
   <slot>change_numNorm()</slot>
   <slot>transform_normPoints()</slot>
+  <slot>save_current_configuration()</slot>
+  <slot>load_configuration()</slot>
  </slots>
 </ui>

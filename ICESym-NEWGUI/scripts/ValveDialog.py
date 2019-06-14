@@ -76,9 +76,9 @@ class ValveDialog(QtWidgets.QDialog):
         self.ui_vd.max_valve_lift_lineEdit.setValidator(QtGui.QDoubleValidator(0, 100, 3))
         return
 
-    def save_valve_template(self):
+    def save_current_configuration(self):
         """
-        save a defined user template
+        save a defined user configuration
         """
         filename = ("./templates/valve_default.json")
         with open(filename, 'w') as openedfile:
