@@ -124,7 +124,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             self.set_configuration_run_and_postProcess_widgets()
             show_message('New case successfully created!',1)
         return
-    
+
     def set_configuration_run_and_postProcess_widgets(self):
         if self.cw:
             self.ui.tab_configuration.layout().removeWidget(self.cw)
@@ -143,7 +143,6 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         self.ui.tab_run.layout().addWidget(self.ltw)
         self.ltw.setAutoFillBackground(True)
         return
-        
 
     def addTreeChild(self, name, number_in_tree):
         tree_subitem = QtWidgets.QTreeWidgetItem()
@@ -156,7 +155,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         tree_item.addChild(tree_subitem)
         self.number_of_objects[number_in_tree] += 1
         return
-    
+
     def removeTreeChild(self, itype, name):
         sub_item = self.ui.componentsTreeWidget.findItems(name,QtCore.Qt.MatchExactly|QtCore.Qt.MatchRecursive)
         tree_item = self.ui.componentsTreeWidget.topLevelItem(TREE_POSITION[itype])
@@ -171,13 +170,21 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             tree_item_n.setText(0, tree_item_n.text(0)[0:-1]+str(tree_index))
         return
 
-    def addSceneItem(self, itype, position = QtCore.QPoint(0,0), iobject = None):
-        if not iobject:
-            iobject = copy.deepcopy(self.default_dict[itype])
+    def addSceneItem(self, itype, position = QtCore.QPoint(0,0), iobject = None, new = False, copying = False):
+        if new or copying:
+            iobject = copy.deepcopy(self.default_dict[itype] if new else iobject)
             if 'label' in iobject.keys():
-                iobject['label'] = '%s_%s'%(iobject['label'],len(self.objects[itype]))
-            if itype in self.configure_default.keys():
-                self.configure_default[itype](iobject,self.current_configuration['nstroke'])
+                if new:
+                    new_label = '%s_%s'%(iobject['label'],len(self.objects[itype]))
+                    if itype in self.configure_default.keys():
+                        self.configure_default[itype](iobject,self.current_configuration['nstroke'])
+                elif copying:
+                    new_label = '%s_copy_0'%iobject['label']
+                    c = 1
+                    while not self.check_unique_label(new_label):
+                        new_label = new_label = '%s_copy_%s'%(iobject['label'],c)
+                        c = c+1
+                iobject['label'] = new_label
         item = SceneItem(itype, position, iobject)
         self.scene_items.append(item)
         self.scene.addItem(item.pixmap)
@@ -642,7 +649,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
 
     def drawObjects(self, itype, dict_data):
         for idata in dict_data:
-            self.addSceneItem( itype, QtCore.QPoint(idata['position'][0], idata['position'][1]), idata)
+            self.addSceneItem(itype, QtCore.QPoint(idata['position'][0], idata['position'][1]), idata, False, False)
         return
     
     def cleanObjects(self):
@@ -659,7 +666,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
                 tree_item.removeChild(it)
                 del it
         return
-    
+
     def check_valve_type(self, scene_item):
         self.scene.removeItem(scene_item.pixmap)
         if scene_item.object['typeVal']=='int':
@@ -683,9 +690,18 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
                 min_centroid = icentroid
         return min_centroid+QtCore.QPointF(-32.0,-32.0)
     
+    def check_unique_label(self, object_label, show_message_b = False):
+        for item in self.scene_items:
+            if 'label' in item.object.keys():
+                if item.object['label'] == object_label:
+                    if show_message_b:
+                        show_message('There is already an object with this name. Please, select another one.')
+                    return False
+        return True
+
 # Keyboard manipulation and auxiliary functions
 # -----------------------------------------------------------------------------
-    
+
     def key_press_event(self, event):
         if not self.check_tab(INDEX_TAB_MODELING):
             return
@@ -736,7 +752,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
                     if reply == QtWidgets.QMessageBox.Yes:
                         object_position = self.find_optimum_cell_position(self.current_mouse_position)
                         self.addSceneItem(self.item_to_copy.type, object_position,\
-                                          self.item_to_copy.object)
+                                          self.item_to_copy.object, False, True)
                         self.item_to_copy = None
         return
 
@@ -817,7 +833,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
 
         self.current_mouse_position = self.view.mapToScene(event.pos())
         return
-    
+
     def mouse_release(self, event):
         if not self.check_tab(INDEX_TAB_MODELING):
             return
@@ -1024,37 +1040,37 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
     def addValve(self):
         if not self.check_tab(INDEX_TAB_MODELING):
             return
-        self.addSceneItem('Valves')
+        self.addSceneItem('Valves',QtCore.QPoint(0,0),None,True,False)
         return
 
     def addAtmosphere(self):
         if not self.check_tab(INDEX_TAB_MODELING):
             return
-        self.addSceneItem('Atmospheres')
+        self.addSceneItem('Atmospheres',QtCore.QPoint(0,0),None,True,False)
         return
 
     def addTube(self):
         if not self.check_tab(INDEX_TAB_MODELING):
             return
-        self.addSceneItem('Tubes')
+        self.addSceneItem('Tubes',QtCore.QPoint(0,0),None,True,False)
         return
 
     def addTank(self):
         if not self.check_tab(INDEX_TAB_MODELING):
             return
-        self.addSceneItem('Tanks')
+        self.addSceneItem('Tanks',QtCore.QPoint(0,0),None,True,False)
         return
 
     def addJunction(self):
         if not self.check_tab(INDEX_TAB_MODELING):
             return
-        self.addSceneItem('Junctions')
+        self.addSceneItem('Junctions',QtCore.QPoint(0,0),None,True,False)
         return
 
     def addCylinder(self):
         if not self.check_tab(INDEX_TAB_MODELING):
             return
-        self.addSceneItem('Cylinders')
+        self.addSceneItem('Cylinders',QtCore.QPoint(0,0),None,True,False)
         self.cw.edit_ig_order(len(self.objects['Cylinders'])-1,False)
         return
 
