@@ -1,5 +1,5 @@
 # ICESym
-Authors: Juan Marcelo Gimenez, Ezequiel Jose Lopez, Santiago Chialvo & Norberto Marcelo Nigro
+Authors: Juan Marcelo Gimenez, Ezequiel Jose Lopez, César Pairetti, Santiago Chialvo & Norberto Marcelo Nigro
 
 This project consists of two main parts:
 
