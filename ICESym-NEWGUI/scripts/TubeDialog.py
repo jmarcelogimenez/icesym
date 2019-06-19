@@ -479,10 +479,24 @@ class TubeDialog(QtWidgets.QDialog):
         self.ui_td.numNorm.setEnabled(state)
         self.ui_td.posNorm.setEnabled(state)
         self.ui_td.histo.setEnabled(state)
+        self.ui_td.equispaced_norm_checkBox.setEnabled(state)
         if index==0:
             self.current_dict['histo'] = []
             for inode in range(self.current_dict['nnod']):
                 self.current_dict['histo'].append(inode)
+        return
+    
+    def set_equispaced_normalized_points(self, check):
+        if not check:
+            return
+        self.ui_td.posNorm.clearContents()
+        nrows = self.ui_td.posNorm.rowCount()
+        print nrows
+        vals = np.linspace(0.0, 1.0, nrows)
+        for irow in range(0, nrows):
+            it = QtWidgets.QTableWidgetItem(str(vals[irow]))
+            it.setFlags(QtCore.Qt.ItemIsEnabled|QtCore.Qt.ItemIsEditable) 
+            self.ui_td.posNorm.setItem(irow, 0, it)
         return
 
     def accept(self):
