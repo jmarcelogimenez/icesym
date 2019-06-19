@@ -190,12 +190,12 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
                 archives.sort() # Para que me aparezcan en orden numerico
                 for index,iarchive in enumerate(archives):
                     iarchive = iarchive.replace('.txt','')
-                    new_element = component[0:-1]+" "+iarchive[-1]
+                    new_element = self.current_objects[component][int(iarchive[-1])].object['label']
                     if new_element not in added_elements:
                         self.ui.element.addItem(new_element)
                         added_elements.append(new_element)
 
-        self.choose_element(component[0:-1]+" "+str(0))
+        self.choose_element(self.ui.element.currentText())
         return
     
     def choose_element(self, element):
@@ -203,7 +203,7 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
             return
         self.clear_comboboxes([1,2,3])
         index_element = int(element[-1])
-        component = element[0:-2]+'s'
+        component = self.ui.component.currentText()
         if index_element>=len(self.current_objects[component]):
             show_message("Error trying to find %s"%element)
             self.clear_comboboxes([1,2,3])
@@ -224,7 +224,7 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
             return
         self.clear_comboboxes([2,3])
         index_element = int(element[-1])
-        component = element[0:-2]+'s'
+        component = self.ui.component.currentText()
         selected_rpms = self.get_list_items(self.ui.rpms)
         rpm_folder = os.path.join(self.current_run_dir,"RPM_%s"%selected_rpms[0])
         archive_extra = [f for f in os.listdir(rpm_folder) if (COMPONENTS_DICT[component] \
