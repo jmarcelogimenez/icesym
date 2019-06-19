@@ -34,9 +34,10 @@ class PlotTypeTwoWidget(QtWidgets.QWidget):
         QtWidgets.QWidget.__init__(self)
         self.ui = Ui_PlotTypeTwoWidget()
         self.ui.setupUi(self)
-        self.current_run_dir    = current_run_dir
-        self.plot_function      = plot_function
-        self.plot_type          = plot_type
+        self.current_run_dir        = current_run_dir
+        self.plot_function          = plot_function
+        self.plot_type              = plot_type
+        self.current_index_element  = -1
         self.change_attributes(run_attributes,current_objects)
         # Funciones para obtener y setear los archivos abiertos, existe una 
         # unica instancia compartida por todos los PlotTypeOneWidget y la tiene
@@ -107,7 +108,7 @@ class PlotTypeTwoWidget(QtWidgets.QWidget):
         plot_attributes['variable'] = str(self.ui.variable.currentText())
         plot_attributes['title'] = str(self.ui.title.text())
         plot_attributes['figure_number'] = self.ui.figure_number.currentIndex()-1
-        plot_attributes['unit'] = str(self.ui.units.currentText())
+        plot_attributes['units'] = str(self.ui.units.currentText())
         return plot_attributes
     
     def change_variable(self, variable):
@@ -123,15 +124,14 @@ class PlotTypeTwoWidget(QtWidgets.QWidget):
         self.ui.plot_pushButton.setEnabled(False)
         QtWidgets.QApplication.processEvents()
         try:
-            
             plot_attributes = self.get_plot_attributes()
             rpm_folder = os.path.join(self.current_run_dir,"RPM_%s"%plot_attributes['rpm'])
             archive = os.path.join(rpm_folder,"tube_"+plot_attributes['index_element']+".txt")
-            (data,new_time) = self.read_normal_txt(archive,plot_attributes['time'],plot_attributes['variable_index'],plot_attributes['unit'])
+            (data,new_time) = self.read_normal_txt(archive,plot_attributes['time'],plot_attributes['variable_index'],plot_attributes['units'])
             datas.append(data)
             legends.append(plot_attributes['legend'] + '_time_' + str(new_time) + '_tube_' + plot_attributes['index_element'])
             n_plots = self.plot_function(datas, plot_attributes['title'], legends, 'Nodes', plot_attributes['variable'], '', \
-                                         plot_attributes['unit'], plot_attributes['figure_number'], 4)
+                                         plot_attributes['units'], plot_attributes['figure_number'], 4)
             if plot_attributes['figure_number']==-1:
                 self.ui.figure_number.addItem('Figure '+str(n_plots-1))
         except:

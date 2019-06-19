@@ -102,8 +102,12 @@ class TubeDialog(QtWidgets.QDialog):
         (success,new_configuration) = load_configuration_aux(self,'tube')
         if not success or not self.check_json_keys(new_configuration):
             return
-        self.current_dict = new_configuration
-        self.set_parameters()
+        try:
+            self.current_dict = new_configuration
+            self.set_parameters()
+            show_message('Configuration successfully loaded!',1)
+        except:
+            show_message('Error trying to set the loaded configuration')
         return
 
     def check_json_keys(self, configuration_to_check = None):

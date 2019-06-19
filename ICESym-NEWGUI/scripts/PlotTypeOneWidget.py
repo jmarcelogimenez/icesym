@@ -347,7 +347,7 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
         plot_attributes['variable_index']   = int(self.ui.variable.currentIndex())
         plot_attributes['title']            = str(self.ui.title.text())
         plot_attributes['figure_number']    = self.ui.figure_number.currentIndex()-1
-        plot_attributes['unit']             = str(self.ui.units.currentText())
+        plot_attributes['units']             = str(self.ui.units.currentText())
         return plot_attributes
 
     def plot_angle_or_time(self, plot_attributes):
@@ -360,9 +360,9 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
                 (archive, extras) = self.archive_to_open(plot_attributes['variable'],rpm_folder,plot_attributes['component'])
                 try:
                     if extras:
-                        data = self.read_extras_txt(archive,icycle,plot_attributes['variable'],plot_attributes['component'],plot_attributes['unit'])
+                        data = self.read_extras_txt(archive,icycle,plot_attributes['variable'],plot_attributes['component'],plot_attributes['units'])
                     else:
-                        data = self.read_normal_txt(archive,plot_attributes['node'],icycle,plot_attributes['variable_index'],plot_attributes['unit'])
+                        data = self.read_normal_txt(archive,plot_attributes['node'],icycle,plot_attributes['variable_index'],plot_attributes['units'])
                     datas.append(data)
                     legends.append(plot_attributes['label']+"_RPM_"+str(irpm)+"_Cycle_"+str(icycle))
                 except:
@@ -381,9 +381,9 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
                 (archive, extras) = self.archive_to_open(plot_attributes['variable'],rpm_folder,plot_attributes['component'])
                 try:
                     if extras:
-                        data = self.read_extras_txt(archive,icycle,plot_attributes['variable'],plot_attributes['component'],plot_attributes['unit'])
+                        data = self.read_extras_txt(archive,icycle,plot_attributes['variable'],plot_attributes['component'],plot_attributes['units'])
                     else:
-                        data = self.read_normal_txt(archive,plot_attributes['node'],icycle,plot_attributes['variable_index'],plot_attributes['unit'])
+                        data = self.read_normal_txt(archive,plot_attributes['node'],icycle,plot_attributes['variable_index'],plot_attributes['units'])
                     res = self.trapz_data(data)
                     data = [icycle,res]
                     data_irpm.append(data)
@@ -400,7 +400,7 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
         if plot_attributes['component']=='Globals':
             for icycle in plot_attributes['selected_cycles']:
                 [data,legend] = self.ga.return_calculated_variable(plot_attributes['variable'],int(icycle),\
-                                                                    plot_attributes['label'],plot_attributes['unit'])
+                                                                    plot_attributes['label'],plot_attributes['units'])
                 datas.append(data)
                 legends.append(legend)
             # flat the lists
@@ -415,9 +415,9 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
                     (archive, extras) = self.archive_to_open(plot_attributes['variable'],rpm_folder,plot_attributes['component'])
                     try:
                         if extras:
-                            data = self.read_extras_txt(archive,icycle,plot_attributes['variable'],plot_attributes['component'],plot_attributes['unit'])
+                            data = self.read_extras_txt(archive,icycle,plot_attributes['variable'],plot_attributes['component'],plot_attributes['units'])
                         else:
-                            data = self.read_normal_txt(archive,plot_attributes['node'],icycle,plot_attributes['variable_index'],plot_attributes['unit'])
+                            data = self.read_normal_txt(archive,plot_attributes['node'],icycle,plot_attributes['variable_index'],plot_attributes['units'])
                         res = self.trapz_data(data)
                         data = [irpm,res]
                         data_icycle.append(data)
@@ -443,7 +443,7 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
                 (datas,legends) = self.plot_cycle(plot_attributes)
     
             n_plots = self.plot_function(datas, plot_attributes['title'], legends, self.xlabel, plot_attributes['variable'], \
-                                         self.xunits, plot_attributes['unit'], plot_attributes['figure_number'], self.plot_type)
+                                         self.xunits, plot_attributes['units'], plot_attributes['figure_number'], self.plot_type)
             if plot_attributes['figure_number']==-1:
                 self.ui.figure_number.addItem('Figure '+str(n_plots-1))
         except:

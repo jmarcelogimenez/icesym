@@ -400,14 +400,15 @@ class postProcessWidget(QtWidgets.QWidget):
             except:
                 show_message('Error opening the archive %s'%filename)
         return
-    """
-    When a simulation finish, this routine reads a series of default lists with
-    a particular configuration (in indexs):
-    plot_list = [type_of_plot,component,node,variable,[cycles],legend,[rpms],title,figure,units]
-    Then it plot it (if possible)
-    In rpms or cycle the negative values implies the last calculated values (-1 last, -2 last last, etc)
-    """
+
     def plot_defaults(self):
+        """
+        When a simulation finish, this routine reads a series of default lists with
+        a particular configuration (in indexs):
+        plot_list = [type_of_plot,component,node,[variable],[cycles],[rpms],units,title,figure,legend]
+        Then it plot it (if possible)
+        In rpms or cycle the negative values implies the last calculated values (-1 last, -2 last last, etc)
+        """
         if not self.enable_ppw():
             show_message('Post Process not enabled.')
             return
@@ -417,23 +418,41 @@ class postProcessWidget(QtWidgets.QWidget):
             plot_attributes = {}
             plot_attributes['component']        = iplot[1]
             plot_attributes['node']             = iplot[2]
-            plot_attributes['variable']         = iplot[3]
+
+            elements_to_plot = []
+            if iplot[3]<0: # Negative case, all the elements
+                for ielement in range(plotWidget.ui.element.count()):
+                    elements_to_plot.append(ielement)
+            else: # Positive case, just one element
+                elements_to_plot.append(iplot[3])
+            
+            plot_attributes['variable']         = iplot[4]
+            plot_attributes['units']            = iplot[5]
             plot_attributes['selected_cycles']  = []
-            for icycle in iplot[4]:
+            for icycle in iplot[6]:
                 plot_attributes['selected_cycles'].append(icycle if icycle>0 else self.run_attributes['ncycles'])
-            plot_attributes['label']            = iplot[5]
             plot_attributes['selected_rpms']    = []
-            for irpm in iplot[6]:
+            for irpm in iplot[7]:
                 plot_attributes['selected_rpms'].append(irpm if irpm>0 else self.run_attributes['rpms'][irpm])
-            plot_attributes['variable_index']   = plotWidget.ui.variable.findText(iplot[3])
-            plot_attributes['title']            = iplot[7]
-            plot_attributes['figure_number']    = iplot[8]
-            plot_attributes['unit']             = iplot[9]
-            try:
-                plotWidget.prepare_plot(plot_attributes)
-            except:
-                show_message('Cannot plot the default configuration number %s'%index)
+            if plot_attributes['selected_rpms']==[]:
+                plot_attributes['selected_rpms'] = self.run_attributes['rpms']
+            plot_attributes['label']            = iplot[8]
+            if type(plot_attributes['variable'])!=list:
+                plot_attributes['variable_index'] = plotWidget.ui.variable.findText(plot_attributes['variable'])
+            else:
+                plot_attributes['variable_index'] = []
+                plot_attributes['variable_index'].append(plotWidget.ui.x_variable.findText(plot_attributes['variable'][0]))
+                plot_attributes['variable_index'].append(plotWidget.ui.y_variable.findText(plot_attributes['variable'][1]))
+            plot_attributes['title']            = iplot[9]
+            plot_attributes['figure_number']    = -1 if iplot[10]<0 else len(self.plots[iplot[0]])-1
+            for ielement in elements_to_plot:
+                try:
+                    plotWidget.current_index_element    = ielement
+                    plotWidget.prepare_plot(plot_attributes)
+                    plot_attributes['figure_number']    = len(self.plots[iplot[0]])-1
+                    plot_attributes['label']            = '%s_%s'%(iplot[8],ielement)
+                except:
+                    show_message('Cannot plot the default configuration number %s'%index)
 
         show_message('Default Post Process sucessfully created!',1)
         return
-        

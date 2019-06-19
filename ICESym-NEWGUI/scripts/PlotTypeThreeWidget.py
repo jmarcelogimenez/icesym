@@ -346,11 +346,11 @@ class PlotTypeThreeWidget(QtWidgets.QWidget):
                 legends.append(plot_attributes['label']+"_RPM_"+str(irpm)+"_Cycle_"+str(icycle))
         return (datas,legends)
 
-    def prepare_plot(self):
+    def prepare_plot(self, _plot_attributes=None):
         self.ui.plot_pushButton.setEnabled(False)
         QtWidgets.QApplication.processEvents()
         try:
-            plot_attributes = self.get_plot_attributes()
+            plot_attributes = _plot_attributes if _plot_attributes else self.get_plot_attributes()
             datas = []
             legends = []
             (datas,legends) = self.plot_free(plot_attributes)
