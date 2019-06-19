@@ -491,7 +491,6 @@ class TubeDialog(QtWidgets.QDialog):
             return
         self.ui_td.posNorm.clearContents()
         nrows = self.ui_td.posNorm.rowCount()
-        print nrows
         vals = np.linspace(0.0, 1.0, nrows)
         for irow in range(0, nrows):
             it = QtWidgets.QTableWidgetItem(str(vals[irow]))
