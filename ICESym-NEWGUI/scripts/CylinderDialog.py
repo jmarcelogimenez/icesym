@@ -600,6 +600,10 @@ class CylinderDialog(QtWidgets.QDialog):
         self.close()
         return
     
+    def reject(self):
+        self.close()
+        return
+    
     def closeEvent(self, event):
         if not self.sender() or self.sender().objectName()=='cancel_pushButton':
             self.current_dict['state_ini'].insert(0,self.current_dict['state_ini_0'][0])
