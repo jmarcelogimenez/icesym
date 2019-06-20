@@ -167,7 +167,8 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         # Renumera todos los que quedaron por detras
         for tree_index in range(index_of_sub_item,tree_item.childCount()):
             tree_item_n = tree_item.child(tree_index)
-            tree_item_n.setText(0, tree_item_n.text(0)[0:-1]+str(tree_index))
+            object_type = tree_item_n.text(0).split()[0]
+            tree_item_n.setText(0, "%s %s"%(object_type,tree_index))
         return
 
     def addSceneItem(self, itype, position = QtCore.QPoint(0,0), iobject = None, new = False, copying = False):
