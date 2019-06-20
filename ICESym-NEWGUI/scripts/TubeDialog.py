@@ -67,7 +67,7 @@ class TubeDialog(QtWidgets.QDialog):
     
     def load_default(self):
         """
-        load the default atmosphere template
+        load the default tube template
         """
         filename = os.path.join(INSTALL_PATH,"templates","tube_default.json")
         if not os.path.isfile(filename):

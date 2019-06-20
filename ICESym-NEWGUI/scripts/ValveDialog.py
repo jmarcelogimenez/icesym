@@ -5,11 +5,14 @@ Created on Wed May  9 11:03:06 2018
 
 import json
 import os
+import copy
 import numpy as np
 import pyqtgraph as pg
+from time import localtime, strftime
 from PyQt5 import QtGui, QtWidgets, QtCore
 from valveDialog_ui import Ui_ValveDialog
-from utils import set_plot, check_if_float, show_message, convert_string, INSTALL_PATH, LOADS_PATH
+from utils import set_plot, check_if_float, show_message, convert_string, load_configuration_aux,\
+                  save_current_configuration_aux, INSTALL_PATH, LOADS_PATH
 
 JSON_VALVE_KEYS = ['Lvmax', 'angle_VC', 'label', 'Nval', 'Dv', \
                    'type_dat', 'typeVal', 'angle_V0', 'valve_model', 'Cd', 'Lv', \
@@ -39,7 +42,7 @@ class ValveDialog(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self)
         self.ui_vd = Ui_ValveDialog()
         self.ui_vd.setupUi(self)
-        self.setFixedSize(403, 460)
+        self.setBaseSize(400, 460)
         self.set_restrictions()
         self.current_dict = None # default valve dictionary
         self.setWindowTitle( self.windowTitle() + " " + str(item_index) )
@@ -52,7 +55,42 @@ class ValveDialog(QtWidgets.QDialog):
         self.parent = parent
         self.current_scene_item = current_valve_scene_item
         return
+
+    def save_current_configuration(self):
+        dict_to_save = copy.deepcopy(self.current_dict)
+        dict_to_save['tube'] = -1
+        dict_to_save['ncyl'] = -1
+        time_label = strftime("%Y%m%d", localtime())
+        dict_to_save['label']   = "%s_save_%s"%(dict_to_save['label'],time_label)
+        save_current_configuration_aux(self,dict_to_save)
+        return
+
+    def load_configuration(self):
+        (success,new_configuration) = load_configuration_aux(self,'valve')
+        if not success or not self.check_json_keys(new_configuration):
+            return
+        try:
+            self.current_dict = new_configuration
+            self.current_scene_item.object = new_configuration
+            self.set_parameters()
+            self.parent.check_valve_type(self.current_scene_item)
+            show_message('Configuration successfully loaded!',1)
+        except:
+            show_message('Error trying to set the loaded configuration')
+        return
     
+    def check_json_keys(self, configuration_to_check = None):
+        """
+        check if the loaded json include all the obligatory keys
+        """
+        if not configuration_to_check:
+            configuration_to_check = self.current_dict
+        for ikey in JSON_VALVE_KEYS:
+            if ikey not in configuration_to_check.keys():
+                show_message("Wrong number of keys in json default valve archive")
+                return False
+        return True
+
     def check_keys(self):
         """
         check that the essential keys of the object exists, otherwise put a 
@@ -74,15 +112,6 @@ class ValveDialog(QtWidgets.QDialog):
         self.ui_vd.closing_angle_lineEdit.setValidator(QtGui.QDoubleValidator(0, 360, 3))
         self.ui_vd.diameter_lineEdit.setValidator(QtGui.QDoubleValidator(0, 100, 3))
         self.ui_vd.max_valve_lift_lineEdit.setValidator(QtGui.QDoubleValidator(0, 100, 3))
-        return
-
-    def save_current_configuration(self):
-        """
-        save a defined user configuration
-        """
-        filename = ("./templates/valve_default.json")
-        with open(filename, 'w') as openedfile:
-            json.dump(self.current_dict, openedfile)
         return
 
     def load_default(self):
@@ -246,33 +275,6 @@ class ValveDialog(QtWidgets.QDialog):
         else:
             self.ui_vd.angle_lift_tableWidget.setEnabled(True)
             self.ui_vd.max_valve_lift_lineEdit.setEnabled(False)
-        return
-
-    def save_current_configuration(self):
-        """
-        save in a json file the current valve configuration
-        """
-        file_dialog = QtGui.QFileDialog()
-        file_dialog.setWindowTitle('Save valve template')
-        file_dialog.setDirectory(INSTALL_PATH)
-        file_dialog.setNameFilter('json files (*.json)')
-        file_dialog.setDefaultSuffix('json')
-        filename = ''
-        if file_dialog.exec_() == QtGui.QFileDialog.Accepted:
-            filename = file_dialog.selectedFiles()[0]
-        else:
-            show_message("Operation cancelled", 1)
-            return
-
-        if filename == '' or not '.json' in filename:
-            show_message("Wrong file name. Has a .json extension?")
-            return
-        try:
-            with open(filename, 'w') as openedfile:
-                json.dump(self.current_dict, openedfile)
-            show_message("The file has been successfully saved", 1)
-        except:
-            show_message("An error as ocurred trying to save the .json file")
         return
 
     def get_table(self, ikey, table, current_dict, factor):

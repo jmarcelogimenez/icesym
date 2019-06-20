@@ -6,14 +6,16 @@ Created on Sat Jul 28 20:51:13 2018
 @author: etekken
 """
 
-import math, os, json
+import math, os, json, copy
+from time import localtime, strftime
 import numpy as np
 import pyqtgraph as pg
 from PyQt5 import QtWidgets, QtCore, QtGui
 from cylinderDialog_ui import Ui_CylinderDialog
 from utils import M2MM, SQM2SQCM, RAD2DEG, MM2M, CCM2CM, SQCM2SQM, DEG2RAD, CM2CCM,\
                   DEFAULT_DVP, INSTALL_PATH, convert_string, set_plot, check_if_float,\
-                  show_message, LOADS_PATH
+                  show_message, LOADS_PATH, save_current_configuration_aux,\
+                  load_configuration_aux
 
 JSON_CYLINDER_KEYS = ["crank_radius", "type_ig", "label", "full_implicit", "ndof", "model_ht",\
                       "factor_ht", "piston_area", "ownState", "mass_C", "nnod", "scavenge_type",\
@@ -148,13 +150,39 @@ class CylinderDialog(QtWidgets.QDialog):
             return
         self.set_parameters()
         return
+    
+    def save_current_configuration(self):
+        dict_to_save = copy.deepcopy(self.current_dict)
+        dict_to_save['nnod'] = 1
+        dict_to_save['state_ini'] = [dict_to_save['state_ini'][0]]
+        time_label = strftime("%Y%m%d", localtime())
+        dict_to_save['label']   = "%s_save_%s"%(dict_to_save['label'],time_label)
+        save_current_configuration_aux(self,dict_to_save)
+        return
 
-    def check_json_keys(self):
+    def load_configuration(self):
+        (success,new_configuration) = load_configuration_aux(self,'cylinder')
+        if not success or not self.check_json_keys(new_configuration):
+            return
+        try:
+            self.current_dict = new_configuration
+            self.set_parameters()
+            show_message('Configuration successfully loaded!',1)
+        except:
+            show_message('Error trying to set the loaded configuration')
+        return
+
+    def check_json_keys(self, configuration_to_check = None):
         """
         check if the loaded json include all the obligatory keys
         """
+        if not configuration_to_check:
+            configuration_to_check = self.current_dict
         for ikey in JSON_CYLINDER_KEYS:
-            if ikey not in self.current_dict.keys() in (self.current_dict['fuel'].keys() or self.current_dict['combustion'].keys() or self.current_dict['injection'].keys()):
+            if ikey not in configuration_to_check.keys() in \
+            (configuration_to_check['fuel'].keys() or \
+             configuration_to_check['combustion'].keys() or \
+             configuration_to_check['injection'].keys()):
                 show_message("Wrong number of keys in json default cylinder archive")
                 return False
         return True

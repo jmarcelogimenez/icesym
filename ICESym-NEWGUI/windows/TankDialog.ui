@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>452</width>
+    <width>501</width>
     <height>578</height>
    </rect>
   </property>
@@ -30,9 +30,9 @@
    <item row="1" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QPushButton" name="save_config_pushButton">
+      <widget class="QPushButton" name="save_configuration_pushButton">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="font">
         <font>
@@ -48,6 +48,20 @@
        </property>
        <property name="autoDefault">
         <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="load_configuration_pushButton">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="text">
+        <string> Load Configuration</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../images/images.qrc">
+         <normaloff>:/fromHelyx/fromHelyx/downloadZip16.png</normaloff>:/fromHelyx/fromHelyx/downloadZip16.png</iconset>
        </property>
       </widget>
      </item>
@@ -421,16 +435,26 @@
        <item row="3" column="0">
         <widget class="QTableWidget" name="state_ini">
          <attribute name="horizontalHeaderDefaultSectionSize">
-          <number>131</number>
+          <number>148</number>
          </attribute>
          <column>
           <property name="text">
            <string>Density</string>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
          </column>
          <column>
           <property name="text">
            <string>Velocity</string>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+           </font>
           </property>
          </column>
          <column>
@@ -471,7 +495,7 @@
           <bool>false</bool>
          </attribute>
          <attribute name="horizontalHeaderDefaultSectionSize">
-          <number>131</number>
+          <number>148</number>
          </attribute>
          <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
           <bool>false</bool>
@@ -646,8 +670,8 @@
    <slot>load_table()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>390</x>
-     <y>512</y>
+     <x>479</x>
+     <y>521</y>
     </hint>
     <hint type="destinationlabel">
      <x>225</x>
@@ -662,8 +686,8 @@
    <slot>load_table()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>390</x>
-     <y>512</y>
+     <x>479</x>
+     <y>521</y>
     </hint>
     <hint type="destinationlabel">
      <x>225</x>
@@ -694,8 +718,8 @@
    <slot>cancel()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>401</x>
-     <y>555</y>
+     <x>490</x>
+     <y>567</y>
     </hint>
     <hint type="destinationlabel">
      <x>225</x>
@@ -719,10 +743,44 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>load_configuration_pushButton</sender>
+   <signal>released()</signal>
+   <receiver>TankDialog</receiver>
+   <slot>load_configuration()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>231</x>
+     <y>554</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>250</x>
+     <y>288</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>save_configuration_pushButton</sender>
+   <signal>released()</signal>
+   <receiver>TankDialog</receiver>
+   <slot>save_current_configuration()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>81</x>
+     <y>554</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>250</x>
+     <y>288</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>load_table()</slot>
   <slot>cancel()</slot>
   <slot>modify_nnodes()</slot>
+  <slot>save_current_configuration()</slot>
+  <slot>load_configuration()</slot>
  </slots>
 </ui>

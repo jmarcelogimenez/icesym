@@ -1575,15 +1575,30 @@
           <property name="text">
            <string>Density</string>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
          </column>
          <column>
           <property name="text">
            <string>Velocity</string>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
          </column>
          <column>
           <property name="text">
            <string>Pressure</string>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+           </font>
           </property>
          </column>
         </widget>
@@ -1690,7 +1705,7 @@
      <item>
       <widget class="QPushButton" name="save_configuration_pushButton">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="font">
         <font>
@@ -1706,6 +1721,20 @@
        <property name="icon">
         <iconset resource="../images/images.qrc">
          <normaloff>:/fromHelyx/fromHelyx/save16.png</normaloff>:/fromHelyx/fromHelyx/save16.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="load_configuration_pushButton">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="text">
+        <string> Load Configuration</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../images/images.qrc">
+         <normaloff>:/fromHelyx/fromHelyx/downloadZip16.png</normaloff>:/fromHelyx/fromHelyx/downloadZip16.png</iconset>
        </property>
       </widget>
      </item>
@@ -1780,8 +1809,8 @@
    <slot>change_temp_type()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>355</x>
-     <y>359</y>
+     <x>352</x>
+     <y>381</y>
     </hint>
     <hint type="destinationlabel">
      <x>328</x>
@@ -1812,8 +1841,8 @@
    <slot>combustion_model_selection()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>419</x>
-     <y>194</y>
+     <x>566</x>
+     <y>226</y>
     </hint>
     <hint type="destinationlabel">
      <x>328</x>
@@ -1860,8 +1889,8 @@
    <slot>change_ignition_delay_model()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>408</x>
-     <y>223</y>
+     <x>590</x>
+     <y>251</y>
     </hint>
     <hint type="destinationlabel">
      <x>328</x>
@@ -1997,6 +2026,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>save_configuration_pushButton</sender>
+   <signal>released()</signal>
+   <receiver>CylinderDialog</receiver>
+   <slot>save_current_configuration()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>81</x>
+     <y>849</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>345</x>
+     <y>436</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>load_configuration_pushButton</sender>
+   <signal>released()</signal>
+   <receiver>CylinderDialog</receiver>
+   <slot>load_configuration()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>231</x>
+     <y>849</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>345</x>
+     <y>436</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>change_temp_type()</slot>
@@ -2009,5 +2070,7 @@
   <slot>modify_nnodes()</slot>
   <slot>plot_table()</slot>
   <slot>cancel()</slot>
+  <slot>save_current_configuration()</slot>
+  <slot>load_configuration()</slot>
  </slots>
 </ui>

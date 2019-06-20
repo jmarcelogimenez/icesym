@@ -6,11 +6,13 @@ Created on Wed Nov 28 16:35:51 2018
 @author: etekken
 """
 
-import os, json
+import os, json, copy
+from time import localtime, strftime
 from PyQt5 import QtWidgets, QtCore, QtGui
 from tankDialog_ui import Ui_TankDialog
 from utils import M2MM, SQM2SQCM, CM2CCM, CCM2CM, MM2M, SQCM2SQM, check_if_float,\
-                    show_message, convert_string, INSTALL_PATH, LOADS_PATH
+                    show_message, convert_string, INSTALL_PATH, LOADS_PATH,\
+                    load_configuration_aux,save_current_configuration_aux
 import numpy as np
 
 JSON_TANK_KEYS = ['label','nnod','ndof','Volume','mass','h_film','Area_wall','T_wall','Cd_ports','state_ini',\
@@ -32,7 +34,7 @@ class TankDialog(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self)
         self.ui_td = Ui_TankDialog()
         self.ui_td.setupUi(self)
-        self.setFixedSize(452, 578)
+        self.setBaseSize(452, 578)
         self.set_restrictions()
         self.current_dict = None # default tank dictionary
         self.setWindowTitle( self.windowTitle() + " " + str(item_index) )
@@ -78,12 +80,38 @@ class TankDialog(QtWidgets.QDialog):
         self.set_parameters()
         return
 
-    def check_json_keys(self):
+    def save_current_configuration(self):
+        dict_to_save = copy.deepcopy(self.current_dict)
+        dict_to_save['int2tube'] = []
+        dict_to_save['exh2tube'] = []
+        dict_to_save['Cd_ports'] = []
+        dict_to_save['state_ini'] = [dict_to_save['state_ini'][0]]
+        dict_to_save['nnod'] = 1
+        time_label = strftime("%Y%m%d", localtime())
+        dict_to_save['label']    = "%s_save_%s"%(dict_to_save['label'],time_label)
+        save_current_configuration_aux(self,dict_to_save)
+        return
+
+    def load_configuration(self):
+        (success,new_configuration) = load_configuration_aux(self,'tank')
+        if not success or not self.check_json_keys(new_configuration):
+            return
+        try:
+            self.current_dict = new_configuration
+            self.set_parameters()
+            show_message('Configuration successfully loaded!',1)
+        except:
+            show_message('Error trying to set the loaded configuration')
+        return
+
+    def check_json_keys(self, configuration_to_check = None):
         """
         check if the loaded json include all the obligatory keys
         """
+        if not configuration_to_check:
+            configuration_to_check = self.current_dict
         for ikey in JSON_TANK_KEYS:
-            if ikey not in self.current_dict.keys():
+            if ikey not in configuration_to_check.keys():
                 show_message("Wrong number of keys in json default tank archive")
                 return False
         return True

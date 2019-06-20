@@ -7,9 +7,12 @@ Created on Wed Nov 28 17:13:17 2018
 """
 
 import os, json
+import copy
+from time import localtime, strftime
 from PyQt5 import QtWidgets, QtCore
 from junctionDialog_ui import Ui_JunctionDialog
-from utils import show_message, INSTALL_PATH
+from utils import show_message, INSTALL_PATH, save_current_configuration_aux,\
+                    load_configuration_aux
 
 JSON_JUNCTION_KEYS = ['label','ndof','nnod','type_end','node2tube','histo', 'extras']
 
@@ -28,7 +31,7 @@ class JunctionDialog(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self)
         self.ui_jd = Ui_JunctionDialog()
         self.ui_jd.setupUi(self)
-        self.setFixedSize(358, 300)
+        self.setBaseSize(358, 300)
         self.current_dict = None # default junction dictionary
         self.setWindowTitle( self.windowTitle() + " " + str(item_index) )
         if not current_junction:
@@ -61,13 +64,39 @@ class JunctionDialog(QtWidgets.QDialog):
             return
         self.set_parameters()
         return
+    
+    def save_current_configuration(self):
+        dict_to_save = copy.deepcopy(self.current_dict)
+        dict_to_save['type_end']    = []
+        dict_to_save['node2tube']   = []
+        dict_to_save['histo']       = []
+        dict_to_save['state_ini']   = []
+        dict_to_save['nnod']        = 0
+        time_label = strftime("%Y%m%d", localtime())
+        dict_to_save['label']   = "%s_save_%s"%(dict_to_save['label'],time_label)
+        save_current_configuration_aux(self,dict_to_save)
+        return
 
-    def check_json_keys(self):
+    def load_configuration(self):
+        (success,new_configuration) = load_configuration_aux(self,'junction')
+        if not success or not self.check_json_keys(new_configuration):
+            return
+        try:
+            self.current_dict = new_configuration
+            self.set_parameters()
+            show_message('Configuration successfully loaded!',1)
+        except:
+            show_message('Error trying to set the loaded configuration')
+        return
+
+    def check_json_keys(self, configuration_to_check = None):
         """
         check if the loaded json include all the obligatory keys
         """
+        if not configuration_to_check:
+            configuration_to_check = self.current_dict
         for ikey in JSON_JUNCTION_KEYS:
-            if ikey not in self.current_dict.keys():
+            if ikey not in configuration_to_check.keys():
                 show_message("Wrong number of keys in json default junction archive")
                 return False
         return True

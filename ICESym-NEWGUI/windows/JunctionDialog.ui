@@ -27,88 +27,6 @@
    <bool>true</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QPushButton" name="pushButton_3">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>9</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string> Save Configuration</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../images/images.qrc">
-         <normaloff>:/fromHelyx/fromHelyx/save16.png</normaloff>:/fromHelyx/fromHelyx/save16.png</iconset>
-       </property>
-       <property name="autoDefault">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="font">
-        <font>
-         <pointsize>9</pointsize>
-        </font>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="accept_pushButton">
-       <property name="font">
-        <font>
-         <pointsize>9</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string> Accept</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../images/images.qrc">
-         <normaloff>:/fromHelyx/fromHelyx/tick16.png</normaloff>:/fromHelyx/fromHelyx/tick16.png</iconset>
-       </property>
-       <property name="autoDefault">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="cancel_pushButton">
-       <property name="font">
-        <font>
-         <pointsize>9</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string> Cancel</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../images/images.qrc">
-         <normaloff>:/fromHelyx/fromHelyx/win_closeAll16.png</normaloff>:/fromHelyx/fromHelyx/win_closeAll16.png</iconset>
-       </property>
-       <property name="autoDefault">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="font">
@@ -278,6 +196,98 @@
      </widget>
     </widget>
    </item>
+   <item row="1" column="0">
+    <layout class="QGridLayout" name="gridLayout_3">
+     <item row="1" column="2">
+      <widget class="QPushButton" name="cancel_pushButton">
+       <property name="font">
+        <font>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string> Cancel</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../images/images.qrc">
+         <normaloff>:/fromHelyx/fromHelyx/win_closeAll16.png</normaloff>:/fromHelyx/fromHelyx/win_closeAll16.png</iconset>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QPushButton" name="accept_pushButton">
+       <property name="font">
+        <font>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string> Accept</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../images/images.qrc">
+         <normaloff>:/fromHelyx/fromHelyx/tick16.png</normaloff>:/fromHelyx/fromHelyx/tick16.png</iconset>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QPushButton" name="save_configuration_pushButton">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string> Save Configuration</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../images/images.qrc">
+         <normaloff>:/fromHelyx/fromHelyx/save16.png</normaloff>:/fromHelyx/fromHelyx/save16.png</iconset>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QPushButton" name="load_configuration_pushButton">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="text">
+        <string> Load Configuration</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../images/images.qrc">
+         <normaloff>:/fromHelyx/fromHelyx/downloadZip16.png</normaloff>:/fromHelyx/fromHelyx/downloadZip16.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="Line" name="line_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
   </layout>
  </widget>
  <resources>
@@ -291,8 +301,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>221</x>
-     <y>277</y>
+     <x>347</x>
+     <y>256</y>
     </hint>
     <hint type="destinationlabel">
      <x>178</x>
@@ -316,8 +326,42 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>save_configuration_pushButton</sender>
+   <signal>released()</signal>
+   <receiver>JunctionDialog</receiver>
+   <slot>save_current_configuration()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>90</x>
+     <y>243</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>178</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>load_configuration_pushButton</sender>
+   <signal>released()</signal>
+   <receiver>JunctionDialog</receiver>
+   <slot>load_configuration()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>90</x>
+     <y>276</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>178</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>cancel()</slot>
+  <slot>save_current_configuration()</slot>
+  <slot>load_configuration()</slot>
  </slots>
 </ui>
