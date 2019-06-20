@@ -77,6 +77,8 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         self.item_to_copy = None
         self.current_mouse_position = QtCore.QPointF(0.0,0.0)
         self.current_selected_item = None
+        self.centroids = []
+        self.grid_lines = []
         self.ui.canvas_widget.show()
 
         # array con todos los items presentes
@@ -213,8 +215,6 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
     def drawGrid(self, windowsize):        
         X_SIZE = 66
         Y_SIZE = 66
-        self.centroids = []
-        self.grid_lines = []
         centroids_x = []
         centroids_y = []
         pencil = QtGui.QPen(QtCore.Qt.gray, 1)
