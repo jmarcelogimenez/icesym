@@ -69,12 +69,14 @@ class PlotTypeTwoWidget(QtWidgets.QWidget):
         return
     
     def set_elements(self):
+        self.ui.element.clear()
         for index,itube in enumerate(self.current_objects['Tubes']):
             if itube.object['typeSave']==0:
                 self.ui.element.addItem(itube.object['label'])
         return
     
     def set_variables(self):
+        self.ui.variable.clear()
         self.ui.variable.addItems(LISTNDOFA)
         return
     

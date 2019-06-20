@@ -38,6 +38,7 @@ class postProcessWidget(QtWidgets.QWidget):
         QtWidgets.QWidget.__init__(self)
         self.ui_ppw = Ui_PostProcessWidget()
         self.ui_ppw.setupUi(self)
+        self.current_objects = current_objects
         self.change_attributes(current_configuration, current_objects)
         self.current_run_dir = os.path.join(RUNS_PATH,self.current_configuration['folder_name'])
         self.apw = None
@@ -54,12 +55,14 @@ class postProcessWidget(QtWidgets.QWidget):
         self.open_archives  = {}
         self.run_attributes = {}
         self.ui_ppw.tabWidget_plots.setEnabled(False)
+        self.current_attributes_changed = False
         return
 
     def change_attributes(self, current_configuration, current_objects):
         self.current_configuration = current_configuration
         self.current_run_dir = os.path.join(RUNS_PATH,self.current_configuration['folder_name'])
         self.current_objects = current_objects
+        self.current_attributes_changed = True
         return
 
     def enable_ppw(self):
@@ -88,13 +91,14 @@ class postProcessWidget(QtWidgets.QWidget):
             if not os.path.isdir(self.current_run_dir):
                 return False
             (run_attributes,irpm_missing) = self.load_current_attributes()
-            if self.run_attributes!=run_attributes:
+            if self.run_attributes!=run_attributes or self.current_attributes_changed:
                 self.run_attributes = run_attributes
                 # If the run attributes or the current objects changed, it is possible
                 # that also the open archives.. maybe an incomplete rpm is now complete
                 self.open_archives = {}
                 for ipw in self.plot_widgets:
                     ipw.change_attributes(run_attributes, self.current_objects)
+                self.current_attributes_changed = False
         return True
 
     def load_current_attributes(self):

@@ -202,7 +202,7 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
         if not self.ui.element.count():
             return
         self.clear_comboboxes([1,2,3])
-        index_element = int(element[-1])
+        index_element = self.ui.element.findText(element,QtCore.Qt.MatchFixedString)
         component = self.ui.component.currentText()
         if index_element>=len(self.current_objects[component]):
             show_message("Error trying to find %s"%element)
@@ -223,7 +223,7 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
         if not self.ui.element.count():
             return
         self.clear_comboboxes([2,3])
-        index_element = int(element[-1])
+        index_element = self.ui.element.findText(element,QtCore.Qt.MatchFixedString)
         component = self.ui.component.currentText()
         selected_rpms = self.get_list_items(self.ui.rpms)
         rpm_folder = os.path.join(self.current_run_dir,"RPM_%s"%selected_rpms[0])
