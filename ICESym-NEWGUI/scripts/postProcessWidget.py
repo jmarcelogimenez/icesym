@@ -15,7 +15,7 @@ from PlotTypeThreeWidget import PlotTypeThreeWidget
 import pyqtgraph as pg
 import numpy as np
 from utils import set_plot, show_message, check_two_equals, SelectionDialog, PLOT_ARGUMENTS,\
-                  INSTALL_PATH, RUNS_PATH, DEFAULT_PLOTS
+                  INSTALL_PATH, RUNS_PATH, DEFAULT_PLOTS, CURVE_LINE_FORMATS, CURVE_COLORS
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -48,7 +48,7 @@ class postProcessWidget(QtWidgets.QWidget):
         self.spw = None
         self.fpw = None
         self.plot_widgets   = []
-        self.colours        = ['r', 'b', 'k', 'g', 'y', 'c']
+        self.colours        = ['r', 'b', 'k', 'g', 'y', 'c','m']
         self.plots          = {}
         self.legends        = {}
         self.colour_plots   = {}
@@ -325,9 +325,28 @@ class postProcessWidget(QtWidgets.QWidget):
 
             it = self.plots[plot_type][figure_number].plot(xdata, ydata,\
                                  pen={'color': self.colour_plots[plot_type][figure_number], 'width': 1})
+            it.curve.setClickable(True)
+            it.curve.sigClicked.connect(self.curve_clicked)
             self.advance_colour(len(self.plots[plot_type])-1,self.colour_plots[plot_type])
             self.legends[plot_type][figure_number].addItem(it,legend_texts[index])
         return len(self.plots[plot_type])
+    
+    def curve_clicked(self, curve_item):
+        """
+        When a curve is clicked, we can change the colour/format of it
+        """
+        from CurveFormatDialog import CurveFormatDialog
+        curve_format_dialog = CurveFormatDialog()
+        return_value = curve_format_dialog.exec_()
+        if return_value:
+            try:
+                color = CURVE_COLORS[curve_format_dialog.ui_cfd.color.currentText()]
+                line_format = CURVE_LINE_FORMATS[curve_format_dialog.ui_cfd.line_format.currentText()]
+                pen = {'color': color, 'width': 1, 'style': line_format}
+                curve_item.setPen(pen)
+            except:
+                show_message('Error trying to set the format of the curve')
+        return
 
     def save_postpro(self):
         name = QtWidgets.QFileDialog.getSaveFileName(self, 'Save Post Process As', "./", "Hierarchical Data Format Files (*.hdf)")

@@ -77,9 +77,9 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         self.item_to_copy = None
         self.current_mouse_position = QtCore.QPointF(0.0,0.0)
         self.current_selected_item = None
+        self.ui.canvas_widget.show()
         self.centroids = []
         self.grid_lines = []
-        self.ui.canvas_widget.show()
 
         # array con todos los items presentes
         self.scene_items = []
@@ -217,6 +217,8 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         Y_SIZE = 66
         centroids_x = []
         centroids_y = []
+        self.centroids = []
+        self.grid_lines = []
         pencil = QtGui.QPen(QtCore.Qt.gray, 1)
         for xi in range(X_SIZE, int(windowsize.width()), X_SIZE):
             p1 = self.view.mapToScene( QtCore.QPoint( float(xi) , 0) )

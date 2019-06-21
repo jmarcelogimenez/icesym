@@ -134,6 +134,22 @@ TAB_INFORMATION[INDEX_TAB_MODELING]['name']         = 'Modeling'
 TAB_INFORMATION[INDEX_TAB_RUN]['name']              = 'Run'
 TAB_INFORMATION[INDEX_TAB_POSTPROCESS]['name']      = 'Post Process'
 
+# curve's format information
+CURVE_COLORS = {}
+CURVE_COLORS['Red']      = 'r'
+CURVE_COLORS['Blue']     = 'b'
+CURVE_COLORS['Black']    = 'k'
+CURVE_COLORS['Green']    = 'g'
+CURVE_COLORS['Yellow']   = 'y'
+CURVE_COLORS['Cyan']     = 'c'
+CURVE_COLORS['Magenta']  = 'm'
+CURVE_LINE_FORMATS = {}
+CURVE_LINE_FORMATS['Solid']         = QtCore.Qt.SolidLine
+CURVE_LINE_FORMATS['Dash']          = QtCore.Qt.DashLine
+CURVE_LINE_FORMATS['Dot']           = QtCore.Qt.DotLine
+CURVE_LINE_FORMATS['Dash Dot']      = QtCore.Qt.DashDotLine
+CURVE_LINE_FORMATS['Dash Dot Dot']  = QtCore.Qt.DashDotDotLine
+
 def set_plot(plot, leg_bottom, leg_left, title, units_x = '', units_y = ''):
     """
     set the parameters to the given plot
