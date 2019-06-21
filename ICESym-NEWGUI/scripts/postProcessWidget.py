@@ -342,7 +342,8 @@ class postProcessWidget(QtWidgets.QWidget):
             try:
                 color = CURVE_COLORS[curve_format_dialog.ui_cfd.color.currentText()]
                 line_format = CURVE_LINE_FORMATS[curve_format_dialog.ui_cfd.line_format.currentText()]
-                pen = {'color': color, 'width': 1, 'style': line_format}
+                width = curve_format_dialog.ui_cfd.width.value()
+                pen = {'color': color, 'width': width, 'style': line_format}
                 curve_item.setPen(pen)
             except:
                 show_message('Error trying to set the format of the curve')
