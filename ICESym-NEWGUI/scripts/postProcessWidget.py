@@ -15,7 +15,7 @@ from PlotTypeThreeWidget import PlotTypeThreeWidget
 from CurveFormatDialog import CurveFormatDialog
 import pyqtgraph as pg
 import numpy as np
-from utils import set_plot, show_message, check_two_equals, SelectionDialog, PLOT_ARGUMENTS,\
+from utils import set_plot, show_message, check_two_equals, PLOT_ARGUMENTS,\
                   INSTALL_PATH, RUNS_PATH, DEFAULT_PLOTS, CURVE_LINE_FORMATS, CURVE_COLORS
 
 try:

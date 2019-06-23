@@ -166,7 +166,7 @@ class PlotTypeThreeWidget(QtWidgets.QWidget):
                         self.ui.element.addItem(new_element)
                         added_elements.append(new_element)
 
-        self.choose_element(component[0:-1]+" "+str(0))
+        self.choose_element(self.ui.element.currentText())
         return
 
     def choose_variable(self, element):
@@ -233,7 +233,7 @@ class PlotTypeThreeWidget(QtWidgets.QWidget):
 
     def loadextratxt(self, archive, offset):
         with open(archive, "r") as f:
-            all_data = [map(float,x.split()) for x in f.readlines()]
+            all_data = [list(map(float,x.split())) for x in f.readlines()]
         A = array([])
         A = append(A,all_data)
         return A
