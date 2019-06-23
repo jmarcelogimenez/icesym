@@ -48,3 +48,6 @@ call dist_win/pyuic ../windows/NewCaseDialog.ui -o newCaseDialog_ui.py
 
 call dist_win/pyuic ../windows/UsageDialog.ui -o usageDialog_ui.py
 %SEDPATH%\sed.exe -i "/setContentsMargins/d" "usageDialog_ui.py"
+
+call dist_win/pyuic ../windows/CurveFormatDialog.ui -o curveFormatDialog_ui.py
+%SEDPATH%\sed.exe -i "/setContentsMargins/d" curveFormatDialog_ui.py
