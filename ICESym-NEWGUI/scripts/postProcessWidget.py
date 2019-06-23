@@ -12,6 +12,7 @@ from postProcessWidget_ui import Ui_PostProcessWidget
 from PlotTypeOneWidget import PlotTypeOneWidget
 from PlotTypeTwoWidget import PlotTypeTwoWidget
 from PlotTypeThreeWidget import PlotTypeThreeWidget
+from CurveFormatDialog import CurveFormatDialog
 import pyqtgraph as pg
 import numpy as np
 from utils import set_plot, show_message, check_two_equals, SelectionDialog, PLOT_ARGUMENTS,\
@@ -54,6 +55,8 @@ class postProcessWidget(QtWidgets.QWidget):
         self.colour_plots   = {}
         self.open_archives  = {}
         self.run_attributes = {}
+        self.curve_attributes  = {}
+        self.current_selected_curve = None
         self.ui_ppw.tabWidget_plots.setEnabled(False)
         self.current_attributes_changed = False
         return
@@ -243,42 +246,6 @@ class postProcessWidget(QtWidgets.QWidget):
         except:
             show_message('An error has occurred. Cannot delete this figure')
         return
-    
-    def remove_curve(self, remove_plot, plot_type):
-        try:
-            (tabWidget,plotWidget) = self.choose_widgets(plot_type)
-            for index,iplot in enumerate(self.plots[plot_type]):
-                if remove_plot == iplot:
-                    plot_items = self.plots[plot_type][index].listDataItems()
-                    break
-            legends = []
-            for ilegenditem in self.legends[plot_type][index].items:
-                legends.append( ilegenditem[1].text )
-    
-            if len(plot_items):
-                dialog = QtWidgets.QDialog()
-                SDialog = SelectionDialog()
-                SDialog.setupUi(dialog, legends)
-                ret = dialog.exec_()
-                ret = True
-                if ret:
-                    ncurves = SDialog.listWidget.count()
-                    er = 0
-                    for row in range(ncurves):
-                        item = SDialog.listWidget.item(row)
-                        checkState = item.checkState()
-                        if checkState == 2:
-                            self.plots[plot_type][index].removeItem(self.plots[plot_type][index].listDataItems()[row-er])
-                            self.legends[plot_type][index].removeItem(self.legends[plot_type][index].items[row-er][1].text)
-                            er+=1
-                    show_message('Curve(s) successfully erased!',1)
-                else:
-                    show_message('Operation cancelled',1)
-            else:
-                show_message('This plot has not curves',1)
-        except:
-            show_message('An error has occurred. Cannot delete this curves')
-        return
 
     def plot(self, current_data, title, legend_texts, xlabel, ylabel, xunits, yunits, figure_number, plot_type):
         
@@ -309,8 +276,8 @@ class postProcessWidget(QtWidgets.QWidget):
             if figure_number==-1 and not added:
                 new_plot = pg.PlotWidget()
                 set_plot(new_plot, xlabel, ylabel, title, xunits, yunits)
-                new_plot.getPlotItem().getViewBox().menu.addAction("Delete Curve",  lambda: self.remove_curve(new_plot,plot_type))
-                new_plot.getPlotItem().getViewBox().menu.addAction("Delete Figure", lambda: self.remove_figure(new_plot,plot_type))                
+                new_plot.getPlotItem().getViewBox().menu.addAction("Delete Figure", lambda: self.remove_figure(new_plot,plot_type))
+                new_plot.getPlotItem().getViewBox().keyPressEvent = self.key_pressed_viewbox
                 tab = QtWidgets.QWidget()
                 tabWidget.addTab(tab,'Figure '+str(len(self.plots[plot_type])))
                 tab = tabWidget.widget(len(self.plots[plot_type]))
@@ -321,33 +288,88 @@ class postProcessWidget(QtWidgets.QWidget):
                 legend = pg.LegendItem(offset=(0,1))
                 legend.setParentItem(self.plots[plot_type][-1].getPlotItem())
                 self.legends[plot_type].append(legend)
+                figure_number = len(self.plots[plot_type])-1
                 added = True
 
             it = self.plots[plot_type][figure_number].plot(xdata, ydata,\
                                  pen={'color': self.colour_plots[plot_type][figure_number], 'width': 1})
             it.curve.setClickable(True)
             it.curve.sigClicked.connect(self.curve_clicked)
+            
             self.advance_colour(len(self.plots[plot_type])-1,self.colour_plots[plot_type])
-            self.legends[plot_type][figure_number].addItem(it,legend_texts[index])
+            self.legends[plot_type][figure_number].addItem(it.curve,legend_texts[index])
+            self.curve_attributes[it.curve] = [legend_texts[index],plot_type,figure_number]
         return len(self.plots[plot_type])
+    
+    def key_pressed_viewbox(self, event):
+        if not self.current_selected_curve:
+            return
+        if event.key() == QtCore.Qt.Key_Delete:
+            msg = "Do you want to remove the selected curve?"
+            reply = show_message(msg,4,QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.Yes:
+                self.remove_curve()
+        elif event.key() == QtCore.Qt.Key_F:
+            self.format_curve()
+        return
     
     def curve_clicked(self, curve_item):
         """
-        When a curve is clicked, we can change the colour/format of it
+        When a curve is clicked, mark it as selected curve (paint it in blue)
         """
-        from CurveFormatDialog import CurveFormatDialog
+        if self.current_selected_curve:
+            self.current_selected_curve.setShadowPen(None)
+        if self.current_selected_curve == curve_item:
+            self.current_selected_curve = None
+            return
+        pen = {'color': 'b', 'width': 4, 'style': QtCore.Qt.SolidLine}
+        curve_item.setShadowPen(pen)
+        self.current_selected_curve = curve_item
+        return
+
+    def remove_curve(self):
+        try:
+            curve_item = self.current_selected_curve
+            legend_text = self.curve_attributes[curve_item][0]
+            plot_type   = self.curve_attributes[curve_item][1]
+            figure_number = self.curve_attributes[curve_item][2]
+            data_items = self.plots[plot_type][figure_number].listDataItems()
+            data_item_to_erase = None
+            for index,i_data_item in enumerate(data_items):
+                if i_data_item.curve == curve_item:
+                    data_item_to_erase = i_data_item
+                    break
+            self.plots[plot_type][figure_number].removeItem(data_item_to_erase)
+            self.legends[plot_type][figure_number].removeItem(legend_text)
+            del self.curve_attributes[curve_item]
+            self.current_selected_curve = None
+            show_message('Curve successfully erased!',1)
+        except:
+            show_message('An error has occurred. Cannot delete this curve')
+        return
+    
+    def format_curve(self):
         curve_format_dialog = CurveFormatDialog()
         return_value = curve_format_dialog.exec_()
         if return_value:
             try:
+                curve_item = self.current_selected_curve
                 color = CURVE_COLORS[curve_format_dialog.ui_cfd.color.currentText()]
                 line_format = CURVE_LINE_FORMATS[curve_format_dialog.ui_cfd.line_format.currentText()]
                 width = curve_format_dialog.ui_cfd.width.value()
                 pen = {'color': color, 'width': width, 'style': line_format}
                 curve_item.setPen(pen)
+                legend_text = self.curve_attributes[curve_item][0]
+                plot_type   = self.curve_attributes[curve_item][1]
+                figure_number = self.curve_attributes[curve_item][2]
+                # When the curve style is modified, we need to have a reference to
+                # the label that matches with the curve. This information is stored
+                # in the dictionary curve_attributes. Pyqtgraph dont provide
+                # methods to change the item, so I must erease and insert it again.
+                self.legends[plot_type][figure_number].removeItem(legend_text)
+                self.legends[plot_type][figure_number].addItem(curve_item,legend_text)
             except:
                 show_message('Error trying to set the format of the curve')
-        return
 
     def save_postpro(self):
         name = QtWidgets.QFileDialog.getSaveFileName(self, 'Save Post Process As', "./", "Hierarchical Data Format Files (*.hdf)")
