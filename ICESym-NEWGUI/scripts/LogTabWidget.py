@@ -28,7 +28,7 @@ except AttributeError:
         return QtGui.QApplication.translate(context, text, disambig)
     
 class LogTabWidget(QtWidgets.QWidget):
-    def __init__(self, case_name, case_dir, folder_name, rpms, save_data):
+    def __init__(self, case_name, case_dir, folder_name, rpms, save_data, plot_defaultPostProcess_after_run):
         QtWidgets.QWidget.__init__(self)
         self.ui_tab_widget = Ui_LogTabWidget()
         self.ui_tab_widget.setupUi(self)
@@ -38,6 +38,7 @@ class LogTabWidget(QtWidgets.QWidget):
         self.current_run_dir    = os.path.join(RUNS_PATH,folder_name) # Directorio donde se guarda la corrida (variable)
         self.rpms               = rpms # RPMS a correr (variable)
         self.save_data_f = save_data
+        self.plot_defaultPostProcess_after_run_f = plot_defaultPostProcess_after_run
         self.current_log = ''
         self.lastPos = 0
         self.lastlastPos = -1
@@ -153,6 +154,10 @@ class LogTabWidget(QtWidgets.QWidget):
     def success_simulation(self):
         if not show_errors(SIMULATOR_PATH) and not self.process_killed:
             show_message('Simulation Finished', 1)
+            msg = "Do you want to generate the default Post Process?"
+            reply = show_message(msg,4,QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.Yes:
+                self.plot_defaultPostProcess_after_run_f()
         self.process_killed = False
         return
     

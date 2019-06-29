@@ -468,7 +468,7 @@ class postProcessWidget(QtWidgets.QWidget):
                 return
 
         advance_progressBar = 100./len(DEFAULT_PLOTS)
-        sucess = True
+        success = True
         for index,iplot in enumerate(DEFAULT_PLOTS):
             (tabWidget,plotWidget) = self.choose_widgets(iplot[0])
             plot_attributes = {}
@@ -511,10 +511,10 @@ class postProcessWidget(QtWidgets.QWidget):
                     self.ui_ppw.postPro_progressBar.setValue(current_progress_value + advance_progressBar)
                     QtWidgets.QApplication.processEvents()
                 except:
-                    sucess = False
+                    success = False
                     show_message('Cannot plot the default configuration number %s'%index)
 
-        if sucess:
+        if success:
             show_message('Default Post Process sucessfully created!',1)
             self.default_postProcess_done = True
         self.ui_ppw.postPro_progressBar.setValue(0)

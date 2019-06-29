@@ -141,7 +141,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         self.ui.tab_postProcess.layout().addWidget(self.ppw)
         self.ppw.setAutoFillBackground(True)
         self.ltw = LogTabWidget(self.case_name, self.case_dir, self.current_configuration['folder_name'],\
-                                self.current_configuration['rpms'], self.save_data)
+                                self.current_configuration['rpms'], self.save_data, self.plot_defaultPostProcess_after_run)
         self.ui.tab_run.layout().addWidget(self.ltw)
         self.ltw.setAutoFillBackground(True)
         return
@@ -1020,6 +1020,13 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         ud = UsageDialog()
         ud.exec_()
         return
+    
+    def plot_defaultPostProcess_after_run(self):
+        self.ui.tabWidget.setCurrentIndex(INDEX_TAB_POSTPROCESS)
+        self.ui.actionDefault_Post_Process.setEnabled(False)
+        self.ppw.plot_defaults()
+        self.ui.actionDefault_Post_Process.setEnabled(True)
+        return
 
 # Tabs check/manipulation auxiliary functions
 # -----------------------------------------------------------------------------
@@ -1079,7 +1086,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
 
 # Run Tab Actions
 # -----------------------------------------------------------------------------
-        
+
     def run_simulation(self):
         if not self.check_tab(INDEX_TAB_RUN):
             return
@@ -1091,7 +1098,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             return
         self.ltw.kill_process()
         return
-    
+
 # Post Process Tab Actions
 # -----------------------------------------------------------------------------
         
