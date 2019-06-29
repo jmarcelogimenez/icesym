@@ -459,6 +459,8 @@ class postProcessWidget(QtWidgets.QWidget):
             show_message('Post Process not enabled.')
             return
 
+        advance_progressBar = 100./len(DEFAULT_PLOTS)
+        sucess = True
         for index,iplot in enumerate(DEFAULT_PLOTS):
             (tabWidget,plotWidget) = self.choose_widgets(iplot[0])
             plot_attributes = {}
@@ -471,7 +473,7 @@ class postProcessWidget(QtWidgets.QWidget):
                     elements_to_plot.append(ielement)
             else: # Positive case, just one element
                 elements_to_plot.append(iplot[3])
-            
+
             plot_attributes['variable']         = iplot[4]
             plot_attributes['units']            = iplot[5]
             plot_attributes['selected_cycles']  = []
@@ -497,8 +499,14 @@ class postProcessWidget(QtWidgets.QWidget):
                     plotWidget.prepare_plot(plot_attributes)
                     plot_attributes['figure_number']    = len(self.plots[iplot[0]])-1
                     plot_attributes['label']            = '%s_%s'%(iplot[8],ielement)
+                    current_progress_value = self.ui_ppw.postPro_progressBar.value()
+                    self.ui_ppw.postPro_progressBar.setValue(current_progress_value + advance_progressBar)
+                    QtWidgets.QApplication.processEvents()
                 except:
+                    sucess = False
                     show_message('Cannot plot the default configuration number %s'%index)
 
-        show_message('Default Post Process sucessfully created!',1)
+        if sucess:
+            show_message('Default Post Process sucessfully created!',1)
+        self.ui_ppw.postPro_progressBar.setValue(0)
         return

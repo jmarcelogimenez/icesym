@@ -1108,7 +1108,9 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         return
 
     def plot_defaults(self):
+        self.ui.actionDefault_Post_Process.setEnabled(False)
         if not self.check_tab(INDEX_TAB_POSTPROCESS):
             return
         self.ppw.plot_defaults()
+        self.ui.actionDefault_Post_Process.setEnabled(True)
         return

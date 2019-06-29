@@ -109,15 +109,15 @@ PLOT_ARGUMENTS[5]['title']          = 'Free Plot'
 # default plots to graph when the simulation finish
 DEFAULT_PLOTS = []
 DEFAULT_PLOTS.append([5,'Cylinders',0,0,['Pressure','Volume'],['Pa','m^3'],[-1],[-1],'PV_Cyl0','PV Plot Cylinder 0',-1])
-DEFAULT_PLOTS.append([2,'Globals',0,0,'Power Indicated','W',[-1],[],'Power Indicated','Power',-1])
-DEFAULT_PLOTS.append([2,'Globals',0,0,'Power Effective','W',[-1],[],'Power Effective','Power',0])
-DEFAULT_PLOTS.append([2,'Globals',0,0,'Torque Indicated','N.m',[-1],[],'Torque Indicated','Torque',-1])
-DEFAULT_PLOTS.append([2,'Globals',0,0,'Torque Effective','N.m',[-1],[],'Torque Effective','Torque',0])
 DEFAULT_PLOTS.append([0,'Cylinders',0,-1,'Temperature','K',[-1],[-1],'Temperature','Cylinder Temperatures',-1])
 DEFAULT_PLOTS.append([0,'Cylinders',0,0,'Mass Flow Rate trought Intake Port','kg/s',[-1],[0],'Mass Flow Rate trought Intake Port','Mass Flow Rate (Intake)',-1])
 DEFAULT_PLOTS.append([0,'Cylinders',0,0,'Mass Flow Rate trought Intake Port','kg/s',[-1],[-1],'Mass Flow Rate trought Intake Port','Mass Flow Rate (Intake)',0])
 DEFAULT_PLOTS.append([0,'Cylinders',0,0,'Mass Flow Rate trought Exhaust Port','kg/s',[-1],[0],'Mass Flow Rate trought Exhaust Port','Mass Flow Rate (Exhaust)',-1])
 DEFAULT_PLOTS.append([0,'Cylinders',0,0,'Mass Flow Rate trought Exhaust Port','kg/s',[-1],[-1],'Mass Flow Rate trought Exhaust Port','Mass Flow Rate (Exhaust)',0])
+DEFAULT_PLOTS.append([2,'Globals',0,0,'Power Indicated','W',[-1],[],'Power Indicated','Power',-1])
+DEFAULT_PLOTS.append([2,'Globals',0,0,'Power Effective','W',[-1],[],'Power Effective','Power',0])
+DEFAULT_PLOTS.append([2,'Globals',0,0,'Torque Indicated','N.m',[-1],[],'Torque Indicated','Torque',-1])
+DEFAULT_PLOTS.append([2,'Globals',0,0,'Torque Effective','N.m',[-1],[],'Torque Effective','Torque',0])
 
 # tab's information
 INDEX_TAB_CONFIGURATION = 0
