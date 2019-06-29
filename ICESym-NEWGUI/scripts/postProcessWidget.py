@@ -59,6 +59,7 @@ class postProcessWidget(QtWidgets.QWidget):
         self.current_selected_curve = None
         self.ui_ppw.tabWidget_plots.setEnabled(False)
         self.current_attributes_changed = False
+        self.default_postProcess_done = False
         return
 
     def change_attributes(self, current_configuration, current_objects):
@@ -85,6 +86,7 @@ class postProcessWidget(QtWidgets.QWidget):
                             show_message(msg,1)
                         self.set_plot_widgets()
                         self.ui_ppw.tabWidget_plots.setEnabled(True)
+                    self.default_postProcess_done = False
                 except:
                     show_message('Error in setting the PostProcess Tab')
                     return False
@@ -459,6 +461,12 @@ class postProcessWidget(QtWidgets.QWidget):
             show_message('Post Process not enabled.')
             return
 
+        if self.default_postProcess_done:
+            msg = "The default Post Process has already been carried out. Do you want to do it again?"
+            reply = show_message(msg,4,QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
+            if reply == QtWidgets.QMessageBox.No:
+                return
+
         advance_progressBar = 100./len(DEFAULT_PLOTS)
         sucess = True
         for index,iplot in enumerate(DEFAULT_PLOTS):
@@ -508,5 +516,6 @@ class postProcessWidget(QtWidgets.QWidget):
 
         if sucess:
             show_message('Default Post Process sucessfully created!',1)
+            self.default_postProcess_done = True
         self.ui_ppw.postPro_progressBar.setValue(0)
         return
