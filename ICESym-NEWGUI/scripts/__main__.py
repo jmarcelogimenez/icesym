@@ -28,6 +28,9 @@ def main():
         w.exec_()
         sys.exit(1)
 
+    from exception_handling import init_exception_handling
+    init_exception_handling()
+
     from NewCaseDialog import NewCaseDialog
     open_dialog = NewCaseDialog()
     ret = open_dialog.exec_()

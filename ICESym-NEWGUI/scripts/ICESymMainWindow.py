@@ -21,6 +21,7 @@ from PyQt5.QtSvg import QGraphicsSvgItem
 from LogTabWidget import LogTabWidget
 from SceneItem import SceneItem
 from UsageDialog import UsageDialog
+from exception_handling import handle_exception
 from utils import show_message, load_templates, save_data_aux, ICON_PATHS,\
                   ICON_PATHS_NC, DEFAULT_DVP, INSTALL_PATH, CASES_PATH,\
                   INDEX_TAB_MODELING, INDEX_TAB_RUN, INDEX_TAB_POSTPROCESS,\
@@ -1117,7 +1118,13 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
     def plot_defaults(self):
         if not self.check_tab(INDEX_TAB_POSTPROCESS):
             return
-        self.ui.actionDefault_Post_Process.setEnabled(False)
-        self.ppw.plot_defaults()
-        self.ui.actionDefault_Post_Process.setEnabled(True)
+        try:
+            self.ui.actionDefault_Post_Process.setEnabled(False)
+            self.ppw.plot_defaults()
+            from exception_handling import CURRENT_EXCEPTION
+            assert(not CURRENT_EXCEPTION)
+        except:
+            handle_exception('An error has occured. Cannot plot the defaults')
+        finally:
+            self.ui.actionDefault_Post_Process.setEnabled(True)
         return

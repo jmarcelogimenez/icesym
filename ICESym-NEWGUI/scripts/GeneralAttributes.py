@@ -9,7 +9,6 @@ Created on Wed Mar 27 18:40:34 2019
 import os
 from numpy import trapz
 from math import pi
-from utils import show_message
 from units import CONVERSIONS
 
 GROUP_A = ['IMEP per Cylinder','FMEP per Cylinder','BMEP per Cylinder']
@@ -52,8 +51,6 @@ class GeneralAttributes():
                 data = [ [float(irpm),self.general_atributes[variable][icycle][irpm]*scale] for irpm in self.rpms ]
                 legends.append(label+"_"+variable+"_Cycle_"+str(icycle))
                 datas.append(data)
-        else:
-            show_message('%s not yet calculated. Aborting'%variable)
         return [datas,legends]
     
     def calculate_work_vd_pMax(self):
@@ -82,7 +79,6 @@ class GeneralAttributes():
                     pMaxAux = []
 
                     if not len(volData) or not len(pData):
-                        show_message('There was an error loading the volume and presurre data')
                         return False
 
                     # primeros valores
@@ -123,7 +119,6 @@ class GeneralAttributes():
         if (not self.general_atributes.keys()) or\
         not (all(i in ['w','volDesp','pMax'] for i in self.general_atributes.keys())):
             if not self.calculate_work_vd_pMax():
-                show_message('There was an error calculating the variable')
                 return False
 
         	# calculo de IMEP_per_cylinder, FMEP_per_cylinder y BMEP_per_cylinder (ncyls x ncycles x nrpms)
@@ -164,7 +159,6 @@ class GeneralAttributes():
         if (not self.general_atributes.keys()) or\
         not (all(i in ['IMEP per Cylinder','FMEP per Cylinder','BMEP per Cylinder'] for i in self.general_atributes.keys())):
             if not self.calculate_IMEP_FMEP_BMEP():
-                show_message('There was an error calculating the variable')
                 return False
 
         power_indicated         = {}
@@ -211,7 +205,6 @@ class GeneralAttributes():
         if (not self.general_atributes.keys()) or\
         not (all(i in ['Power Indicated','Power Effective','Torque Indicated','Torque Effective','Mechanical Efficiency'] for i in self.general_atributes.keys())):
             if not self.calculate_torque_and_power():
-                show_message('There was an error calculating the variable')
                 return False
         
         (mfc,mair)  = self.getMasses() if 'mfc' not in self.general_atributes.keys() else \

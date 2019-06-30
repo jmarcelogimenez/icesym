@@ -12,6 +12,7 @@ from plotTypeThreeWidget_ui import Ui_PlotTypeThreeWidget
 from utils import show_message
 from numpy import loadtxt, take, array, append
 from units import UNITS, CONVERSIONS
+from exception_handling import handle_exception
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -229,6 +230,11 @@ class PlotTypeThreeWidget(QtWidgets.QWidget):
         else A_node_filtered[A_node_filtered[:,1] == int(icycle)]
         data = take(A_node_and_cycle_filtered, 4+variable_index, axis=1)
         data = [i*scale for i in data]
+        
+        try:
+            assert(data != [])
+        except:
+            handle_exception('Cannot find data in %s archive for %s cycle'%(archive,icycle))
         return data
 
     def loadextratxt(self, archive, offset):
@@ -266,6 +272,11 @@ class PlotTypeThreeWidget(QtWidgets.QWidget):
         ndata = A.shape[0]
         data = [ A[i+variable_line][variable_col]*scale \
                 for i in range(0,ndata,offset) if (int(A[i][0])==int(icycle) or self.not_check_cycle)]
+        
+        try:
+            assert(data != [])
+        except:
+            handle_exception('Cannot find data in %s archive for %s cycle'%(archive,icycle))
         return data
 
     def verify_data(self, rpms, cycles):
@@ -338,9 +349,11 @@ class PlotTypeThreeWidget(QtWidgets.QWidget):
                         else:
                             data = self.read_normal_txt(iarchive,plot_attributes['node'],icycle,plot_attributes['variable_index'][index],plot_attributes['units'][index])
                         data_p.append(data)
+                        from exception_handling import CURRENT_EXCEPTION
+                        assert(not CURRENT_EXCEPTION)
                     except:
-                        show_message('Error opening archive %s. Cannot plot this selections.'%iarchive)
-                        return ([],[])
+                        handle_exception('Error opening archive %s. Cannot plot this selections.'%iarchive)
+                        return
                 data_p = [[data_p[0][i],data_p[1][i]] for i in range(len(data_p[0]))]
                 datas.append(data_p)
                 legends.append(plot_attributes['label']+"_RPM_"+str(irpm)+"_Cycle_"+str(icycle))
@@ -358,7 +371,10 @@ class PlotTypeThreeWidget(QtWidgets.QWidget):
                                          plot_attributes['units'][0], plot_attributes['units'][1], plot_attributes['figure_number'], self.plot_type)
             if plot_attributes['figure_number']==-1:
                 self.ui.figure_number.addItem('Figure '+str(n_plots-1))
+            from exception_handling import CURRENT_EXCEPTION
+            assert(not CURRENT_EXCEPTION)
         except:
-            show_message('Error trying to plot the current selection')
-        self.ui.plot_pushButton.setEnabled(True)
+            handle_exception('Error trying to plot the current selection')
+        finally:
+            self.ui.plot_pushButton.setEnabled(True)
         return

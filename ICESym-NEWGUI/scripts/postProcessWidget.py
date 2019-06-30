@@ -17,6 +17,7 @@ import pyqtgraph as pg
 import numpy as np
 from utils import set_plot, show_message, check_two_equals, PLOT_ARGUMENTS,\
                   INSTALL_PATH, RUNS_PATH, DEFAULT_PLOTS, CURVE_LINE_FORMATS, CURVE_COLORS
+from exception_handling import handle_exception
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -253,12 +254,17 @@ class postProcessWidget(QtWidgets.QWidget):
         
         # no permitir dos leyendas iguales en un misma plot, puesto que luego para borrar
         # una curva pyqtgraph usa el nombre
-        legends_to_check = legend_texts
-        if figure_number>=0:
-            for item in self.legends[plot_type][figure_number].items:
-                legends_to_check.append(item[1].text)
-        if check_two_equals(legend_texts):
-            show_message('There are two legends with the same name. Please, select another legend name for this selections')
+        try:
+            legends_to_check = legend_texts
+            if figure_number>=0:
+                for item in self.legends[plot_type][figure_number].items:
+                    legends_to_check.append(item[1].text)
+            two_equals = check_two_equals(legend_texts)
+            assert(not two_equals)
+            from exception_handling import CURRENT_EXCEPTION
+            assert(not CURRENT_EXCEPTION)
+        except:
+            handle_exception('There are two legends with the same name. Please, select another legend name for this selections')
             return
         
         pg.setConfigOptions(background='w')
@@ -510,9 +516,11 @@ class postProcessWidget(QtWidgets.QWidget):
                     current_progress_value = self.ui_ppw.postPro_progressBar.value()
                     self.ui_ppw.postPro_progressBar.setValue(current_progress_value + advance_progressBar)
                     QtWidgets.QApplication.processEvents()
+                    from exception_handling import CURRENT_EXCEPTION
+                    assert(not CURRENT_EXCEPTION)
                 except:
                     success = False
-                    show_message('Cannot plot the default configuration number %s'%index)
+                    handle_exception('Cannot plot the default configuration number %s'%index)
 
         if success:
             show_message('Default Post Process sucessfully created!',1)

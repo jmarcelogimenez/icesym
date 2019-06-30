@@ -13,7 +13,7 @@ from utils import show_message, PLOT_ARGUMENTS
 from units import UNITS, CONVERSIONS
 from numpy import loadtxt, take, array, append, trapz
 from GeneralAttributes import GeneralAttributes
-
+from exception_handling import handle_exception
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -261,6 +261,11 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
         data = take(A_node_and_cycle_filtered, [self.normal_x_var,4+variable_index], axis=1)
         for idata in data:
             idata[1] = idata[1]*scale
+            
+        try:
+            assert(data != [])
+        except:
+            handle_exception('Cannot find data in %s archive for %s cycle'%(archive,icycle))
         return data
 
     def loadextratxt(self, archive, offset):
@@ -297,6 +302,11 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
         ndata = A.shape[0]
         data = [[ A[i][self.extras_x_var], A[i+variable_line][variable_col]*scale ] \
                 for i in range(0,ndata,offset) if (int(A[i][0])==int(icycle) or self.not_check_cycle)]
+        
+        try:
+            assert(data != [])
+        except:
+            handle_exception('Cannot find data in %s archive for %s cycle'%(archive,icycle))
         return data
     
     def verify_data(self, rpms, cycles):
@@ -365,9 +375,11 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
                         data = self.read_normal_txt(archive,plot_attributes['node'],icycle,plot_attributes['variable_index'],plot_attributes['units'])
                     datas.append(data)
                     legends.append(plot_attributes['label']+"_RPM_"+str(irpm)+"_Cycle_"+str(icycle))
+                    from exception_handling import CURRENT_EXCEPTION
+                    assert(not CURRENT_EXCEPTION)
                 except:
-                    show_message('Error opening archive %s. Cannot plot this selections.'%archive)
-                    return ([],[])
+                    handle_exception('Error opening archive %s. Cannot plot this selections'%archive)
+                    return
         return (datas,legends)
 
     def plot_cycle(self, plot_attributes):
@@ -387,9 +399,11 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
                     res = self.trapz_data(data)
                     data = [icycle,res]
                     data_irpm.append(data)
+                    from exception_handling import CURRENT_EXCEPTION
+                    assert(not CURRENT_EXCEPTION)
                 except:
-                    show_message('Error opening archive %s. Cannot plot this selections.'%archive)
-                    return ([],[])
+                    handle_exception('Error opening archive %s. Cannot plot this selections'%archive)
+                    return
             datas.append(data_irpm)
             legends.append(plot_attributes['label']+"_RPM_"+str(irpm))
         return (datas,legends)
@@ -421,9 +435,11 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
                         res = self.trapz_data(data)
                         data = [irpm,res]
                         data_icycle.append(data)
+                        from exception_handling import CURRENT_EXCEPTION
+                        assert(not CURRENT_EXCEPTION)
                     except:
-                        show_message('Error opening archive %s. Cannot plot this selections.'%archive)
-                        return ([],[])
+                        handle_exception('Error opening archive %s. Cannot plot this selections'%archive)
+                        return
                 datas.append(data_icycle)
                 legends.append(plot_attributes['label']+"_Cycle_"+str(icycle))
         return (datas,legends)
@@ -446,7 +462,10 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
                                          self.xunits, plot_attributes['units'], plot_attributes['figure_number'], self.plot_type)
             if plot_attributes['figure_number']==-1:
                 self.ui.figure_number.addItem('Figure '+str(n_plots-1))
+            from exception_handling import CURRENT_EXCEPTION
+            assert(not CURRENT_EXCEPTION)
         except:
-            show_message('Error trying to plot the current selection')
-        self.ui.plot_pushButton.setEnabled(True)
+            handle_exception('Error trying to plot the current selection')
+        finally:
+            self.ui.plot_pushButton.setEnabled(True)
         return
