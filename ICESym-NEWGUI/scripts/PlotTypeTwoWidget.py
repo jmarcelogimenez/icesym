@@ -10,6 +10,7 @@ import os
 from PyQt5 import QtCore, QtGui, QtWidgets
 from plotTypeTwoWidget_ui import Ui_PlotTypeTwoWidget
 from utils import show_message
+from exception_handling import handle_exception
 from numpy import loadtxt, take
 from units import UNITS, CONVERSIONS
 
@@ -97,6 +98,10 @@ class PlotTypeTwoWidget(QtWidgets.QWidget):
         data = take(A_time_filtered, [0,4+variable_index], axis=1)
         for idata in data:
             idata[1] = idata[1]*scale
+        try:
+            assert(len(data) != 0)
+        except:
+            handle_exception('Cannot find data in %s archive'%(archive))
         return (data,new_time)
     
     def get_plot_attributes(self):

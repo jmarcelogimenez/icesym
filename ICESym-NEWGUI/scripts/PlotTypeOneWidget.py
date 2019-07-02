@@ -93,12 +93,14 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
         self.current_run_dir = current_run_dir
         self.plot_function = plot_function
         self.plot_type = plot_type
+        self.ga = None
         self.change_attributes(run_attributes, current_objects)
         # Funciones para obtener y setear los archivos abiertos, existe una 
         # unica instancia compartida por todos los PlotTypeOneWidget y la tiene
         # el padre postProcessWidget
         self.get_open_archives = get_oa
         self.set_open_archives = set_oa
+        
         self.set_restrictions()
         return
     
@@ -106,6 +108,9 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
         self.run_attributes = run_attributes
         self.current_objects = current_objects
         self.set_rpms_and_cycles()
+        if self.ga:
+            self.ga.change_attributes(self.run_attributes,self.current_objects['Cylinders'],\
+                                      self.current_objects['Atmospheres'][0].object['state_ini'][0] )
         self.choose_component('Cylinders')
         return
     
@@ -261,9 +266,9 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
         data = take(A_node_and_cycle_filtered, [self.normal_x_var,4+variable_index], axis=1)
         for idata in data:
             idata[1] = idata[1]*scale
-            
+
         try:
-            assert(data != [])
+            assert(len(data) != 0)
         except:
             handle_exception('Cannot find data in %s archive for %s cycle'%(archive,icycle))
         return data
@@ -304,7 +309,7 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
                 for i in range(0,ndata,offset) if (int(A[i][0])==int(icycle) or self.not_check_cycle)]
         
         try:
-            assert(data != [])
+            assert(len(data) != 0)
         except:
             handle_exception('Cannot find data in %s archive for %s cycle'%(archive,icycle))
         return data

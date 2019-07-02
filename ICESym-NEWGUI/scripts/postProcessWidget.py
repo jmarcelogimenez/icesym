@@ -16,7 +16,8 @@ from CurveFormatDialog import CurveFormatDialog
 import pyqtgraph as pg
 import numpy as np
 from utils import set_plot, show_message, check_two_equals, PLOT_ARGUMENTS,\
-                  INSTALL_PATH, RUNS_PATH, DEFAULT_PLOTS, CURVE_LINE_FORMATS, CURVE_COLORS
+                  INSTALL_PATH, RUNS_PATH, DEFAULT_PLOTS, CURVE_LINE_FORMATS,\
+                  CURVE_COLORS, dir_size
 from exception_handling import handle_exception
 
 try:
@@ -56,7 +57,8 @@ class postProcessWidget(QtWidgets.QWidget):
         self.colour_plots   = {}
         self.open_archives  = {}
         self.run_attributes = {}
-        self.curve_attributes  = {}
+        self.run_attributes['rpms_folder_sizes'] = {}
+        self.curve_attributes  = {}        
         self.current_selected_curve = None
         self.ui_ppw.tabWidget_plots.setEnabled(False)
         self.current_attributes_changed = False
@@ -97,8 +99,11 @@ class postProcessWidget(QtWidgets.QWidget):
             if not os.path.isdir(self.current_run_dir):
                 return False
             (run_attributes,irpm_missing) = self.load_current_attributes()
-            if self.run_attributes!=run_attributes or self.current_attributes_changed:
+            if self.run_attributes != run_attributes or\
+            self.run_attributes['rpms_folder_sizes'] != run_attributes['rpms_folder_sizes'] or\
+            self.current_attributes_changed:
                 self.run_attributes = run_attributes
+                self.run_attributes['rpms_folder_sizes'] = run_attributes['rpms_folder_sizes']
                 # If the run attributes or the current objects changed, it is possible
                 # that also the open archives.. maybe an incomplete rpm is now complete
                 self.open_archives = {}
@@ -122,13 +127,15 @@ class postProcessWidget(QtWidgets.QWidget):
         # Attributes for PlotWidgets
         irpm_missing = []
         run_attributes = {}
-        run_attributes['rpms']         = []
-        run_attributes['final_times']  = []
+        run_attributes['rpms']              = []
+        run_attributes['final_times']       = []
+        run_attributes['rpms_folder_sizes'] = {}
 
         calculated_rpms = [int(f.replace('RPM_','')) for f in os.listdir(self.current_run_dir) if 'RPM_' in f]
-        
+
         # First, include the calculated ones
         for irpm in calculated_rpms:
+            # This ones are not be changed by current simulation
             if irpm not in self.current_configuration['rpms']:
                 self.current_configuration['rpms'].append(irpm)
         # Of the "set" one, check the ones that are not calculated
@@ -137,6 +144,15 @@ class postProcessWidget(QtWidgets.QWidget):
             if not os.path.isdir(rpm_folder):
                 irpm_missing.append(irpm)
                 continue
+            current_dir_size = dir_size(rpm_folder)
+            # check if the size of the calculated ones changed, so run_attributes must change
+            if not irpm in self.run_attributes['rpms_folder_sizes'].keys():
+                run_attributes['rpms_folder_sizes'][irpm] = current_dir_size
+            else:
+                old_dir_size = self.run_attributes['rpms_folder_sizes'][irpm]
+                run_attributes['rpms_folder_sizes'][irpm] = current_dir_size if \
+                current_dir_size > old_dir_size else old_dir_size
+
             run_attributes['rpms'].append(irpm)
         
         # Order the rpms, because maybe the user simulates 1000-3000 and then 4000

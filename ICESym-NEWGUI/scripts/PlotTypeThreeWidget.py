@@ -232,7 +232,7 @@ class PlotTypeThreeWidget(QtWidgets.QWidget):
         data = [i*scale for i in data]
         
         try:
-            assert(data != [])
+            assert(len(data) != 0)
         except:
             handle_exception('Cannot find data in %s archive for %s cycle'%(archive,icycle))
         return data
@@ -274,7 +274,7 @@ class PlotTypeThreeWidget(QtWidgets.QWidget):
                 for i in range(0,ndata,offset) if (int(A[i][0])==int(icycle) or self.not_check_cycle)]
         
         try:
-            assert(data != [])
+            assert(len(data) != 0)
         except:
             handle_exception('Cannot find data in %s archive for %s cycle'%(archive,icycle))
         return data
@@ -354,7 +354,8 @@ class PlotTypeThreeWidget(QtWidgets.QWidget):
                     except:
                         handle_exception('Error opening archive %s. Cannot plot this selections.'%iarchive)
                         return
-                data_p = [[data_p[0][i],data_p[1][i]] for i in range(len(data_p[0]))]
+                data_len = min(len(data_p[0]),len(data_p[1])) # sometimes arrays differs in length
+                data_p = [[data_p[0][i],data_p[1][i]] for i in range(data_len)]
                 datas.append(data_p)
                 legends.append(plot_attributes['label']+"_RPM_"+str(irpm)+"_Cycle_"+str(icycle))
         return (datas,legends)

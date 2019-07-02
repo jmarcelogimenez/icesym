@@ -16,19 +16,22 @@ GROUP_B = ['Power Indicated','Power Effective','Torque Indicated','Torque Effect
 
 class GeneralAttributes():
     def __init__(self, run_attributes, read_normal_txt, read_extras_txt, cylinders, rho, current_run_dir):
-        self.general_atributes = {}
-        self.run_attributes = run_attributes
         self.read_extras_txt = read_extras_txt
         self.read_normal_txt = read_normal_txt
+        self.change_attributes(run_attributes, cylinders, rho)
+        self.current_run_dir = current_run_dir
+        return
 
+    def change_attributes(self, run_attributes, cylinders, rho):
+        self.general_atributes = {}
+        self.run_attributes = run_attributes
         self.rpms = [int(irpm) for irpm in self.run_attributes['rpms']]
         self.ncycles = self.run_attributes['ncycles']
         self.ncyls = len(cylinders)
         self.cylinders = cylinders
         self.rho = rho
-        self.current_run_dir = current_run_dir
         return
-    
+
     def return_calculated_variable(self, variable, icycle, label, unit):        
         if variable not in self.general_atributes.keys():
             if variable in GROUP_A:

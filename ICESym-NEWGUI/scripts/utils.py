@@ -440,10 +440,11 @@ def load_configuration_aux(parent, ctype):
             show_message('There was an error trying to load this configuration.')
     return (False,new_configuration)
 
-"""
-Given a list, checks if 2 items are equal in it
-"""
+
 def check_two_equals(nlist):
+    """
+    Given a list, checks if 2 items are equal in it
+    """
     n = 0
     for i in range(n,len(nlist)):
         for j in range(n+1,len(nlist)):
@@ -453,6 +454,39 @@ def check_two_equals(nlist):
         if n==len(nlist):
             return False
     return False
+
+def dir_size(start, follow_links = True, start_depth = 0):
+    """
+    Given a directory, returns its size in bytes
+    """
+    from exception_handling import handle_exception
+    # Get a list of all names of files and subdirectories in directory start
+    try: 
+        dir_list = os.listdir(start)
+        from exception_handling import CURRENT_EXCEPTION
+        assert(not CURRENT_EXCEPTION)
+    except:
+        handle_exception('Cannot list directory %s'%start)
+        return
+
+    total = 0L
+    for item in dir_list:
+        # Get statistics on each item--file and subdirectory--of start
+        path = os.path.join(start, item)
+        try: 
+            stats = os.stat(path)
+            from exception_handling import CURRENT_EXCEPTION
+            assert(not CURRENT_EXCEPTION)
+        except:
+            handle_exception('Cannot list directory %s'%path)
+            return
+        # The size in bytes is in the seventh item of the stats tuple, so:
+        total += stats[6]
+        # recursive descent if warranted
+        if os.path.isdir(path) and (follow_links or not os.path.islink(path)):
+            bytes = dir_size(path, follow_links, start_depth+1)
+            total += bytes
+    return total
 
 class SelectionDialog(object):
     def setupUi(self, Dialog, items):
