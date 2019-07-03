@@ -66,12 +66,13 @@ You might need sudo privileges depending where the python libraries are placed.*
 
 ```bash
 sudo apt-get install qt5-default
+export NPROCS=2
 cd DIR_VIRTUALENV
 wget -c https://sourceforge.net/projects/pyqt/files/sip/sip-4.19.8/sip-4.19.8.tar.gz
 tar xvzf sip-4.19.8.tar.gz 
 cd sip-4.19.8/
 python configure.py --incdir=../include/python2.7
-make -j
+make -j $NPROCS
 make install
 cd DIR_VIRTUALENV
 
@@ -79,7 +80,7 @@ wget -c https://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-5.10.1/PyQt5_gpl-
 tar xvzf PyQt5_gpl-5.10.1.tar.gz
 cd PyQt-gpl-5.10.1/
 python configure.py --qmake=/usr/bin/qmake --sip-incdir=../sip-4.19.8/siplib --no-qml-plugin --no-designer-plugin
-make -j
+make -j $NPROCS
 make install
 cd DIR_VIRTUALENV
 
