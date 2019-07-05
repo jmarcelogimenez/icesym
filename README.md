@@ -44,18 +44,20 @@ The first step is to create the python virtual environment, let us call it DIR_V
 virtualenv --python=/usr/bin/python2.7 DIR_VIRTUALENV
 ```
 
-The simulator requires, besides basic python 2.7 packages, numpy, Cython and gfortran compilators. To compile and install, follow the next steps:
+The simulator requires, besides basic python 2.7 packages, numpy, Cython and gfortran compilators. To compile and install the simulator in the folder $HOME/ICESym, follow the next steps:
 
 ```bash
-cd DIR_VIRTUALENV
+export DIR_VIRTUALENV=$HOME/ICESym
+mkdir -p $DIR_VIRTUALENV
+cd $DIR_VIRTUALENV
 source bin/activate
-git clone https://github.com/jmarcelogimenez/icesym.git
-pip install numpy==1.8
-pip install Cython
-sudo apt-get install gfortran-4.9-multilib
-cd icesym/ICESym-1D/src
-make
-python setup.py install
+(VENV) git clone https://github.com/jmarcelogimenez/icesym.git
+(VENV) pip install numpy==1.8
+(VENV) pip install Cython
+(VENV) sudo apt-get install gfortran-4.9-multilib
+(VENV) cd icesym/ICESym-1D/src
+(VENV) make
+(VENV) python setup.py install
 ```
 
 The GUI requires Qt5 (tested with 5.2.1, the default in Ubuntu 14.04), PyQt5 (tested with 5.10.1), sip (tested with 4.19.8), pyinstaller (tested with 3.4) and pyqtgraph. To compile and install all the packages, 
@@ -65,44 +67,46 @@ follow the next steps (assuming you have already done step 2.2 and have the virt
 You might need sudo privileges depending where the python libraries are placed.*
 
 ```bash
-sudo apt-get install qt5-default
-export NPROCS=2
-cd DIR_VIRTUALENV
-wget -c https://sourceforge.net/projects/pyqt/files/sip/sip-4.19.8/sip-4.19.8.tar.gz
-tar xvzf sip-4.19.8.tar.gz 
-cd sip-4.19.8/
-python configure.py --incdir=../include/python2.7
-make -j $NPROCS
-make install
-cd DIR_VIRTUALENV
+(VENV) sudo apt-get install qt5-default libqt5svg5-dev
+(VENV) export NPROCS=4
+(VENV) cd $DIR_VIRTUALENV
+(VENV) wget -c https://sourceforge.net/projects/pyqt/files/sip/sip-4.19.8/sip-4.19.8.tar.gz
+(VENV) tar xvzf sip-4.19.8.tar.gz 
+(VENV) cd sip-4.19.8/
+(VENV) python configure.py --incdir=../include/python2.7
+(VENV) make -j $NPROCS
+(VENV) make install
+(VENV) cd DIR_VIRTUALENV
 
-wget -c https://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-5.10.1/PyQt5_gpl-5.10.1.tar.gz
-tar xvzf PyQt5_gpl-5.10.1.tar.gz
-cd PyQt-gpl-5.10.1/
-python configure.py --qmake=/usr/bin/qmake --sip-incdir=../sip-4.19.8/siplib --no-qml-plugin --no-designer-plugin
-make -j $NPROCS
-make install
-cd DIR_VIRTUALENV
+(VENV) wget -c https://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-5.10.1/PyQt5_gpl-5.10.1.tar.gz
+(VENV) tar xvzf PyQt5_gpl-5.10.1.tar.gz
+(VENV) cd PyQt-gpl-5.10.1/
+(VENV) python configure.py --qmake=/usr/bin/qmake --sip-incdir=../sip-4.19.8/siplib --no-qml-plugin --no-designer-plugin
+(VENV) make -j $NPROCS
+(VENV) make install
+(VENV) cd $DIR_VIRTUALENV
 
-pip install -r icesym/dist_linux/requirements.txt
-cd DIR_VIRTUALENV/icesym/ICESym-NEWGUI/scripts
-./compileWidgets_linux.sh
+(VENV) pip install -r icesym/dist_linux/requirements.txt
+(VENV) cd DIR_VIRTUALENV/icesym/ICESym-NEWGUI/scripts
+(VENV) ./compileWidgets_linux.sh
 ```
 
-There is a final step to use the simulator with the GUI, you must copy the **simCythonCPP.so** library built in ICESym-1D to the simulator/dist_linux folder located in ICESym-NEWGUI. Then:
+There is a final step to use the simulator with the GUI, you must copy the **simCythonCPP.so** library built in ICESym-1D to the simulator/dist_linux folder located in ICESym-NEWGUI. This is done as follows:
 
 ```bash
-cd ICESym-NEWGUI/simulator/dist_linux
-./create_dist
+(VENV) cd $DIR_VIRTUALENV/icesym/ICESym-NEWGUI/simulator/dist_linux
+(VENV) ./create_dist
 ```
 
 #### Usage
 
-For the compiled version:
+Running the compiled simulator requires to activate the virtual environment each time:
 
 ```bash
-cd ICESym-NEWGUI
-python scripts/__main__.py
+cd $DIR_VIRTUALENV
+source bin/activate
+(VENV) cd icesym/ICESym-NEWGUI
+(VENV) python scripts/__main__.py
 ```
 
 ### Creating distributable
@@ -110,13 +114,11 @@ python scripts/__main__.py
 To create a linux distributable, assuming you set the virtual enviroment following the steps in Installation (2), just install PyInstaller:
 
 ```bash
-pip install PyInstaller==3.4
-```
-
-Then, inside the folder dist_linux:
-
-```bash
-./create_dist.sh
+cd $DIR_VIRTUALENV
+source bin/activate
+(VENV) pip install PyInstaller==3.4
+(VENV) cd icesym/ICESym-NEWGUI/simulator/dist_linux
+(VENV) ./create_dist.sh
 ```
 
 ## Windows Distributions
