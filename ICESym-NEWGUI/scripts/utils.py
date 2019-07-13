@@ -108,7 +108,7 @@ PLOT_ARGUMENTS[5]['title']          = 'Free Plot'
 
 # default plots to graph when the simulation finish
 DEFAULT_PLOTS = []
-DEFAULT_PLOTS.append([5,'Cylinders',0,0,['Pressure','Volume'],['Pa','m^3'],[-1],[-1],'PV_Cyl0','PV Plot Cylinder 0',-1])
+DEFAULT_PLOTS.append([5,'Cylinders',0,0,['Volume','Pressure'],['m^3','Pa'],[-1],[-1],'PV_Cyl0','PV Plot Cylinder 0',-1])
 DEFAULT_PLOTS.append([0,'Cylinders',0,-1,'Temperature','K',[-1],[-1],'Temperature','Cylinder Temperatures',-1])
 DEFAULT_PLOTS.append([0,'Cylinders',0,0,'Mass Flow Rate trought Intake Port','kg/s',[-1],[0],'Mass Flow Rate trought Intake Port','Mass Flow Rate (Intake)',-1])
 DEFAULT_PLOTS.append([0,'Cylinders',0,0,'Mass Flow Rate trought Intake Port','kg/s',[-1],[-1],'Mass Flow Rate trought Intake Port','Mass Flow Rate (Intake)',0])
