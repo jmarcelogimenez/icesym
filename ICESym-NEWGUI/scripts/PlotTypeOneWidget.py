@@ -259,13 +259,13 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
         else:
             A = open_archives[archive]
 
-        scale = CONVERSIONS[unit]
+        scale, operation = CONVERSIONS[unit]
         A_node_filtered = A[A[:,0] == node]
         A_node_and_cycle_filtered = A_node_filtered if self.not_check_cycle \
         else A_node_filtered[A_node_filtered[:,1] == int(icycle)]
         data = take(A_node_and_cycle_filtered, [self.normal_x_var,4+variable_index], axis=1)
         for idata in data:
-            idata[1] = idata[1]*scale
+            idata[1] = operation(idata[1], scale)
 
         try:
             assert(len(data) != 0)
@@ -284,7 +284,7 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
         offset = 4 if component=='Cylinders' else 2
         variable_line = CYLEXTRA_LINES[variable][0] if component=='Cylinders' else 1
         variable_col = CYLEXTRA_LINES[variable][1] if component=='Cylinders' else TANKEXTRA_LINES[variable]
-        scale = CONVERSIONS[unit]
+        scale, operation = CONVERSIONS[unit]
         
         open_archives = self.get_open_archives()
         if archive not in open_archives.keys():
@@ -305,7 +305,7 @@ class PlotTypeOneWidget(QtWidgets.QWidget):
             TANKEXTRA_LINES['Enthalpy Flow Rate'] = int(ntubes)
             variable_col = TANKEXTRA_LINES[variable]
         ndata = A.shape[0]
-        data = [[ A[i][self.extras_x_var], A[i+variable_line][variable_col]*scale ] \
+        data = [[ A[i][self.extras_x_var], operation(A[i+variable_line][variable_col], scale) ] \
                 for i in range(0,ndata,offset) if (int(A[i][0])==int(icycle) or self.not_check_cycle)]
         
         try:

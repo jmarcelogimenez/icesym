@@ -221,12 +221,12 @@ class PlotTypeThreeWidget(QtWidgets.QWidget):
         else:
             A = open_archives[archive]
 
-        scale = CONVERSIONS[unit]
+        scale, operation = CONVERSIONS[unit]
         A_node_filtered = A[A[:,0] == node]
         A_node_and_cycle_filtered = A_node_filtered if self.not_check_cycle \
         else A_node_filtered[A_node_filtered[:,1] == int(icycle)]
         data = take(A_node_and_cycle_filtered, 4+variable_index, axis=1)
-        data = [i*scale for i in data]
+        data = [operation(i, scale) for i in data]
         
         try:
             assert(len(data) != 0)
@@ -245,7 +245,7 @@ class PlotTypeThreeWidget(QtWidgets.QWidget):
         offset = 4 if component=='Cylinders' else 2
         variable_line = CYLEXTRA_LINES[variable][0] if component=='Cylinders' else 1
         variable_col = CYLEXTRA_LINES[variable][1] if component=='Cylinders' else TANKEXTRA_LINES[variable]
-        scale = CONVERSIONS[unit]
+        scale, operation = CONVERSIONS[unit]
         
         open_archives = self.get_open_archives()
         if archive not in open_archives.keys():
@@ -267,7 +267,7 @@ class PlotTypeThreeWidget(QtWidgets.QWidget):
             variable_col = TANKEXTRA_LINES[variable]
 
         ndata = A.shape[0]
-        data = [ A[i+variable_line][variable_col]*scale \
+        data = [ operation(A[i+variable_line][variable_col], scale) \
                 for i in range(0,ndata,offset) if (int(A[i][0])==int(icycle) or self.not_check_cycle)]
         
         try:

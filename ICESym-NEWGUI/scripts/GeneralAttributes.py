@@ -43,15 +43,15 @@ class GeneralAttributes():
 
         datas   = []
         legends = []
-        scale   = CONVERSIONS[unit]
+        scale, operation   = CONVERSIONS[unit]
         if variable in self.general_atributes.keys():
             if 'per Cylinder' in variable:
                 for icylinder in range(self.ncyls):
-                    data = [ [float(irpm),self.general_atributes[variable][icylinder][irpm][icycle]*scale] for irpm in self.rpms ]
+                    data = [ [float(irpm), operation(self.general_atributes[variable][icylinder][irpm][icycle], scale) ] for irpm in self.rpms ]
                     legends.append(label+"_"+variable+"_Cylinder_"+str(icylinder)+"_Cycle_"+str(icycle))
                     datas.append(data)
             else:
-                data = [ [float(irpm),self.general_atributes[variable][icycle][irpm]*scale] for irpm in self.rpms ]
+                data = [ [float(irpm), operation(self.general_atributes[variable][icycle][irpm], scale) ] for irpm in self.rpms ]
                 legends.append(label+"_"+variable+"_Cycle_"+str(icycle))
                 datas.append(data)
         return [datas,legends]

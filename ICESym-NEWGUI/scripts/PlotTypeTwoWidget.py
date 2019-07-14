@@ -90,14 +90,14 @@ class PlotTypeTwoWidget(QtWidgets.QWidget):
         else:
             A = open_archives[archive]
 
-        scale = CONVERSIONS[unit]
+        scale, operation = CONVERSIONS[unit]
         times = A[:,3]
         new_time = min(times, key=lambda x:abs(x-time)) # el mas cercano en la lista
 
         A_time_filtered = A[A[:,3] == new_time]
         data = take(A_time_filtered, [0,4+variable_index], axis=1)
         for idata in data:
-            idata[1] = idata[1]*scale
+            idata[1] = operation(idata[1], scale)
         try:
             assert(len(data) != 0)
         except:
