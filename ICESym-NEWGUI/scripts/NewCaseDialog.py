@@ -103,7 +103,7 @@ class NewCaseDialog(QtWidgets.QDialog):
         for isi in range(ncyls+1):
             iobject['state_ini'].append(DEFAULT_DVP)
             iobject['Cd_ports'].append(0.8)
-        position = QtCore.QPoint(X_SIZE*4,INITIAL_Y)
+        position = QtCore.QPoint(X_SIZE*3, INITIAL_Y)
         item_tank = SceneItem('Tanks', position, iobject)
         objects['Tanks'].append(item_tank)
         
@@ -113,7 +113,7 @@ class NewCaseDialog(QtWidgets.QDialog):
         # nnod: 1 tube + ncyls
         for isi in range(ncyls+1):
             iobject['state_ini'].append(DEFAULT_DVP)
-        position = QtCore.QPoint(X_SIZE*16,INITIAL_Y)
+        position = QtCore.QPoint(X_SIZE*13, INITIAL_Y)
         item_junc = SceneItem('Junctions', position, iobject)
         objects['Junctions'].append(item_junc)
 
@@ -124,7 +124,7 @@ class NewCaseDialog(QtWidgets.QDialog):
             iobject['typeVal']  = 'int'
             iobject['label']    = 'Intake_Valve_%s'%icyl
             configure_default_valve(iobject,default_dict['Configurations']['nstroke'])
-            position = QtCore.QPoint(X_SIZE*8,Y_SIZE*icyl*2)
+            position = QtCore.QPoint(X_SIZE*7, Y_SIZE*icyl*2)
             item_valve = SceneItem('Valves', position, iobject)
             objects['Valves'].append(item_valve)
 
@@ -137,7 +137,7 @@ class NewCaseDialog(QtWidgets.QDialog):
             iobject['nleft']    = 0
             iobject['label']    = 'Tube_%s'%len(objects['Tubes'])
             configure_default_tube(iobject)
-            position = QtCore.QPoint(X_SIZE*6,Y_SIZE*icyl*2)
+            position = QtCore.QPoint(X_SIZE*5, Y_SIZE*icyl*2)
             item_tube = SceneItem('Tubes', position, iobject)
             objects['Tubes'].append(item_tube)
             index_tube = objects['Tubes'].index(item_tube)
@@ -172,7 +172,7 @@ class NewCaseDialog(QtWidgets.QDialog):
             vol_constant = float(self.ui_ncd.vol_constant.text())
             objects['Tanks'][0].object['Volume'] = (vol_constant*math.pi*iobject['Bore']**2/4.0)*iobject['crank_radius']
 
-            position = QtCore.QPoint(X_SIZE*10,Y_SIZE*icyl*2)
+            position = QtCore.QPoint(X_SIZE*8, Y_SIZE*icyl*2)
             item_cyl = SceneItem('Cylinders', position, iobject)
             objects['Cylinders'].append(item_cyl)
 
@@ -181,7 +181,7 @@ class NewCaseDialog(QtWidgets.QDialog):
             iobject['typeVal']  = 'exh'
             iobject['label']    = 'Exhaust_Valve_%s'%icyl
             configure_default_valve(iobject,default_dict['Configurations']['nstroke'])
-            position = QtCore.QPoint(X_SIZE*12,Y_SIZE*icyl*2)
+            position = QtCore.QPoint(X_SIZE*9, Y_SIZE*icyl*2)
             item_valve = SceneItem('Valves', position, iobject)
             objects['Valves'].append(item_valve)
 
@@ -192,7 +192,7 @@ class NewCaseDialog(QtWidgets.QDialog):
             iobject['nleft']    = icyl
             iobject['label']    = 'Tube_%s'%len(objects['Tubes'])
             configure_default_tube(iobject)
-            position = QtCore.QPoint(X_SIZE*14,Y_SIZE*icyl*2)
+            position = QtCore.QPoint(X_SIZE*11, Y_SIZE*icyl*2)
             item_tube = SceneItem('Tubes', position, iobject)
             objects['Junctions'][0].object['type_end'].append(1)
             objects['Tubes'].append(item_tube)
@@ -208,7 +208,7 @@ class NewCaseDialog(QtWidgets.QDialog):
         iobject['nleft']    = 0
         iobject['label']    = 'Tube_%s'%len(objects['Tubes'])
         configure_default_tube(iobject)
-        position = QtCore.QPoint(X_SIZE*18,INITIAL_Y)
+        position = QtCore.QPoint(X_SIZE*14, INITIAL_Y)
         item_tube = SceneItem('Tubes', position, iobject)
         objects['Tubes'].append(item_tube)
         index_tube = objects['Tubes'].index(item_tube)
@@ -216,7 +216,7 @@ class NewCaseDialog(QtWidgets.QDialog):
         objects['Junctions'][0].object['node2tube'].append(index_tube)
 
         iobject = copy.deepcopy(default_dict['Atmospheres'])
-        position = QtCore.QPoint(X_SIZE*20,INITIAL_Y)
+        position = QtCore.QPoint(X_SIZE*16, INITIAL_Y)
         item_atmosphere = SceneItem('Atmospheres', position, iobject)
         objects['Atmospheres'].append(item_atmosphere)
         
