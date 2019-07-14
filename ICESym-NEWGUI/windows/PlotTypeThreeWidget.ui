@@ -82,22 +82,7 @@
      </item>
      <item>
       <property name="text">
-       <string>Tubes</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
        <string>Tanks</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Junctions</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Globals</string>
       </property>
      </item>
     </widget>

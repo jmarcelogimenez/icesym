@@ -30,10 +30,7 @@ except AttributeError:
 
 COMPONENTS_DICT = {}
 COMPONENTS_DICT['Cylinders'] = 'cyl'
-COMPONENTS_DICT['Tubes'] = 'tube'
 COMPONENTS_DICT['Tanks'] = 'tank'
-COMPONENTS_DICT['Junctions'] = 'junc'
-COMPONENTS_DICT['Globals'] = 'global'
 
 LISTNDOFA   = ['Density', 'Velocity', 'Pressure']
 LISTNDOFB   = ['Density', 'Pressure','Temperature']
