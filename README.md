@@ -117,7 +117,9 @@ To create a linux distributable, assuming you set the virtual enviroment followi
 cd $DIR_VIRTUALENV
 source bin/activate
 (VENV) pip install PyInstaller==3.4
-(VENV) cd icesym/ICESym-NEWGUI/simulator/dist_linux
+(VENV) cd $DIR_VIRTUALENV/icesym/ICESym-NEWGUI/
+(VENV) source etc/bashrc_linux
+(VENV) cd $DIR_VIRTUALENV/icesym/dist_linux
 (VENV) ./create_dist.sh
 ```
 
