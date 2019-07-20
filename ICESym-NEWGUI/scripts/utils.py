@@ -469,7 +469,7 @@ def dir_size(start, follow_links = True, start_depth = 0):
         handle_exception('Cannot list directory %s'%start)
         return
 
-    total = 0L
+    total = 0
     for item in dir_list:
         # Get statistics on each item--file and subdirectory--of start
         path = os.path.join(start, item)
