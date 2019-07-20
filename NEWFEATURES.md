@@ -1,7 +1,7 @@
 # New features 190722
 
 ---------------------------------------
-##Several changes
+## Several changes
 ---------------------------------------
 
 - Folders take their names of the user input.
@@ -19,7 +19,7 @@
 - Free plots only for cylinders and tanks.
 
 ---------------------------------------
-##Corrected bugs
+## Corrected bugs
 ---------------------------------------
 
 - Divide the initial state of the tank and cylinders of node zero and the rest.
@@ -34,7 +34,7 @@
 - Correction in units conversion from K to C.
 
 ---------------------------------------
-##New features
+## New features
 ---------------------------------------
 
 - Added default cylinders in the wizard for 2/4 stroke and CI/SI.
