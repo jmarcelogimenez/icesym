@@ -1,8 +1,6 @@
 # New features 190722
 
----------------------------------------
 ## Several changes
----------------------------------------
 
 - Folders take their names of the user input.
 - Default objects are now numerated.
@@ -18,9 +16,7 @@
 - Change the ubication of the items in the basic wizard layout to fit the screen.
 - Free plots only for cylinders and tanks.
 
----------------------------------------
 ## Corrected bugs
----------------------------------------
 
 - Divide the initial state of the tank and cylinders of node zero and the rest.
 - Adding cd ports with a tube - tank connection.
@@ -33,9 +29,7 @@
 - Invert the PV default diagram.
 - Correction in units conversion from K to C.
 
----------------------------------------
 ## New features
----------------------------------------
 
 - Added default cylinders in the wizard for 2/4 stroke and CI/SI.
 - Inform simulated/to simulate rpms.
