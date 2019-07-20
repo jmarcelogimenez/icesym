@@ -14,7 +14,7 @@ This project consists of two main parts:
 
 Download the packaged version from [ICESym-Linux64](https://sourceforge.net/projects/icesym/files/icesym-l64-20190524.tar.gz/download). It includes the simulator and GUI and it was tested in the following distros:
 
-- Ubuntu 14.04 
+- Ubuntu 14.04
 - Ubuntu 16.04
 - Ubuntu 18.04
 
@@ -38,17 +38,16 @@ Create a virtual environment and download all the needed packages. To start, you
 - Python 2.7
 - virtualenv (tested in version 15.1.0)
 
-The first step is to create the python virtual environment, let us call it DIR_VIRTUALENV. The --python flag indicates the path where our python 2.7 is:
+The first step is to create the python virtual environment, let us call it icesym_virtualenv. The --python flag indicates the path where our python 2.7 is:
 
 ```bash
-virtualenv --python=/usr/bin/python2.7 DIR_VIRTUALENV
+virtualenv --python=/usr/bin/python2.7 icesym_virtualenv
 ```
 
-The simulator requires, besides basic python 2.7 packages, numpy, Cython and gfortran compilators. To compile and install the simulator in the folder $HOME/ICESym, follow the next steps:
+The last command created a folder where our virtual enviroment is located. The fortran simulator requires, besides basic python 2.7 packages, numpy, Cython and gfortran compilators. To compile and install the simulator in the folder icesym_virtualenv, follow the next steps:
 
 ```bash
-export DIR_VIRTUALENV=$HOME/ICESym
-mkdir -p $DIR_VIRTUALENV
+export DIR_VIRTUALENV=$HOME/icesym_virtualenv
 cd $DIR_VIRTUALENV
 source bin/activate
 (VENV) git clone https://github.com/jmarcelogimenez/icesym.git
@@ -60,7 +59,7 @@ source bin/activate
 (VENV) python setup.py install
 ```
 
-The GUI requires Qt5 (tested with 5.2.1, the default in Ubuntu 14.04), PyQt5 (tested with 5.10.1), sip (tested with 4.19.8), pyinstaller (tested with 3.4) and pyqtgraph. To compile and install all the packages, 
+The GUI requires Qt5 (tested with 5.2.1, the default in Ubuntu 14.04), PyQt5 (tested with 5.10.1), sip (tested with 4.19.8), pyinstaller (tested with 3.4) and pyqtgraph. To compile and install all the packages,
 follow the next steps (assuming you have already done step 2.2 and have the virtual environment already activated):
 
 *Notes: The NPROC variable depends on the cores in your system that you want to use to compile. The qmake path in the configuration of PyQt5 can vary depending on the distro.
@@ -71,7 +70,7 @@ You might need sudo privileges depending where the python libraries are placed.*
 (VENV) export NPROCS=4
 (VENV) cd $DIR_VIRTUALENV
 (VENV) wget -c https://sourceforge.net/projects/pyqt/files/sip/sip-4.19.8/sip-4.19.8.tar.gz
-(VENV) tar xvzf sip-4.19.8.tar.gz 
+(VENV) tar xvzf sip-4.19.8.tar.gz
 (VENV) cd sip-4.19.8/
 (VENV) python configure.py --incdir=../include/python2.7
 (VENV) make -j $NPROCS
