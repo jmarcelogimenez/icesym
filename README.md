@@ -118,6 +118,8 @@ source bin/activate
 (VENV) pip install PyInstaller==3.4
 (VENV) cd $DIR_VIRTUALENV/icesym/ICESym-NEWGUI/
 (VENV) source etc/bashrc_linux
+(VENV) cd scripts
+(VENV) ./compileWidgets_linux.sh
 (VENV) cd $DIR_VIRTUALENV/icesym/dist_linux
 (VENV) ./create_dist.sh
 ```
