@@ -50,7 +50,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
         QtWidgets.QMainWindow.__init__(self)
         self.ui = Ui_ICESymMainWindow()
         self.ui.setupUi(self)
-        self.setGeometry(0, 0, 1350, 760)
+        self.setGeometry(0, 0, 1375, 760)
         # ubica la interfaz en el centro de la pantalla
         self.centerOnScreen()
 
