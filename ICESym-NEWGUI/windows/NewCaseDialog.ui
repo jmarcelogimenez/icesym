@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>496</height>
+    <height>510</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -107,6 +107,8 @@
        <widget class="QComboBox" name="type_ig">
         <property name="font">
          <font>
+          <family>Ubuntu</family>
+          <pointsize>9</pointsize>
           <underline>false</underline>
          </font>
         </property>
@@ -129,6 +131,8 @@
         </property>
         <property name="font">
          <font>
+          <family>Ubuntu</family>
+          <pointsize>9</pointsize>
           <underline>false</underline>
          </font>
         </property>
@@ -141,6 +145,8 @@
        <widget class="QSpinBox" name="ncyls">
         <property name="font">
          <font>
+          <family>Ubuntu</family>
+          <pointsize>9</pointsize>
           <underline>false</underline>
          </font>
         </property>
@@ -154,6 +160,12 @@
       </item>
       <item row="1" column="2">
        <widget class="QComboBox" name="nstroke">
+        <property name="font">
+         <font>
+          <family>Ubuntu</family>
+          <pointsize>9</pointsize>
+         </font>
+        </property>
         <property name="currentIndex">
          <number>1</number>
         </property>
@@ -173,6 +185,8 @@
        <widget class="QLabel" name="label_5">
         <property name="font">
          <font>
+          <family>Ubuntu</family>
+          <pointsize>9</pointsize>
           <underline>false</underline>
          </font>
         </property>
@@ -188,6 +202,8 @@
         </property>
         <property name="font">
          <font>
+          <family>Ubuntu</family>
+          <pointsize>9</pointsize>
           <underline>false</underline>
          </font>
         </property>
@@ -203,6 +219,8 @@
         </property>
         <property name="font">
          <font>
+          <family>Ubuntu</family>
+          <pointsize>9</pointsize>
           <underline>false</underline>
          </font>
         </property>
@@ -213,6 +231,12 @@
       </item>
       <item row="8" column="0">
        <widget class="QLabel" name="label_8">
+        <property name="font">
+         <font>
+          <family>Ubuntu</family>
+          <pointsize>9</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Constant Tank Volume:</string>
         </property>
@@ -220,6 +244,12 @@
       </item>
       <item row="8" column="2">
        <widget class="QLineEdit" name="vol_constant">
+        <property name="font">
+         <font>
+          <family>Ubuntu</family>
+          <pointsize>9</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>1.0</string>
         </property>
@@ -229,6 +259,8 @@
        <widget class="QLabel" name="label_6">
         <property name="font">
          <font>
+          <family>Ubuntu</family>
+          <pointsize>9</pointsize>
           <underline>false</underline>
          </font>
         </property>
@@ -241,6 +273,8 @@
        <widget class="QLabel" name="label_4">
         <property name="font">
          <font>
+          <family>Ubuntu</family>
+          <pointsize>9</pointsize>
           <underline>false</underline>
          </font>
         </property>
@@ -253,6 +287,8 @@
        <widget class="QLabel" name="label">
         <property name="font">
          <font>
+          <family>Ubuntu</family>
+          <pointsize>9</pointsize>
           <underline>false</underline>
          </font>
         </property>
@@ -265,6 +301,8 @@
        <widget class="QLabel" name="label_7">
         <property name="font">
          <font>
+          <family>Ubuntu</family>
+          <pointsize>9</pointsize>
           <underline>false</underline>
          </font>
         </property>
@@ -277,6 +315,8 @@
        <widget class="QLabel" name="label_3">
         <property name="font">
          <font>
+          <family>Ubuntu</family>
+          <pointsize>9</pointsize>
           <underline>false</underline>
          </font>
         </property>
@@ -292,6 +332,8 @@
         </property>
         <property name="font">
          <font>
+          <family>Ubuntu</family>
+          <pointsize>9</pointsize>
           <underline>false</underline>
          </font>
         </property>
@@ -318,6 +360,12 @@
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_9">
+        <property name="font">
+         <font>
+          <family>Ubuntu</family>
+          <pointsize>9</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Strokes per Cycle:</string>
         </property>
@@ -325,6 +373,12 @@
       </item>
       <item row="3" column="0">
        <widget class="QLabel" name="label_10">
+        <property name="font">
+         <font>
+          <family>Ubuntu</family>
+          <pointsize>9</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Type of Cylinder:</string>
         </property>
@@ -332,6 +386,12 @@
       </item>
       <item row="3" column="2">
        <widget class="QCheckBox" name="default_cylinder">
+        <property name="font">
+         <font>
+          <family>Ubuntu</family>
+          <pointsize>9</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Use default</string>
         </property>
