@@ -10,9 +10,10 @@ import os, copy, math
 from PyQt5 import QtWidgets, QtCore, QtGui
 from newCaseDialog_ui import Ui_NewCaseDialog
 from utils import show_message, load_templates, save_data_aux, check_if_float,\
-                  load_cylinder_template, MM2M, DEFAULT_DVP, INSTALL_PATH, CASES_PATH
+                  load_cylinder_template, MM2M, DEFAULT_DVP, CASES_PATH
 from configurationWidget import configurationWidget
 from SceneItem import SceneItem
+from UsageDialog import UsageDialog
 from TubeDialog import configure_default_tube
 from ValveDialog import configure_default_valve
 
@@ -296,4 +297,9 @@ class NewCaseDialog(QtWidgets.QDialog):
         self.ui_ncd.crank_radius.setEnabled(not state)
         self.ui_ncd.rod_length.setEnabled(not state)
         self.ui_ncd.Vol_clearance.setEnabled(not state)
+        return
+    
+    def start_here(self):
+        ud = UsageDialog()
+        ud.exec_()
         return
