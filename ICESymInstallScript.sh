@@ -152,7 +152,7 @@ if [ -d "$ICESymPath" ]; then
   fi
 fi
 
-if [ "$createVirtualEnv" = true ]; then
+if [ "$cloneICESym" = true ]; then
   git clone https://github.com/jmarcelogimenez/icesym.git
 fi
 
