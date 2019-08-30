@@ -26,16 +26,16 @@ setup(
   description  = 'Simulator',
   author       = 'Juan',
   author_email = 'jmarcelogimenez@gmail.com',
-  ext_modules=[ 
-    Extension(name = "simCythonCPP", 
+  ext_modules=[
+    Extension(name = "simCythonCPP",
               sources=[
               #"core.pyx",
               "simCythonCPP.cpp",
               "tube.cc", "junction.cc", "tank.cc", "cylinder.cc", "atmosphere.cc","simulator.cc", "component.cc"
               ,"def_general.f90", "utilities.f90", "gasdyn_utils.f90", "def_simulator.f90", "def_multivalve.f90",
-              "def_valve.f90", "def_tank.f90", "def_junction.f90", "def_cylinder.f90", "def_tube.f90" 
-              ], include_dirs = [numpy.get_include()],libraries=['gfortran','gfortranbegin','pthread'],extra_compile_args=["-fpermissive","-g0", "-O3"]
+              "def_valve.f90", "def_tank.f90", "def_junction.f90", "def_cylinder.f90", "def_tube.f90"
+              ], include_dirs = [numpy.get_include()],libraries=['gfortran','pthread'],extra_compile_args=["-fpermissive","-g0", "-O3"]
               ),
-              
+
     ],
 )

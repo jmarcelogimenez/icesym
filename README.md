@@ -8,7 +8,9 @@ This project consists of two main parts:
 
 ## Linux Distributions
 
-### PACKAGED VERSION:
+### PACKAGED VERSION
+
+Download this distribution if you are a final user of ICESym, i.e. you will use it only for research or academic propose.
 
 #### Installation
 
@@ -29,9 +31,13 @@ source etc/bashrc
 ./icesym
 ```
 
-### FROM SOURCES VERSION:
+### DEVELOPER VERSION
+
+Follow this steps if you are a developer of ICESym, i.e. you will add new functionalities to the simulator/GUI.
 
 #### Installation
+
+All the following steps are summarized in a bash script that you can download [here](https://sourceforge.net/projects/icesym/files/ICESymInstallScript.sh/download). Note that it seems to be a bug in Ubuntu 18.04 with the default version of PyQt5 used (5.10.1). To avoid this, please use the 5.9.2 version.
 
 Create a virtual environment and download all the needed packages. To start, you will need the following packages:
 
@@ -128,6 +134,8 @@ source bin/activate
 
 ### PACKAGED VERSION
 
+Download this distribution if you are a final user of ICESym, i.e. you will use it only for research or academic propose.
+
 #### Installation
 
 Download the packaged version from [ICESym-Win64](https://sourceforge.net/projects/icesym/files/icesym-w64-20190528.zip/download). It includes the simulator and GUI and it was tested in the following distros:
@@ -141,7 +149,9 @@ Please, if you use ICESym in another distro please contact us to add it to the l
 
 For packaged version, first execute the etc/bashrc_win.bat and then execute icesym.exe.
 
-### FROM SOURCES VERSION:
+### DEVELOPER VERSION
+
+Follow this steps if you are a developer of ICESym, i.e. you will add new functionalities to the simulator/GUI.
 
 #### Installation
 
