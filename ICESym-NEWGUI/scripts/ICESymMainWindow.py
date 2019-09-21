@@ -25,7 +25,7 @@ from exception_handling import handle_exception
 from utils import show_message, load_templates, save_data_aux, ICON_PATHS,\
                   ICON_PATHS_NC, DEFAULT_DVP, INSTALL_PATH, CASES_PATH,\
                   INDEX_TAB_MODELING, INDEX_TAB_RUN, INDEX_TAB_POSTPROCESS,\
-                  TAB_INFORMATION
+                  TAB_INFORMATION, DEFAULT_DPT
 
 TREE_POSITION = {} 
 TREE_POSITION['Cylinders']      = 0
@@ -183,6 +183,7 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
                     if itype in self.configure_default.keys():
                         self.configure_default[itype](iobject,self.current_configuration['nstroke'])
                 elif copying:
+                    self.resetConnectionsData(iobject, itype)
                     new_label = '%s_copy_0'%iobject['label']
                     c = 1
                     while not self.check_unique_label(new_label):
@@ -595,6 +596,35 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
             self.modify_conections_items(connection[0],connection[1])
 
         self.orderTanksConnections()
+        return
+    
+    def resetConnectionsData(self, iobject, itype):
+        if itype=='Junctions':
+            iobject['node2tube']    = []
+            iobject['type_end']     = []
+            iobject['state_ini']    = []
+            iobject['nnod']         = 0
+            iobject['histo']        = []
+        if itype=='Tanks':
+            iobject['state_ini']   = [DEFAULT_DPT]
+            iobject['Cd_ports']    = []
+            iobject['nnod']        = 1
+            iobject['histo']       = []
+            iobject['int2tube']    = []
+            iobject['exh2tube']    = []
+        if itype=='Tubes':
+            iobject['nleft']       = -1
+            iobject['nright']      = -1
+            iobject['tleft']       = "<none>"
+            iobject['tright']      = "<none>"
+        if itype=='Valves':
+            iobject['ncyl'] = -1
+            iobject['tube'] = -1
+        if itype=='Cylinders':
+            iobject['nnod']             = 1
+            iobject['state_ini']        = [DEFAULT_DPT]
+            iobject['intake_valves']    = []
+            iobject['exhaust_valves']   = []
         return
     
     def eraseConnection(self, connection):

@@ -67,6 +67,8 @@ ICON_PATHS_NC['Valve_int']      = VALVE_INT_PATH_NC
 
 # default density, velocity and pressure
 DEFAULT_DVP = [1.1769, 0.1, 101330.0]
+# default density, pressure and temperature
+DEFAULT_DPT = [1.1769, 101330.0, 300.0]
 
 PLOT_ARGUMENTS = {}
 PLOT_ARGUMENTS[0] = {}
