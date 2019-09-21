@@ -1,0 +1,8 @@
+----------------------
+ICESym Windows Edition
+----------------------
+
+1) Download RapidEE_setup.exe from https://www.rapidee.com/en/download
+2) Create a new User Variable called ICESYM_INST_DIR and search the full path of the icesym folder, for example C:\Users\Desktop\icesym
+This step must be do only once, however, if you change the location of the folder the environment variable must be edited as well.
+3) Execute icesym.exe

@@ -24,7 +24,7 @@ Please, if you use ICESym in another distro please contact us to add it to the l
 
 #### Usage
 
-For packaged version, just run:
+For the packaged version, just run:
 
 ```bash
 source etc/bashrc
@@ -138,7 +138,7 @@ Download this distribution if you are a final user of ICESym, i.e. you will use 
 
 #### Installation
 
-Download the packaged version from [ICESym-Win64](https://sourceforge.net/projects/icesym/files/icesym-w64-20190528.zip/download). It includes the simulator and GUI and it was tested in the following distros:
+Download the packaged version from [ICESym-Win64](https://sourceforge.net/projects/icesym/files/icesym-w64-20190528.zip/download) and follow the instructions provided in the text file. It includes the simulator and GUI and it was tested in the following distros:
 
 - Windows 7
 - Windows 10

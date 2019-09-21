@@ -1,5 +1,6 @@
 rd /s /q icesym
 mkdir icesym
+xcopy instructions.txt icesym
 mkdir icesym\cases
 xcopy ..\ICESym-NEWGUI\cases icesym\cases
 mkdir icesym\images
@@ -27,5 +28,4 @@ cd ..\ICESym-NEWGUI\scripts\dist_win\
 call create_dist.bat
 cd %~dp0%
 xcopy ..\ICESym-NEWGUI\scripts\dist_win\dist\icesym.exe icesym
-xcopy ..\ICESym-NEWGUI\etc\bashrc_win.bat icesym
 pause
