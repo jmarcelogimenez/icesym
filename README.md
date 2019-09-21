@@ -14,7 +14,7 @@ Download this distribution if you are a final user of ICESym, i.e. you will use 
 
 #### Installation
 
-Download the packaged version from [ICESym-Linux64](https://sourceforge.net/projects/icesym/files/icesym-l64-20190524.tar.gz/download). It includes the simulator and GUI and it was tested in the following distros:
+Download the packaged version from [ICESym-Linux64](https://sourceforge.net/projects/icesym/files/latest/download). It includes the simulator and GUI and it was tested in the following distros:
 
 - Ubuntu 14.04
 - Ubuntu 16.04
@@ -138,7 +138,7 @@ Download this distribution if you are a final user of ICESym, i.e. you will use 
 
 #### Installation
 
-Download the packaged version from [ICESym-Win64](https://sourceforge.net/projects/icesym/files/icesym-w64-20190528.zip/download) and follow the instructions provided in the text file. It includes the simulator and GUI and it was tested in the following distros:
+Download the packaged version from [ICESym-Win64](https://sourceforge.net/projects/icesym/files/latest/download) and follow the instructions provided in the text file. Try to locate the root folder within a path that does not contain blank spaces, otherwise the simulator fails to execute inside the GUI. The package was tested in the following distros:
 
 - Windows 7
 - Windows 10
