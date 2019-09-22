@@ -787,6 +787,8 @@ class ICESymMainWindow(QtWidgets.QMainWindow):
                         object_position = self.find_optimum_cell_position(self.current_mouse_position)
                         self.addSceneItem(self.item_to_copy.type, object_position,\
                                           self.item_to_copy.object, False, True)
+                        if self.item_to_copy.type == "Cylinders":
+                            self.cw.edit_ig_order(len(self.objects['Cylinders']) - 1, False)
                         self.item_to_copy = None
         return
 
