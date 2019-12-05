@@ -205,3 +205,27 @@ Then, inside the folder dist_win run:
 ```bash
 create_dist.bat
 ```
+
+## Any OS
+
+### Virtual Machine 
+
+This option allows using ICESym through a Virtual Machine to users from any operative system.
+
+Previous Requirements:
+
+1) Have installed a Virtual Machine platform. 
+
+We recommend VirtualBox (download from https://www.virtualbox.org/wiki/Downloads)
+Both "Virtual Box platform" and "Virtual Box Extension Pack" are required.
+
+Installation steps:
+
+1) Download the file ICESym-VM.ova (Virtual machine exported as Open Virtualization Format including the storage disk) from: https://mega.nz/#!wvxzlAJY!IzP4clpSqUinC4O7gI7iv0yis9cBpZ87bzDg8llgrZk
+2) Import the machine into your Virtual Machine platform. In VirtualBox "File->Import"
+3) Start the virtual machine (VM) called lUbuntu16.04
+4) Launch (double-click on) the ICESym file placed at the desktop (Select "Execute", if you are asked)
+
+Optional Steps:
+
+5) To transfer data between Guest (VM) and the Host (native OS), you must to create a shared folder using the VirtualBox application (note that Guest Additions are already installed in the VM)
