@@ -214,7 +214,7 @@ This option allows using ICESym through a Virtual Machine to users from any oper
 
 Previous Requirements:
 
-1) Have installed a Virtual Machine platform. 
+1) Having installed a Virtual Machine platform. 
 
 We recommend VirtualBox (download from https://www.virtualbox.org/wiki/Downloads)
 Both "Virtual Box platform" and "Virtual Box Extension Pack" are required.
