@@ -91,6 +91,7 @@ You might need sudo privileges depending where the python libraries are placed.*
 (VENV) make install
 (VENV) cd $DIR_VIRTUALENV
 
+(VENV) pip install --upgrade 'setuptools<45.0.0'
 (VENV) pip install -r icesym/dist_linux/requirements.txt
 (VENV) cd DIR_VIRTUALENV/icesym/ICESym-NEWGUI/scripts
 (VENV) ./compileWidgets_linux.sh
