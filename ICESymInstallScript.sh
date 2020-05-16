@@ -228,6 +228,7 @@ fi
 cd $virtualenvPath
 sleep 1
 
+pip install --upgrade 'setuptools<45.0.0'
 pip install -r icesym/dist_linux/requirements.txt
 cd "$virtualenvPath/icesym/ICESym-NEWGUI/scripts"
 ./compileWidgets_linux.sh

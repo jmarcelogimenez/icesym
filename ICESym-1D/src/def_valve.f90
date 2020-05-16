@@ -14,6 +14,7 @@ module def_valve
      real*8 :: mass_res_port, mass_flow_factor
      real*8, dimension(3) :: state, state_old, state_pipe_old
      real*8, dimension(3,2) :: state_ref
+     character(:), allocatable :: composition
   end type valve
 
 contains
@@ -241,9 +242,7 @@ contains
        relax = tanh(0.05*(niter+1))
        call valve_res_jac(case, U, psi, rp, ga, param, R, J)
        dU = -relax*R/J
-       ! if(isnan(dU)) then
-       !    stop
-       ! end if
+       !
        if(niter.eq.0) then
           normres0 = dabs(R)
           dU0      = dabs(dU)
@@ -360,8 +359,8 @@ contains
 
     U_P = Upipe
     U_T = Uthroat
-    !psi = Area_val/Area_pipe
-    psi = DMIN1(Area_val/Area_pipe,1.0)
+    !
+    psi = DMIN1(Area_val/Area_pipe,0.9999)
 
     old_case = 1
     try_case = old_case
@@ -450,15 +449,6 @@ contains
           if(conv_flag .or. try_case==0) &
                do_cases = .false.
        end do
-       ! For debugging
-       ! if(.not.conv_flag .or. any(isnan(Uthroat))) then
-       !    write(*,*) 'VALVE SOLVER'
-       !    write(*,*) 'n_P: ', n_P, 'psi: ', psi
-       !    write(*,*) 'U_S: ', Uref
-       !    write(*,*) 'U_C: ', Ucyl
-       !    write(*,*) 'RHS: ', RHS
-       !    ! stop
-       ! end if
     else
        a_S = dsqrt(ga*p_S/rho_S)
        v_P = 0.
@@ -855,12 +845,13 @@ contains
     a_T = dsqrt(ga*p_T/rho_T)
 
     ! n_P is the external unit normal to the pipe
-    if(-n_P*v_T > 0.) then
-       subsonic_T = p_C/p_P < (delta+1.)**(ga/(ga-1.))
-    else
-       subsonic_T = p_P/p_C < ((delta+1.)/(1.+delta*(v_P/a_P)**2))**(ga/(ga-1.))
-    end if
-    ! subsonic_T = dabs(v_T) < a_T-tol
+    ! if(-n_P*v_T > 0.) then
+    !    subsonic_T = p_C/p_P < (delta+1.)**(ga/(ga-1.))
+    ! else
+    !    subsonic_T = p_P/p_C < ((delta+1.)/(1.+delta*(v_P/a_P)**2))**(ga/(ga-1.))
+    ! end if
+    subsonic_T = .not.(dabs(dabs(v_T) - a_T) < tol)
+
     if(n_P*v_P > 0.) then
        if(subsonic_T) then ! subsonic flow at the throat
           caso = 2
